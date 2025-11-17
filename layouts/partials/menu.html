@@ -11,8 +11,8 @@ Renders a menu for the given menu ID.
 {{- $menuID := .menuID }}
 
 {{- with index site.Menus $menuID }}
-  <nav id="menu-bar" class="block mt-3 close">
-    <ul class="flex items-center flex flex-nowrap whitespace-nowrap overflow-x-auto space-x-4">
+  <nav id="menu-bar" class="hidden w-full absolute left-0 top-full z-50 bg-white dark:bg-bg-dimmed-inset shadow-lg rounded-b-lg lg:static lg:bg-transparent lg:shadow-none lg:w-auto lg:flex lg:items-center lg:mr-2">
+    <ul class="flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-1 mt-2 lg:mt-0 mb-5 lg:mb-0 ml-4 lg:ml-0">
       {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
     </ul>
   </nav>
@@ -23,11 +23,11 @@ Renders a menu for the given menu ID.
   {{- range .menuEntries }}
     {{- $attrs := dict "href" .URL }}
     {{- /* Add the "rounded-full border px-6 py-2 bg-zinc-100 hover:bg-zinc-200" class to all links */}}
-    {{- $attrs = merge $attrs (dict "class" "rounded-full border px-6 py-2 bg-zinc-100 hover:bg-zinc-200") }}
-    
+    {{- $attrs = merge $attrs (dict "class" "rounded-full border-none lg:border lg:border-gray-200 dark:border-border-dimmed-primary px-6 py-2 bg-none bg-zinc-100 lg:bg-transparent hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:lg:bg-transparent dark:hover:bg-border-dimmed-primary") }}
+
     {{- if $page.IsMenuCurrent .Menu . }}
       {{- /* Add the "active:bg-zinc-300" class if the link is the current page */}}
-      {{- $attrs = merge $attrs (dict "class" (printf "%s %s" $attrs.class "border-zinc-400")) }}
+      {{- $attrs = merge $attrs (dict "class" (printf "%s %s" $attrs.class "lg:bg-zinc-100 lg:dark:bg-bg-dimmed-secondary lg:border-gray-200 lg:dark:border-border-dimmed-primary")) }}
       {{- /* Add the "aria-current" attribute */}}
       {{- $attrs = merge $attrs (dict "aria-current" "page") }}
     {{- else if $page.HasMenuCurrent .Menu .}}
@@ -45,7 +45,7 @@ Renders a menu for the given menu ID.
         {{- end -}}
       >{{ or (T .Identifier) .Name | safeHTML }}</a>
       {{- with .Children }}
-        <ul>
+        <ul class="ml-4">
           {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
         </ul>
       {{- end }}

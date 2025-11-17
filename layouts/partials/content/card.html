@@ -1,35 +1,100 @@
-<article class="relative group bg-zinc-100 hover:bg-blue-100 rounded-3xl">
-	
-	<a class="insert-link" href="{{ .Permalink }}"></a>
+<article class="relative group bg-zinc-100 dark:bg-bg-dimmed-secondary hover:bg-blue-100 dark:hover:bg-bg-dimmed-subtle rounded-3xl">
 
-	<figure class="w-full aspect-video overflow-hidden rounded-3xl">
+  <a class="insert-link" href="{{ .RelPermalink }}" aria-label="post link"></a>
 
-		{{- if .Params.image }}
+    <figure class="w-full aspect-video overflow-hidden rounded-3xl relative">
+    {{- $defaultImgUrl := .Site.Params.defaultFeature }}
+    {{- $imgUrl := $defaultImgUrl }}
 
-		  {{- if (strings.HasPrefix .Params.image "http") }}
+    {{- /* 1. 检查 frontmatter 中是否有 image 字段 */}}
+    {{- $isLocal := false -}}
+    {{- if .Params.image }}
+        {{- $rawUrl := .Params.image }}
+        {{- if or (strings.HasPrefix $rawUrl "http:") (strings.HasPrefix $rawUrl "https:") }}
+            {{- $imgUrl = $rawUrl }}
+        {{- else }}
+            {{- $isLocal = true }}
+        {{- end }}
+    {{- end }}
 
-			<img class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer" src="{{ .Params.image }}" alt="{{ $.Name }}" style="width: 100%; height: 100%; object-fit: cover;">
+    {{- if $isLocal }}
+      {{- with $img := resources.Get .Params.image }}
+        {{- $img := $img.Resize "750x" }}
+        <img loading="lazy"
+            class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer"
+            src="{{ $img.RelPermalink }}"
+            alt="{{ $.Name }}"
+            width="{{ $img.Width }}" height="{{ $img.Height }}" style="width: 100%; height: 100%; object-fit: cover;">
+      {{- end }}
+    {{- else }}
+      {{- /* 4. 远程图片：使用 StyleName.card/alt_card + picture 以提供主格式和备用格式，回退到未加后缀的原始 URL */}}
+      {{- $format := "avif" -}}
+      {{- $altFormat := "webp" -}}
+      {{- $style := "" -}}
+      {{- $altStyle := "" -}}
+      {{- if site.Params.StyleName }}
+          {{- $format = default $format site.Params.StyleName.format }}
+          {{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
+          {{- $style = site.Params.StyleName.card }}
+          {{- $altStyle = site.Params.StyleName.alt_card }}
+      {{- end }}
 
-		  {{- else }}
+      <picture>
+        {{- if and (ne $imgUrl "") (ne $style "") }}
+          <source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $style }}" type="image/{{ $format }}">
+        {{- end }}
+        {{- if and (ne $imgUrl "") (ne $altStyle "") }}
+          <source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $altStyle }}" type="image/{{ $altFormat }}">
+        {{- end }}
 
-			{{- with $imgcard := resources.Get .Params.image -}}
-			  {{- $imgcard := $imgcard.Process "resize 750x" -}}
-			  <img class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer" src="{{ $imgcard.Permalink }}" alt="{{ $.Name }}" width="{{ $imgcard.Width }}" height="{{ $imgcard.Height }}">
-			{{- end }}
+        {{- $fallback := $imgUrl -}}
+        {{- if eq $fallback "" }}
+          {{- $fallback = .Site.Params.defaultFeature -}}
+        {{- end }}
+        <img loading="lazy"
+            class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer"
+            src="{{ $fallback }}"
+            alt="{{ $.Name }}"
+            style="width: 100%; height: 100%; object-fit: cover;">
+      </picture>
+    {{- end }}
 
-		  {{- end }}
+    {{- /* 计算文章作者 id（优先使用 frontmatter.author(s)，否则使用站点默认 Author.id） */}}
+    {{- $authorID := "" -}}
+    {{- if .Params.authors -}}
+      {{- if gt (len .Params.authors) 0 -}}
+        {{- $authorID = index .Params.authors 0 -}}
+      {{- end -}}
+    {{- else if .Params.author -}}
+      {{- $authorID = .Params.author -}}
+    {{- else if .Site.Params.Author.id -}}
+      {{- $authorID = .Site.Params.Author.id -}}
+    {{- else if .Site.Params.author.id -}}
+      {{- $authorID = .Site.Params.author.id -}}
+    {{- end -}}
 
-		{{- end }}
+    {{- /* 覆盖层：在图片上居中显示标题与作者 id */}}
+    <div class="absolute inset-0 z-20 bg-black/40 group-hover:bg-black/40 transition-colors duration-500 pointer-events-none"></div>
+    {{- /*
+    <div class="absolute inset-x-0 bottom-0 z-30 flex flex-col items-center justify-center text-center p-6 pointer-events-none h-3/4 not-prose">
+      <h3 class="w-full text-white font-bold text-shadow-lg/30 leading-tight">{{- partial "title.html" . -}}</h3>
+      {{- if ne $authorID "" }}
+        <div class="mt-2 text-white/90 text-sm md:text-base font-medium text-shadow-lg/30">
+            @{{ $authorID }}
+        </div>
+      {{- end }}
+    </div>
+    */ -}}
+    </figure>
 
-	  </figure>
+  <div class="p-6">
 
-	<div class="p-6">
+    <time datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}">{{ .Date.Format "Jan 02, 2006" }}</time>
 
-		<time datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}">{{ .Date.Format "Jan 02, 2006" }}</time>
+    <h3 class="my-4 text-2xl font-bold">{{ .LinkTitle }}</h3>
 
-		<h3 class="my-4 text-2xl font-bold">{{ .LinkTitle }}</h3>
+    <p class="mt-4 text-normal leading-normal text-zinc-600 dark:text-text-dimmed-secondary line-clamp-2">{{ .Params.summary }}</p>
 
-		<p class="text-normal leading-normal text-zinc-500 line-clamp-2">{{ .Params.description }}</p>
+  </div>
 
-	</div>
 </article>

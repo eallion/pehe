@@ -1,0 +1,103 @@
+{{- range where site.RegularPages "Type" "in" site.Params.mainSections | first 1 -}}
+
+<section class="block md:flex relative group p-6 lg:p-10 space-y-6 md:space-x-6 my-14 bg-zinc-100 dark:bg-bg-dimmed-secondary rounded-3xl hover:bg-blue-100 dark:hover:bg-bg-dimmed-subtle">
+  <figure class="basis-1/2 w-full aspect-video overflow-hidden rounded-2xl relative">
+    {{- $defaultImgUrl := .Site.Params.defaultFeature }}
+    {{- $imgUrl := $defaultImgUrl }}
+
+    {{- /* 1. 检查 frontmatter 中是否有 image 字段 */}}
+    {{- if .Params.image }}
+        {{- $rawUrl := .Params.image }}
+
+        {{- /* 2. 判断是否是外部 HTTP/HTTPS 链接 */}}
+        {{- if or (strings.HasPrefix $rawUrl "http:") (strings.HasPrefix $rawUrl "https:") }}
+            {{- $imgUrl = $rawUrl }}
+        {{- end }}
+        {{- /* 3. 如果是站内链接或无效链接，则 $imgUrl 保持为默认图片 URL */}}
+    {{- end }}
+
+    {{- $isLocal := false -}}
+    {{- if .Params.image }}
+        {{- if not (or (strings.HasPrefix .Params.image "http:") (strings.HasPrefix .Params.image "https:")) }}
+            {{- $isLocal = true }}
+        {{- end }}
+    {{- end }}
+
+    {{- /* 计算文章作者 id（优先使用 frontmatter.author(s)，否则使用站点默认 Author.id） */}}
+    {{- $authorID := "" -}}
+    {{- if .Params.authors -}}
+      {{- if gt (len .Params.authors) 0 -}}
+        {{- $authorID = index .Params.authors 0 -}}
+      {{- end -}}
+    {{- else if .Params.author -}}
+      {{- $authorID = .Params.author -}}
+    {{- else if .Site.Params.Author.id -}}
+      {{- $authorID = .Site.Params.Author.id -}}
+    {{- else if .Site.Params.author.id -}}
+      {{- $authorID = .Site.Params.author.id -}}
+    {{- end -}}
+
+    {{- if $isLocal }}
+      {{- with $img := resources.Get .Params.image }}
+        {{- $img := $img.Resize "1200x" }}
+        <img fetchpriority="high" loading="lazy"
+            class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer"
+            src="{{ $img.RelPermalink }}"
+            alt="{{ $.Name }}" width="{{ $img.Width }}" height="{{ $img.Height }}" style="width: 100%; height: 100%; object-fit: cover;">
+      {{- end }}
+    {{- else }}
+      {{- $format := "avif" -}}
+      {{- $altFormat := "webp" -}}
+      {{- $style := "" -}}
+      {{- $altStyle := "" -}}
+      {{- if site.Params.StyleName }}
+          {{- $format = default $format site.Params.StyleName.format }}
+          {{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
+          {{- $style = site.Params.StyleName.featured }}
+          {{- $altStyle = site.Params.StyleName.alt_featured }}
+      {{- end }}
+
+      <picture>
+        {{- if and (ne $imgUrl "") (ne $style "") }}
+          <source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $style }}" type="image/{{ $format }}">
+        {{- end }}
+        {{- if and (ne $imgUrl "") (ne $altStyle "") }}
+          <source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $altStyle }}" type="image/{{ $altFormat }}">
+        {{- end }}
+
+        {{- $fallback := $imgUrl -}}
+        {{- if eq $fallback "" }}
+          {{- $fallback = .Site.Params.defaultFeature -}}
+        {{- end }}
+        <img fetchpriority="high" loading="lazy"
+            class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer"
+            src="{{ $fallback }}"
+            alt="{{ $.Name }}" style="width: 100%; height: 100%; object-fit: cover;">
+      </picture>
+      {{- end }}
+
+    {{- /* 覆盖层：在图片上居中显示标题与作者 id */}}
+    <div class="absolute inset-0 z-20 bg-black/40 group-hover:bg-black/50 transition-colors duration-500 pointer-events-none"></div>
+    <div class="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-6 pointer-events-none not-prose">
+      <h3 class="w-full text-white font-bold text-shadow-lg/30 leading-tight">{{- partial "title.html" . -}}</h3>
+      {{- if ne $authorID "" }}
+        <div class="mt-4 text-white/90 text-sm md:text-base font-medium text-shadow-lg/30">
+            @{{ $authorID }}
+        </div>
+      {{- end }}
+    </div>
+  </figure>
+
+  <div class="basis-1/2 self-start">
+    <h2 class="font-bold mb-4">
+      <span class="icon text-4xl">
+        {{ partial "icon.html" (dict "name" "new" "class" "text-orange-600") }}
+      </span>
+      <a class="before:content-[''] before:z-10 before:top-0 before:right-0 before:left-0 before:bottom-0 before:absolute before:pointer-events-auto" href="{{ .RelPermalink }}">{{- partial "title.html" . -}}</a></h2>
+    <time datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}">{{ .Date.Format "Jan 02, 2006" }}</time>
+    <p class="mt-4 text-normal leading-normal text-zinc-600 dark:text-text-dimmed-secondary line-clamp-5">{{ .Params.summary }}</p>
+  </div>
+
+</section>
+
+{{ end -}}

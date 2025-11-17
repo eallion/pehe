@@ -1,7 +1,31 @@
-<div class="rounded-2xl p-4 bg-zinc-100 mb-10">
+<div class="rounded-2xl p-8 text-zinc-700 dark:text-text-dimmed-primary bg-zinc-100 dark:bg-bg-dimmed-secondary mb-10 flex-col items-center justify-center gap-6 hidden md:flex">
 
-		<img class="aspect-video rounded" src="/images/email-3249062_1280_by-Muhammad-Ribkhan-Pixabay.jpg" alt="Banner Email Marketing">
+    <!-- {{- partial "anynow.html" . -}} -->
 
-		<p class="text-right text-xs mt-2 leading-none text-zinc-500">Adversitiment</p>
+    <div class="shrink-0">
+        <img class="h-20 w-20 rounded-full object-cover ring-4 ring-white dark:ring-text-dimmed-tertiary shadow-lg" width="144" height="144" alt="{{ .Site.Title }}" src="{{ with .Site.Params.Author.avatar }}{{ . }}{{ else }} {{ .Site.Params.logo  }} {{ end }}">
+    </div>
+
+    <div class="flex items-center justify-center gap-0.5 text-zinc-950 dark:text-text-dimmed-primary hover:cursor-text">
+        {{- with .Site.Params.Author.svg -}}
+            {{ partial "icon.html" (dict "name" . "class" "w-auto h-7 fill-current") }}
+        {{- else -}}
+            <span class="text-3xl font-bold uppercase">{{- .Site.Params.Author.ID -}}</span>
+        {{- end -}}
+    </div>
+
+    <div class="group relative text-center px-0">
+        <p class="font-semibold transition-opacity duration-300 group-hover:opacity-0">
+            {{ .Site.Params.slogan }}
+        </p>
+        <p class="font-semibold absolute top-0 left-0 right-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            {{ .Site.Params.slogan_hover }}
+        </p>
+    </div>
+
+    <div class="w-full grid grid-cols-4 gap-4 px-6 pt-4 border-t border-zinc-200 dark:border-border-dimmed-primary">
+        {{- /* 使用 partialCached 缓存整个统计 partial */ -}}
+        {{- partialCached "content/stats-partial.html" . -}}
+    </div>
 
 </div>

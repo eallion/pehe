@@ -1,0 +1,82 @@
+{{ $authorSlug := .Params.authors | default .Site.Params.author.name }}
+{{ $authorData := index .Site.Data.authors $authorSlug }}
+{{ if not $authorData }}
+  {{ $authorData = index .Site.Data.authors .Site.Params.author.name }}
+{{ end }}
+
+<div id="author-box" class="border border-gray-200 dark:border-border-dimmed-primary p-8 bg-zinc-100 dark:bg-bg-dimmed-secondary rounded-2xl my-8 md:my-14">
+
+  {{ if $authorData.image }}
+    <img class="w-20 h-20 rounded-full" src="{{ $authorData.image }}" alt="{{ $authorData.name | default "作者" }}">
+  {{ else }}
+    <img class="w-20 h-20 rounded-full" src="{{ .Site.Params.Author.avatar }}" alt="{{ $authorData.name | default "作者" }}">
+  {{ end }}
+
+  <h2 class="text-xl font-bold my-4">本文作者：{{ $authorData.name | default .Site.Params.Author.name }}</h2>
+
+  {{ if $authorData.bio }}
+    <p class="mb-4">{{ $authorData.bio }}</p>
+  {{ end }}
+
+  <p class="my-4 inline font-bold">版权信息：
+    {{- $cc := .Site.Params.creativecommons | default "by-sa" -}}
+    {{- $ccUrl := printf "https://creativecommons.org/licenses/%s/4.0/deed.zh-hans" $cc -}}
+    {{- if eq $cc "zero" -}}
+      {{- $ccUrl = "https://creativecommons.org/publicdomain/zero/1.0/deed.zh-hans" -}}
+    {{- end -}}
+
+    {{- partial "icon.html" (dict "name" "cc" "class" "inline-block mb-0.5") -}}
+    {{- range (split $cc "-") -}}
+        {{- if ne . "zero" -}}
+            {{- partial "icon.html" (dict "name" (printf "cc-%s" .) "class" "inline-block mb-0.5") -}}
+        {{- else -}}
+            {{- partial "icon.html" (dict "name" "cc0" "class" "inline-block mb-0.5") -}}
+        {{- end -}}
+    {{- end -}}
+    <span><a href="{{ $ccUrl }}" target="_blank" rel="noopener noreferrer" class="decoration-auto hover:underline">CC {{ upper $cc }} 4.0</a></span>
+  </p>
+
+  <hr class="my-4 border-gray-200 dark:border-gray-600">
+
+  {{ if $authorData.social }}
+  <ul class="flex flex-wrap mt-4 space-x-4">
+    {{ range $authorData.social }}
+      {{ range $platform, $link := . }}
+        {{ $url := $link }}
+        {{ if eq $platform "email" }}
+          {{ if not (hasPrefix $link "mailto:") }}
+            {{ $url = printf "mailto:%s" $link }}
+          {{ end }}
+        {{ else if eq $platform "mastodon" }}
+           {{ if not (hasPrefix $link "http") }}
+             {{/* Handle Mastodon handle like @user@instance.com -> https://instance.com/@user */}}
+             {{ $parts := split $link "@" }}
+             {{ if eq (len $parts) 3 }}
+               {{ $url = printf "https://%s/@%s" (index $parts 2) (index $parts 1) }}
+             {{ end }}
+           {{ end }}
+        {{ end }}
+
+        {{ $icon := $platform }}
+        {{ $label := $platform }}
+
+        {{ if eq $platform "site" }}
+          {{ $icon = "globe" }}
+          {{ $label = "Website" }}
+        {{ else if eq $platform "globe" }}
+          {{ $icon = "website" }}
+          {{ $label = "Website" }}
+        {{ end }}
+
+        <li>
+          <a class="flex items-center decoration-auto hover:underline" href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+            {{ partial "icon.html" (dict "name" $icon "class" "w-5 h-5") }}
+            <span class="ml-1 capitalize">{{ $label }}</span>
+          </a>
+        </li>
+      {{ end }}
+    {{ end }}
+  </ul>
+  {{ end }}
+
+</div>

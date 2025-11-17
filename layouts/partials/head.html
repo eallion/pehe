@@ -1,9 +1,113 @@
-<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c2128" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="{{ .Site.Params.preconnect }}">
+<link rel="dns-prefetch" href="{{ .Site.Params.preconnect }}">
+<!-- Dark Mode Prevention Script -->
+<script>
+  // 立即执行的匿名函数，防止变量污染全局
+  (function() {
+    const storageKey = 'theme';
+    const className = 'dark';
+    const htmlClass = document.documentElement.classList;
+
+    function getTheme() {
+      // 1. 检查本地存储
+      if (localStorage.getItem(storageKey)) {
+        return localStorage.getItem(storageKey);
+      }
+      // 2. 检查系统偏好
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 设置初始状态
+    const theme = getTheme();
+    if (theme === 'dark') {
+      htmlClass.add(className);
+      updateThemeColor('#1c2128');
+    } else {
+      htmlClass.remove(className);
+      updateThemeColor('#ffffff');
+    }
+
+    function updateThemeColor(color) {
+      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+      metaThemeColors.forEach((meta, index) => {
+        if (index === 0) {
+          meta.setAttribute('content', color);
+          meta.removeAttribute('media');
+        } else {
+          meta.remove();
+        }
+      });
+    }
+  })();
+</script>
 <!-- Dynamic title for SEO -->
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
 <!-- Dynamic description for SEO -->
 <meta name="description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.description }}{{ end }}">
+
+<!-- Canonical -->
+<link rel="canonical" href="{{ .Permalink }}" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+<meta property="og:description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.description | default .Summary }}{{ end }}" />
+<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:image" content="https://og.eallion.com/api/og?title={{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+<meta property="og:site_name" content="{{ site.Title }}" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+<meta name="twitter:description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.description | default .Summary }}{{ end }}" />
+<meta name="twitter:image" content="https://og.eallion.com/api/og?title={{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+{{ with .Site.Params.social }}
+  {{ range . }}
+    {{ if eq .name "Twitter" }}
+      <meta name="twitter:site" content="{{ .url | replaceRE "^https?://(www\\.)?(twitter|x)\\.com/?" "@" | strings.TrimSuffix "/" }}" />
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+
+
 {{- partialCached "head/css.html" . -}}
 {{- partialCached "head/favicon.html" . -}}
+{{- partial "head/schema.html" . -}}
 {{- /* template "_internal/google_analytics.html" . */ -}}
+
+{{/* Site Verification */}}
+{{ with .Site.Params.verification.google }}
+  <meta name="google-site-verification" content="{{ . }}">
+{{ end }}
+{{ with .Site.Params.verification.bing }}
+  <meta name="msvalidate.01" content="{{ . }}">
+{{ end }}
+{{ with .Site.Params.verification.pinterest }}
+  <meta name="p:domain_verify" content="{{ . }}">
+{{ end }}
+{{ with .Site.Params.verification.yandex }}
+  <meta name="yandex-verification" content="{{ . }}">
+{{ end }}
+{{ with .Site.Params.verification.fediverse }}
+  <meta name="fediverse:creator" content="{{ . }}">
+{{ end }}
+
+{{/* Me */}}
+{{ with .Site.Params.Author.name }}
+  <meta name="author" content="{{ . }}">
+{{ end }}
+{{ range .Site.Params.Social }}
+  {{ if .url }}
+    <link href="{{ .url }}" rel="me">
+  {{ end }}
+{{ end }}
+
+<!-- RSS -->
+{{ if .IsHome }}
+<link rel="alternate" type="application/rss+xml" href="/index.xml" title="{{ site.Title }}">{{ end }}

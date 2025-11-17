@@ -1,0 +1,171 @@
+/* CSS Custom */
+
+/* * 🛠️ 解决 Tailwind Typography 导致的行内代码块反引号问题
+ * 目标：移除 .prose code::before 和 ::after 插入的字符
+ */
+
+@layer components {
+  /* 确保这个选择器足够具体，能够覆盖 Tailwind 插件生成的样式 */
+  .prose :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::before,
+  .prose :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::after {
+    content: none !important;
+  }
+}
+
+/* 添加代码块高亮样式 */
+html:not(.dark) .chroma,
+html:not(.dark) .chroma * {
+  /* GitHub Light */
+  color: var(--color-gh-text-primary);
+  background-color: var(--color-gh-bg-primary);
+}
+
+html.dark .chroma,
+html.dark .chroma * {
+  /* GitHub Dark Dimmed */
+  color: var(--color-text-dimmed-highlight);
+  background-color: var(--color-bg-dimmed-secondary);
+}
+
+/* Tailwindcss Custom */
+/* 关键：只选择不是 <pre> 标签的直接子元素的 <code> */
+.prose code:not(pre > code) {
+  /* GitHub Light */
+  background-color: var(--color-gh-bg-primary);
+  color: var(--color-gh-text-primary);
+  border: 1px solid var(--color-gh-border-primary);
+  border-radius: 6px;
+  padding: 0.2em 0.4em;
+  line-height: normal;
+  display: inline-block;
+}
+
+.dark .prose code:not(pre > code) {
+  /* GitHub Dark Dimmed */
+  background-color: #656c7633;
+  color: var(--color-text-dimmed-highlight);
+  border: 1px solid var(--color-border-dimmed-primary);
+}
+
+/* Tailwind CSS Blockquote p */
+.prose {
+  /* 移除第一个 <p> 标签前的 `open-quote` */
+  :where(blockquote p:first-of-type):not(:where([class~="not-prose"], [class~="not-prose"] *))::before {
+    content: '';
+  }
+}
+
+.prose {
+
+  /* 移除最后一个 <p> 标签后的 `close-quote` */
+  :where(blockquote p:last-of-type):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+    content: '';
+  }
+}
+
+/* icon shortcodes 的宽高限制 */
+.icon svg {
+  width: 1em;
+  /* 默认宽度 */
+  height: 1em;
+  /* 默认高度 */
+  vertical-align: middle;
+  /* 保持图标垂直对齐 */
+}
+
+/* 添加 "not by AI" 徽章 */
+.notbyai {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 131px;
+    height: 42px;
+    background-repeat: no-repeat;
+}
+
+.notbyai.written {
+    background-image: url(/assets/images/not-by-ai/written-by-human/svg/written-by-human-not-by-ai-badge-white.svg);
+}
+
+.notbyai.produced {
+    background-image: url(/assets/images/not-by-ai/produced-by-human/svg/produced-by-human-not-by-ai-badge-white.svg);
+}
+
+.notbyai.painted {
+    background-image: url(/assets/images/not-by-ai/painted-by-human/svg/painted-by-human-not-by-ai-badge-white.svg);
+}
+
+.dark .notbyai.written {
+    background-image: url(/assets/images/not-by-ai/written-by-human/svg/written-by-human-not-by-ai-badge-black.svg);
+}
+
+.dark .notbyai.produced {
+    background-image: url(/assets/images/not-by-ai/produced-by-human/svg/produced-by-human-not-by-ai-badge-black.svg);
+}
+
+.dark .notbyai.painted {
+    background-image: url(/assets/images/not-by-ai/painted-by-human/svg/painted-by-human-not-by-ai-badge-black.svg);
+}
+
+/* 添加 "Non Bot" 徽章 */
+.nonbot {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 52px;
+    height: 42px;
+    background-repeat: no-repeat;
+    background-image: url(/assets/images/nonbot/nonbot_pledged_logo.svg);
+}
+
+/* 针对所有在 .timeline 容器内的 h3 元素应用隐藏样式 */
+.timeline h3 {
+  /* 目标：视觉隐藏，但在文档流中保留可滚动的位置 */
+
+  opacity: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+
+  /* 确保元素不占用实际空间，避免布局干扰 */
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
+@layer components {
+    /* 1. 查找所有 .timeline-item 元素 */
+    .timeline-item:last-child {
+        /* 2. 针对最后一个 .timeline-item 元素，选择其内部的 .timeline-item-line 子元素 */
+        /* 关键：使用 @apply 结合 CSS 选择器 */
+        .timeline-item-line {
+            display: none;
+            visibility: hidden;
+            opacity: 0;
+        }
+    }
+}
+
+/* 添加 Mastodon 渐变样式 */
+.text-gradient-mastodon {
+    /* 渐变背景：从 #6364FF 到 #563ACC */
+    background: linear-gradient(to bottom, #6364FF, #563ACC);
+
+    /* 将背景裁剪到文本形状 */
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    /* 使文本颜色透明，以显示背景 */
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: bold;
+}
+
+/* Search 结果关键词高亮样式 */
+#search-results-container mark {
+  @apply rounded-sm px-1 font-bold;
+}

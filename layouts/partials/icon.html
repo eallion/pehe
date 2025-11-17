@@ -1,0 +1,40 @@
+{{/* 
+  layouts/partials/icon.html
+  Helper to render SVG icons directly from assets/icons.
+  Usage: 
+    Simple: {{ partial "icon.html" "github" }}
+    Advanced: {{ partial "icon.html" (dict "name" "github" "class" "w-6 h-6 text-red-500") }}
+*/}}
+
+{{ $name := "" }}
+{{ $class := "" }}
+
+{{ if reflect.IsMap . }}
+  {{ $name = .name }}
+  {{ $class = .class }}
+{{ else }}
+  {{ $name = . }}
+{{ end }}
+
+{{ $path := printf "icons/%s.svg" $name }}
+{{ $res := resources.Get $path }}
+
+{{ if $res }}
+  {{ $content := $res.Content }}
+  
+  {{/* If class is provided, inject it into the <svg> tag */}}
+  {{ if $class }}
+    {{/* Check if svg already has a class attribute */}}
+    {{ if findRE `class="[^"]*"` $content }}
+      {{/* Replace existing class */}}
+      {{ $content = replaceRE `class="([^"]*)"` (printf `class="$1 %s"` $class) $content }}
+    {{ else }}
+      {{/* Add class attribute after <svg */}}
+      {{ $content = replaceRE `<svg` (printf `<svg class="%s"` $class) $content }}
+    {{ end }}
+  {{ end }}
+
+  {{ $content | safeHTML }}
+{{ else }}
+  {{ warnf "Icon not found: %s" $path }}
+{{ end }}

@@ -1,0 +1,34 @@
+{{ $title := .Title }}
+{{ $totalLength := $title | countrunes }}
+
+{{/* 策略：判断中文比例，中文越多，字符宽度越接近固定；英文越多，可压缩空间越大。
+  使用正则表达式粗略计算中文/全角字符的数量。
+*/}}
+
+{{ $asciiRegex := "[\\x00-\\x7F]" }}
+{{ $asciiCount := 0 }}
+{{ $nonAsciiCount := 0 }}
+
+{{ range split $title "" }}
+    {{ if findRE $asciiRegex . }}
+        {{ $asciiCount = add $asciiCount 1 }}
+    {{ else }}
+        {{ $nonAsciiCount = add $nonAsciiCount 1 }}
+    {{ end }}
+{{ end }}
+
+{{/* 计算中文/宽字符比例 (0.0 到 1.0) */}}
+{{ $chineseRatio := div $nonAsciiCount $totalLength | default 0.0 }}
+
+{{/* 计算“权重长度”：
+  - 非 ASCII 字符（中文、全角标点、Emoji 等）：权重 1.1 (font-bold 稍微宽一点，留余量)
+  - ASCII 字符（英文、数字、半角标点）：权重 0.6
+*/}}
+{{ $weightedLength := add (mul $nonAsciiCount 1.1) (mul $asciiCount 0.6) }}
+
+<div class="feature-title-container"
+     style="--title-total-length: {{ $totalLength }};
+            --title-chinese-ratio: {{ $chineseRatio }};
+            --title-weighted-length: {{ math.Round $weightedLength }};">
+    <span class="dynamic-title">{{ $title }}</span>
+</div>

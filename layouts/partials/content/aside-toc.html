@@ -1,0 +1,16 @@
+
+<nav class="bg-zinc-100 dark:bg-bg-dimmed-secondary rounded-2xl backdrop-blur-sm border border-gray-200 dark:border-border-dimmed-primary p-6 toc-nav">
+
+  <div class="mb-4 pb-3 border-b border-b-gray-200 dark:border-b-border-dimmed-primary">
+    <h2 class="text-sm font-bold text-zinc-700 dark:text-text-dimmed-primary uppercase tracking-wide flex items-center gap-2">
+      <svg aria-hidden="true" focusable="false" class="octicon octicon-list-unordered" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Table of Contents</h2>
+  </div>
+
+  <div class="toc-scroll-wrapper lg:overflow-y-auto">
+
+    <div class="toc-content-wrapper">
+      {{ .TableOfContents }}
+    </div>
+
+  </div>
+</nav>

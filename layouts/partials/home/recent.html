@@ -1,0 +1,28 @@
+<section class="mb-16">
+
+    <div class="flex items-center mb-6">
+
+      <h2 class="text-3xl md:text-4xl font-bold mr-auto">Recent Post</h2>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-10">
+
+      {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+      {{ $paginatedPages := .Paginate $pages }}
+      {{ $filteredPages := after 1 $paginatedPages.Pages }}
+      {{ range first 6 $filteredPages }}
+
+        {{- partial "content/card" . -}}
+
+      {{ end }}
+
+    </div>
+
+    <!-- Read More -->
+
+    <div class="flex items-center mt-10">
+        <a class="border border-gray-200 dark:border-border-dimmed-primary rounded-full px-6 py-2 hover:bg-zinc-200 dark:hover:bg-bg-dimmed-subtle" href="/blog" target="_self" aria-label="blog" alt="blog">Read More →</a>
+    </div>
+
+</section>

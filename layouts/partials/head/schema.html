@@ -1,0 +1,57 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ .Site.BaseURL }}#website",
+      "url": "{{ .Site.BaseURL }}",
+      "name": "{{ .Site.Title }}",
+      "description": "{{ .Site.Params.description }}",
+      "publisher": {
+        "@id": "{{ .Site.BaseURL }}#person"
+      },
+      "inLanguage": "{{ .Site.LanguageCode }}"
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ .Site.BaseURL }}#person",
+      "name": "{{ .Site.Params.Author.name }}",
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ .Site.Params.Author.avatar | absURL }}"
+      },
+      "description": "{{ .Site.Params.Author.bio }}",
+      "url": "{{ .Site.BaseURL }}"
+    }
+    {{ if .IsPage }}
+    ,
+    {
+      "@type": "BlogPosting",
+      "@id": "{{ .Permalink }}",
+      "headline": "{{ .Title }}",
+      "description": "{{ .Params.description | default .Summary | plainify }}",
+      "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
+      "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
+      "url": "{{ .Permalink }}",
+      "author": {
+        "@id": "{{ .Site.BaseURL }}#person"
+      },
+      "publisher": {
+        "@id": "{{ .Site.BaseURL }}#person"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://og.eallion.com/api/og?title={{ .Title }}"
+      },
+      "wordCount": "{{ .WordCount }}",
+      "inLanguage": "{{ .Site.LanguageCode }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ .Permalink }}"
+      }
+    }
+    {{ end }}
+  ]
+}
+</script>

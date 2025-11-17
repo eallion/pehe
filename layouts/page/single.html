@@ -1,39 +1,33 @@
 {{ define "main" }}
+{{- partial "content/breadcrumb.html" . -}}
 
-<div class="py-14">
+<div class="pb-14" data-pagefind-ignore="all">
 
-	<div class="mb-14">	
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-		<img class="rounded-3xl" src="{{ .Params.image | absURL }}" alt="{{ .Title }}">
+    <article class="md:col-span-2 prose lg:prose-lg dark:prose-invert">
 
-	</div>
+    <header class="not-prose mb-14">
 
+      <h1 class="text-4xl font-bold">{{ .Title }}</h1>
 
-	<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    </header>
 
-		<article class="md:col-span-2 prose lg:prose-lg">
+    <div id="content" class="prose lg:prose-lg dark:prose-invert">
 
-		<header class="not-prose mb-14">
+      {{- .Content -}}
 
-			<h1 class="text-4xl font-bold">{{ .Title }}</h1>
-		
-		</header>
+    </div>
 
-		<div id="content" class="prose lg:prose-lg">
+    </article>
 
-			{{- .Content -}}
-			
-		</div>
+    <aside class="md:col-span-1 hidden md:block">
 
-		</article>
+      {{- partial "content/aside.html" . -}}
 
-		<aside class="md:col-span-1">
+    </aside>
 
-			{{- partial "content/aside.html" . -}}
-		
-		</aside>
-
-	</div>
+  </div>
 
 </div>
 

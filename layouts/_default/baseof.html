@@ -3,14 +3,14 @@
 <head>
   {{ partial "head.html" . }}
 </head>
-<body>
-  <header class="py-6 border-b">
+<body class="bg-white dark:bg-bg-dimmed-primary text-gray-800 dark:text-text-dimmed-primary leading-relaxed">
+  <header id="page-header" class="sticky top-0 z-40 lg:static py-6 lg:py-6 border-b border-zinc-200 dark:border-border-dimmed-primary bg-white dark:bg-bg-dimmed-inset transition-all duration-300 ease-in-out">
     {{- partial "header.html" . -}}
   </header>
   <main class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
     {{- block "main" . }}{{ end -}}
   </main>
-  <footer class="bg-zinc-100 py-10 md:py-14">
+  <footer class="bg-zinc-100 dark:bg-bg-dimmed-inset py-10 md:py-14 border-t border-zinc-200 dark:border-border-dimmed-primary">
     {{- partial "footer.html" . -}}
   </footer>
   {{- partialCached "footer/js.html" . }}

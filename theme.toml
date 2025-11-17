@@ -1,13 +1,13 @@
-name = 'Pehtheme Hugo'
+name = 'Pehe'
 license = 'MIT'
-licenselink = 'https://github.com/fauzanmy/pehtheme-hugo/blob/main/LICENSE'
-description = 'Pehtheme Hugo : A minimalist Hugo theme built with TailwindCSS, for efficient performance and minimalism'
+licenselink = 'https://github.com/eallion/pehe/blob/dev/LICENSE'
+description = 'Pehe : Pehtheme-hugo Enhanced. Bugs fixed. Features refined. This is a Hugo theme is inspired by Material Design v3, built with love using Tailwind CSS v4.'
 
 # The home page of the theme, where the source can be found
-homepage = 'https://github.com/fauzanmy/pehtheme-hugo'
+homepage = 'https://github.com/eallion/pehe'
 
 # If you have a running demo of the theme
-demosite = 'https://pehtheme-hugo.netlify.app/'
+demosite = 'https://www.eallion.com/'
 
 # Taxonomy terms
 tags = ['blog', 'responsive', 'light', 'tailwindcss']
@@ -16,5 +16,5 @@ features = ['tailwindcss', 'two-column', 'sidebar', 'horizontal-menu']
 # If the theme has multiple authors
 
 [author]
-  name = 'Fauzan My'
-  homepage = 'https://fzn.my.id/'
+  name = 'Charles Chin'
+  homepage = 'https://www.eallion.com/'

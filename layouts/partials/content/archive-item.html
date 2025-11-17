@@ -1,0 +1,81 @@
+<article class="group relative flex flex-col md:flex-row gap-4 p-4 rounded-2xl border border-zinc-200 dark:border-text-dimmed-secondary hover:border-zinc-300 dark:hover:border-text-dimmed-primary transition-colors duration-200">
+  <a class="insert-link" href="{{ .RelPermalink }}" aria-label="post link"></a>
+
+    <figure class="w-full md:w-1/5 aspect-video shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-bg-dimmed-primary">
+    {{- $defaultImgUrl := .Site.Params.defaultFeature }}
+    {{- $imgUrl := $defaultImgUrl }}
+
+    {{- /* 1. 检查 frontmatter 中是否有 image 字段 */}}
+    {{- if .Params.image }}
+        {{- $rawUrl := .Params.image }}
+
+        {{- /* 2. 判断是否是外部 HTTP/HTTPS 链接 */}}
+        {{- if or (strings.HasPrefix $rawUrl "http:") (strings.HasPrefix $rawUrl "https:") }}
+            {{- $imgUrl = $rawUrl }}
+        {{- end }}
+        {{- /* 3. 如果是站内链接或无效链接，则 $imgUrl 保持为默认图片 URL */}}
+    {{- end }}
+
+    {{- /* 4. 远程图片：使用 picture，或使用本地资源 */}}
+    {{- $isLocal := false -}}
+    {{- if .Params.image }}
+        {{- if not (or (strings.HasPrefix .Params.image "http:") (strings.HasPrefix .Params.image "https:")) }}
+            {{- $isLocal = true }}
+        {{- end }}
+    {{- end }}
+
+    {{- if $isLocal }}
+      {{- with $img := resources.Get .Params.image }}
+        {{- $img := $img.Resize "750x" }}
+        <img loading="lazy"
+            class="object-cover aspect-video h-full w-full group-hover:scale-105 transition duration-500 cursor-pointer"
+            src="{{ $img.RelPermalink }}"
+            alt="{{ $.Name }}" width="{{ $img.Width }}" height="{{ $img.Height }}" style="width: 100%; height: 100%; object-fit: cover;">
+      {{- end }}
+    {{- else }}
+      {{- $format := "avif" -}}
+      {{- $altFormat := "webp" -}}
+      {{- $style := "" -}}
+      {{- $altStyle := "" -}}
+      {{- if site.Params.StyleName }}
+          {{- $format = default $format site.Params.StyleName.format }}
+          {{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
+          {{- $style = site.Params.StyleName.list }}
+          {{- $altStyle = site.Params.StyleName.alt_list }}
+      {{- end }}
+
+      <picture>
+        {{- if and (ne $imgUrl "") (ne $style "") }}
+          <source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $style }}" type="image/{{ $format }}">
+        {{- end }}
+        {{- if and (ne $imgUrl "") (ne $altStyle "") }}
+          <source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $altStyle }}" type="image/{{ $altFormat }}">
+        {{- end }}
+
+        {{- $fallback := $imgUrl -}}
+        {{- if eq $fallback "" }}
+          {{- $fallback = .Site.Params.defaultFeature -}}
+        {{- end }}
+        <img loading="lazy"
+            class="object-cover aspect-video h-full w-full group-hover:scale-105 transition duration-500 cursor-pointer"
+            src="{{ $fallback }}"
+            alt="{{ $.Name }}" style="width: 100%; height: 100%; object-fit: cover;">
+      </picture>
+    {{- end }}
+
+    </figure>
+
+    <div class="flex-1 min-w-0">
+      <time datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}" class="text-sm text-zinc-500 dark:text-text-dimmed-secondary">
+        {{ .Date.Format "Jan 02, 2006" }}
+      </time>
+
+      <h3 class="mt-2 text-lg font-bold text-zinc-900 dark:text-text-dimmed-primary group-hover:text-blue-600 transition-colors duration-200">
+        {{ .LinkTitle }}
+      </h3>
+
+      <p class="mt-2 text-sm text-zinc-600 dark:text-text-dimmed-secondary line-clamp-3">
+        {{ .Params.summary }}
+      </p>
+    </div>
+</article>

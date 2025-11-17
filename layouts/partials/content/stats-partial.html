@@ -1,0 +1,51 @@
+{{- /* 这个 partial 会被 partialCached 缓存，第一次计算后会被重用 */ -}}
+
+{{- /* 统计文章数 */ -}}
+{{- $articleCount := 0 -}}
+{{- range .Site.RegularPages -}}
+    {{- if eq .Type "blog" -}}
+        {{- $articleCount = add $articleCount 1 -}}
+    {{- end -}}
+{{- end -}}
+
+{{- /* 统计分类和标签 */ -}}
+{{- $categories := slice -}}
+{{- $tags := slice -}}
+{{- range .Site.RegularPages -}}
+    {{- if .Params.categories -}}
+        {{- $categories = union $categories .Params.categories -}}
+    {{- end -}}
+    {{- if .Params.tags -}}
+        {{- $tags = union $tags .Params.tags -}}
+    {{- end -}}
+{{- end -}}
+{{- $categoryCount := len $categories -}}
+{{- $tagCount := len $tags -}}
+
+{{- /* 统计总字数 */ -}}
+{{- $scratch := newScratch -}}
+{{- range (where .Site.Pages "Kind" "page") -}}
+    {{- $scratch.Add "total" .WordCount -}}
+{{- end -}}
+{{- $totalWords := $scratch.Get "total" -}}
+
+{{- /* 输出统计数据 */ -}}
+<div class="flex flex-col items-center justify-center text-center">
+    <div class="text-xs opacity-60 mb-1.5 uppercase tracking-wider">文章</div>
+    <div class="text-xl font-bold">{{ $articleCount }}</div>
+</div>
+
+<div class="flex flex-col items-center justify-center text-center">
+    <div class="text-xs opacity-60 mb-1.5 uppercase tracking-wider">分类</div>
+    <div class="text-xl font-bold">{{ $categoryCount }}</div>
+</div>
+
+<div class="flex flex-col items-center justify-center text-center">
+    <div class="text-xs opacity-60 mb-1.5 uppercase tracking-wider">标签</div>
+    <div class="text-xl font-bold">{{ $tagCount }}</div>
+</div>
+
+<div class="flex flex-col items-center justify-center text-center">
+    <div class="text-xs opacity-60 mb-1.5 uppercase tracking-wider">字数</div>
+    <div class="text-xl font-bold">{{ div $totalWords 1000 }}k</div>
+</div>

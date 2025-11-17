@@ -1,0 +1,41 @@
+<nav class="bg-zinc-100 dark:bg-bg-dimmed-secondary rounded-2xl backdrop-blur-sm border border-gray-200 dark:border-border-dimmed-primary p-6">
+
+  <div class="mb-4 pb-3 border-b border-b-gray-200 dark:border-b-border-dimmed-primary ">
+    <h2 class="text-sm font-bold text-zinc-700 uppercase tracking-wide flex items-center gap-2">
+      <svg aria-hidden="true" focusable="false" class="octicon octicon-info" viewBox="0 0 16 16" width="16" height="16"
+        fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom">
+        <path
+          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z">
+        </path>
+      </svg>本文暂无 TOC
+    </h2>
+  </div>
+
+  <div id="related-post" class="">
+
+    {{- $related := .Site.RegularPages.Related . | first 1 -}}
+
+    {{- with $related -}}
+
+    <h2 class="text-xl md:text-2xl font-bold mb-4">相关阅读</h2>
+
+    <div class="flex flex-wrap gap-4 border rounded-3xl backdrop-blur-sm border-zinc-200 dark:border-border-dimmed-primary shadow-sm hover:shadow-md transition-shadow duration-300">
+
+      {{- range . }}
+
+      {{- partial "content/card.html" . -}}
+
+      {{- end }}
+
+    </div>
+
+
+    {{- else -}}
+
+      <div class="text-center text-zinc-600 dark:text-text-dimmed-primary">暂无相关文章</div>
+
+    {{- end }}
+
+  </div>
+
+</nav>

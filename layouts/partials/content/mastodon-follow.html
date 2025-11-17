@@ -1,0 +1,85 @@
+{{- $defaultMastodonID := "@eallion@e5n.cc" -}}
+{{- $mastodonID := "" -}}
+{{- $email := "" -}}
+{{- $mastodonURL := "" -}}
+
+{{- range .Site.Params.Author.social -}}
+  {{- with .mastodon -}}
+    {{- $mastodonID = . -}}
+  {{- end -}}
+  {{- with .email -}}
+    {{- $email = . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* 1. 如果配置中未提供 mastodon ID，则使用默认值 */ -}}
+{{- if not $mastodonID -}}
+  {{- $mastodonID = $defaultMastodonID -}}
+{{- end -}}
+
+{{- /* 2. 使用 $mastodonID 构造 $mastodonURL */ -}}
+{{- if $mastodonID -}}
+  {{- $parts := split $mastodonID "@" -}}
+  {{- if ge (len $parts) 3 -}}
+    {{- $domain := index $parts 2 -}}
+    {{- $user := index $parts 1 -}}
+    {{- $mastodonURL = printf "https://%s/@%s" $domain $user -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="max-w-7xl mx-auto my-16 rounded-3xl bg-linear-to-b from-[#6364FF] to-[#563ACC]">
+
+  <div class="flex flex-wrap p-6 lg:p-10 space-y-6 lg:space-y-0">
+
+    <div class="w-full md:w-3/5 lg:pr-10 text-white">
+
+      <h3 class="text-2xl font-semibold mb-4">Get in Touch</h3>
+
+      <p>
+        Follow me on
+        <a href="{{ $mastodonURL | default (printf "https://%s/@%s" "e5n.cc" "eallion") }}" target="_blank" class="inline-block underline underline-offset-2" rel="noopener noreferrer">Mastodon</a><span class="mx-1">, or</span>
+        {{- with $email -}}
+          <a href="mailto:{{ . }}" target="_blank" class="inline-block underline underline-offset-2">Email</a><span class="mx-1">,</span>
+        {{- end -}}
+        or subscribe to <a href="/index.xml" target="_blank" class="underline underline-offset-2" rel="noopener noreferrer">RSS</a><span class="mx-1">.</span>
+      </p>
+
+      <p>Genuinely welcome! Feel free to talk to me about anything at all.</p>
+
+    </div>
+
+    <div class="self-center flex flex-col w-full md:w-2/5">
+
+      <div class="block lg:flex space-y-6 lg:space-y-0 lg:space-x-4">
+
+        <div class="relative w-full md:w-3/5" id="copy-container">
+
+          <input id="copy-target" class="w-full px-6 pr-12 py-2 rounded-full bg-white text-neutral-900 truncate"
+            type="text" value="{{ $mastodonID }}" readonly title="{{ $mastodonID }}">
+
+          <button id="copy-button" type="button"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-700 hover:text-blue-600 transition-colors duration-200 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 hover:cursor-pointer"
+            aria-label="复制">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor"
+                d="M16 20H8a3 3 0 0 1-3-3V7a1 1 0 0 0-2 0v10a5 5 0 0 0 5 5h8a1 1 0 0 0 0-2m-6-7a1 1 0 0 0 1 1h5a1 1 0 0 0 0-2h-5a1 1 0 0 0-1 1m11-4.06a1.3 1.3 0 0 0-.06-.27v-.09a1 1 0 0 0-.19-.28l-6-6a1 1 0 0 0-.28-.19a.3.3 0 0 0-.09 0a.9.9 0 0 0-.33-.11H10a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3zm-6-3.53L17.59 8H16a1 1 0 0 1-1-1ZM19 15a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3v3a3 3 0 0 0 .18 1H11a1 1 0 0 0 0 2h8Z" />
+            </svg>
+          </button>
+
+          <div id="copy-success-message"
+            class="absolute right-12 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-blue-600 text-white text-xs rounded opacity-0 transition-opacity duration-300 pointer-events-none">
+            Mastodon 已复制
+          </div>
+
+        </div>
+
+        <a href="{{ $mastodonURL | default (printf "https://%s/@%s" "e5n.cc" "eallion") }}" target="_blank" rel="noopener noreferrer" alt="mastodon"
+          class="w-full md:w-2/5 text-center px-6 py-2 rounded-full bg-white text-neutral-900 hover:bg-neutral-100 transition-colors">
+          <svg class="inline-block mb-1 mr-1 h-4 w-4" width="75" height="79" viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M73.84 17.49C72.696 9.002 65.3 2.312 56.53 1.016 55.05.797 49.444 0 36.458 0h-.097c-12.99 0-15.776.797-17.256 1.016-8.525 1.26-16.311 7.271-18.2 15.86-.909 4.23-1.006 8.919-.837 13.22.24 6.17.288 12.327.848 18.47a87 87 0 0 0 2.022 12.115c1.795 7.361 9.064 13.487 16.185 15.986a43.4 43.4 0 0 0 23.68 1.25 35 35 0 0 0 2.562-.701c1.91-.607 4.147-1.285 5.792-2.477a.19.19 0 0 0 .076-.144v-5.953a.175.175 0 0 0-.216-.17 65.6 65.6 0 0 1-15.367 1.796c-8.906 0-11.301-4.226-11.987-5.985a18.6 18.6 0 0 1-1.042-4.718.17.17 0 0 1 .136-.178.2.2 0 0 1 .08.002 64.4 64.4 0 0 0 15.115 1.795c1.225 0 2.446 0 3.67-.032 5.121-.144 10.52-.406 15.558-1.39.125-.025.251-.047.359-.079 7.947-1.526 15.51-6.316 16.279-18.445.029-.477.1-5.002.1-5.497.004-1.684.543-11.946-.079-18.251" fill="url(#a)"/><path d="M61.248 27.026v21.088h-8.356V27.648c0-4.31-1.796-6.507-5.448-6.507-4.015 0-6.026 2.6-6.026 7.735v11.202H33.11V28.875c0-5.134-2.014-7.734-6.03-7.734-3.63 0-5.444 2.198-5.444 6.507v20.466h-8.353V27.026q0-6.462 3.3-10.269c2.27-2.531 5.247-3.831 8.942-3.831 4.278 0 7.51 1.644 9.665 4.93l2.079 3.49 2.083-3.49c2.154-3.286 5.386-4.93 9.657-4.93 3.691 0 6.668 1.3 8.945 3.831q3.297 3.802 3.293 10.27" fill="#fff"/><defs><linearGradient id="a" x1="37.069" y1="0" x2="37.069" y2="79" gradientUnits="userSpaceOnUse"><stop stop-color="#6364ff"/><stop offset="1" stop-color="#563acc"/></linearGradient></defs></svg><span class="text-gradient-mastodon">FOLLOW</span></a>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,4 @@
+
+<!-- autocorrect-disable -->
+<p class="text-sm">&copy; 2006 - {{ now.Year }}. <a href="{{ with .Site.GetPage "page" "copyright" }}{{ .Permalink }}{{ else }}{{ .Site.BaseURL }}{{ end }}" rel="noopener noreferrer" class="decoration-auto hover:underline">{{ .Site.Params.copyright_name }}</a> All Rights Reserved. <a class="inline-block decoration-auto hover:underline" href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">{{ .Site.Params.icp }}</a></p>
+<!-- autocorrect-enable -->

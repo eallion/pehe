@@ -1,12 +1,28 @@
-{{- with resources.Get "js/insertoggle.js" }}
+{{- $jsFiles := slice
+  (resources.Get "js/dark-mode.js")
+  (resources.Get "js/insertoggle.js")
+  (resources.Get "js/toc.js")
+  (resources.Get "js/copy-newsletter.js")
+  (resources.Get "js/header.js")
+  -}}
+
+{{- $customJs := resources.Match "js/custom/*.js" -}}
+{{- $jsFiles = $jsFiles | append $customJs -}}
+
+{{- if $jsFiles }}
+
+  {{- $bundled := $jsFiles | resources.Concat "js/bundle.js" -}}
+
   {{- if eq hugo.Environment "development" }}
-    {{- with . | js.Build }}
+    {{- with $bundled | js.Build }}
       <script src="{{ .RelPermalink }}"></script>
     {{- end }}
+
   {{- else }}
     {{- $opts := dict "minify" true }}
-    {{- with . | js.Build $opts | fingerprint }}
+    {{- with $bundled | js.Build $opts | fingerprint }}
       <script defer src="{{ .RelPermalink }}" integrity="{{- .Data.Integrity }}" crossorigin="anonymous"></script>
     {{- end }}
   {{- end }}
+
 {{- end }}

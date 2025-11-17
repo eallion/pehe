@@ -1,17 +1,12 @@
-<div class="lg:sticky lg:top-8">
+<div class="lg:sticky lg:top-8 mb-13" data-pagefind-ignore="all">
 
-	{{- partial "content/aside-banner.html" -}}
+  {{- partial "content/aside-banner.html" . -}}
 
-	<div class="space-y-6">
-
-		<h2 class="font-bold text-xl mb-8">Recent Post</h2>
-
-		{{ range where .Site.RegularPages "Type" "posts" | first 5}}
-
-			{{- partial "content/list-post.html" . -}}
-
-		{{ end }}
-		
-	</div>
+  {{- $toc := .TableOfContents -}}
+  {{- if and (ne $toc "") (ne $toc "<nav id=\"TableOfContents\"></nav>") -}}
+    {{- partial "content/aside-toc.html" . -}}
+  {{- else -}}
+    {{- partial "content/aside-no-toc.html" . -}}
+  {{- end -}}
 
 </div>

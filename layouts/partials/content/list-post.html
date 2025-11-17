@@ -1,26 +1,50 @@
 <article class="relative group flex flex-row">
-	<a class="insert-link" href="{{ .Permalink }}"></a>
-	<figure class="basis-1/3 aspect-square overflow-hidden rounded-2xl bg-zinc-100">
+  <a class="insert-link" href="{{ .RelPermalink }}" aria-label="post link"></a>
+  <figure class="basis-1/3 aspect-square overflow-hidden rounded-2xl bg-zinc-100 dark:bg-bg-dimmed-primary">
 
-		{{- if .Params.image }}
+    {{- if .Params.image }}
 
-		  {{- if (strings.HasPrefix .Params.image "http") }}
+      {{- $img := .Params.image }}
+      {{- if (strings.HasPrefix $img "http") }}
+        {{- /* 远程图片：使用 picture，优先 styled formats（site.Params.StyleName），回退到原始 URL */}}
+        {{- $format := "avif" -}}
+        {{- $altFormat := "webp" -}}
+        {{- $style := "" -}}
+        {{- $altStyle := "" -}}
+        {{- if site.Params.StyleName }}
+            {{- $format = default $format site.Params.StyleName.format }}
+            {{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
+            {{- $style = site.Params.StyleName.style }}
+            {{- $altStyle = site.Params.StyleName.alt_style }}
+        {{- end }}
 
-		  <img class="object-cover h-full w-full group-hover:scale-105 transition duration-500 cursor-pointer" src="{{ .Params.image }}" alt="{{ $.Name }}" style="width: 100%; height: 100%; object-fit: cover;" style="width: 100%; height: 100%; object-fit: cover;">
+        <picture>
+          {{- if and (ne $img "") (ne $style "") }}
+            <source srcset="{{ printf "%s%s%s" $img site.Params.StyleName.delimiter $style }}" type="image/{{ $format }}">
+          {{- end }}
+          {{- if and (ne $img "") (ne $altStyle "") }}
+            <source srcset="{{ printf "%s%s%s" $img site.Params.StyleName.delimiter $altStyle }}" type="image/{{ $altFormat }}">
+          {{- end }}
 
-		  {{- else }}
+          {{- $fallback := $img -}}
+          {{- if eq $fallback "" }}
+            {{- $fallback = .Site.Params.defaultFeature -}}
+          {{- end }}
+          <img class="object-cover h-full w-full group-hover:scale-105 transition duration-500 cursor-pointer" src="{{ $fallback }}" alt="{{ $.Name }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+        </picture>
 
-			{{- with $imglist := resources.Get .Params.image -}}
-			  {{- $imglist := $imglist.Crop "250x250 Center" -}}
-			  <img class="object-cover h-full w-full group-hover:scale-105 transition duration-500 cursor-pointer" src="{{ $imglist.Permalink }}" alt="{{ $.Name }}" width="{{ $imglist.Width }}" height="{{ $imglist.Height }}">
-			{{- end }}
+      {{- else }}
 
-		  {{- end }}
+      {{- with $imglist := resources.Get .Params.image -}}
+        {{- $imglist := $imglist.Crop "250x250 Center" -}}
+        <img class="object-cover h-full w-full group-hover:scale-105 transition duration-500 cursor-pointer" src="{{ $imglist.RelPermalink }}" alt="{{ $.Name }}" width="{{ $imglist.Width }}" height="{{ $imglist.Height }}" loading="lazy">
+      {{- end }}
 
-		{{- end }}
+      {{- end }}
 
-	</figure>
-	<div class="basis-2/3 self-center ml-4">
-		<h3 class="font-bold group-hover:underline decoration-auto">{{ .LinkTitle }}</h3>
-	</div>
+    {{- end }}
+  </figure>
+  <div class="basis-2/3 self-center ml-4">
+    <h3 class="font-bold group-hover:underline decoration-auto">{{ .LinkTitle }}</h3>
+  </div>
 </article>

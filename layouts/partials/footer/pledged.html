@@ -1,0 +1,15 @@
+{{- if or .Site.Params.not_by_ai .Site.Params.nonbot -}}
+<div class="flex items-center justify-start gap-4 mb-4">
+  {{- if .Site.Params.not_by_ai -}}
+  <a href="https://notbyai.fyi" target="_blank" rel="noopener noreferrer" aria-label="Written by a Human, Not by AI">
+<div id='notbyai' class='w-fit notbyai written'></div>
+  </a>
+  {{- end -}}
+
+  {{- with .Site.Params.nonbot -}}
+  <a href="{{ . }}" target="_blank" rel="noopener noreferrer" alt="nonbot pledge" aria-label="nonbot pledge">
+<div id='nonbot' class='nonbot w-fit'></div>
+  </a>
+  {{- end -}}
+</div>
+{{- end -}}

@@ -1,43 +1,221 @@
 {{ define "main" }}
 
 {{- partial "content/breadcrumb.html" . -}}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+  <article class="md:col-span-2 prose lg:prose-lg dark:prose-invert">
 
-  <section class="md:col-span-2">
+    <header class="not-prose">
 
-    <h2 class="text-3xl font-bold mb-10">{{ .Title | humanize }}</h2>
+      <h1 id="title" class="text-4xl font-bold leading-normal" data-pagefind-meta="title" data-pagefind-weight="100.0">{{ .Title }}</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-4">
+    </header>
 
-      {{ range ( .Paginator 6 ).Pages }}
-      
-        {{- partial "content/card.html" . -}}
+    <div id="content" class="mb-14" data-pagefind-body>
+        <div class="space-y-12 archive-list">
+          {{ $archiveSize := .Site.Params.archiveSize | default 0 | int }}
+          {{ $pages := .Pages }}
+          {{ if gt $archiveSize 0 }}
+            {{ $pages = (.Paginate .Pages $archiveSize).Pages }}
+          {{ end }}
 
-      {{ end }}
-    
+          {{ range $pages.GroupByDate "2006" }}
+            <div class="year-section">
+              <h2 class="font-extrabold text-zinc-900 dark:text-text-dimmed-primary mb-2 backdrop-blur-sm py-2">
+                {{ .Key }} 年
+              </h2>
+              <div class="space-y-8 border-gray-200 dark:border-border-dimmed-primary">
+                {{ range .Pages.GroupByDate "01 / 2006" }}
+                  <div class="month-section bg-white dark:bg-bg-dimmed-secondary rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-border-dimmed-primary hover:shadow-md transition-shadow duration-200">
+                    <h3 class="not-prose text-xl font-semibold text-zinc-700 dark:text-zinc-300 flex items-center border-b-1 border-gray-200 dark:border-border-dimmed-primary gap-2 pb-6 mb-6">
+                      {{ .Key }}
+                      <span class="text-sm font-normal text-zinc-500">
+                        ({{ len .Pages }})
+                      </span>
+                    </h3>
+                    <div class="space-y-3">
+                      {{ range .Pages }}
+                        <div class="group relative">
+                          <h4 class="flex items-center text-zinc-700 dark:text-zinc-300 text-sm md:text-base font-normal !mt-0 !mb-0 p-0 before:content-['•'] before:mr-2 before:opacity-50 ml-2">
+                            <a href="{{ .RelPermalink }}" class="mr-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium no-underline truncate md:overflow-auto">
+                              {{ .Title }}
+                            </a>
+
+                            {{ $summary := .Summary | default .Description | default .Params.subtitle }}
+                            {{ if $summary }}
+                              <button type="button" class="invisible group-hover:visible toggle-summary inline-flex items-center justify-center w-5 h-5 text-zinc-400 hover:text-blue-500 transition-colors cursor-pointer" aria-label="Toggle summary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M5 7.75a.75.75 0 0 0-.53 1.28l7 7a.75.75 0 0 0 1.06 0l7-7A.75.75 0 0 0 19 7.75z"/></svg>
+                              </button>
+                            {{ else }}
+                              <span class="invisible group-hover:visible inline-flex items-center justify-center w-5 h-5 text-zinc-200 dark:text-zinc-800 cursor-not-allowed select-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M5 7.75a.75.75 0 0 0-.53 1.28l7 7a.75.75 0 0 0 1.06 0l7-7A.75.75 0 0 0 19 7.75z"/></svg>
+                              </span>
+                            {{ end }}
+
+                            <span class="inline-block whitespace-nowrap text-xs md:text-sm text-zinc-400 ml-auto font-mono">
+                              {{ .Date.Format "Jan 2, 2006" }}
+                            </span>
+                          </h4>
+
+                          {{ if $summary }}
+                            <div class="summary-content hidden mt-4 mb-4 ml-8 text-sm text-zinc-600 dark:text-zinc-400 pl-4 pt-2 pb-2 border-l-2 border-zinc-100 dark:border-border-dimmed-primary leading-relaxed">
+                              {{ $summary | plainify | truncate 300 }}
+                            </div>
+                          {{ end }}
+                        </div>
+                      {{ end }}
+                    </div>
+                  </div>
+                {{ end }}
+              </div>
+            </div>
+          {{ end }}
+        </div>
+
+        {{ if gt $archiveSize 0 }}
+        <div class="flex items-center justify-center gap-2 mt-12">
+          {{- if .Paginator.HasPrev -}}
+            <a class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-zinc-300 hover:bg-zinc-100 transition-colors duration-200" href="{{ .Paginator.Prev.URL }}" aria-label="Previous page">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </a>
+          {{- else -}}
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-zinc-400 cursor-not-allowed">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </span>
+          {{- end -}}
+
+          <span class="px-4 py-2 text-sm text-zinc-600 dark:text-text-dimmed-primary">
+            {{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}
+          </span>
+
+          {{- if .Paginator.HasNext -}}
+            <a class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-zinc-300 hover:bg-zinc-100 transition-colors duration-200" href="{{ .Paginator.Next.URL }}" aria-label="Next page">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          {{- else -}}
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-zinc-400 cursor-not-allowed">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </span>
+          {{- end -}}
+        </div>
+        {{ end }}
+
     </div>
 
-    <!-- Paginate here -->
+  </article>
 
-    <div class="flex items-center mt-10">
-      {{- if .Paginator.HasPrev -}}
-        <a class="border rounded-full px-6 py-2 hover:bg-zinc-200 mr-auto" href="{{ .Paginator.Prev.URL }}">← Previous</a>
-      {{- end -}}
+  <!-- Aside -->
+  <aside class="md:col-span-1 hidden md:block">
 
-      {{- if .Paginator.HasNext -}}
-        <a class="border rounded-full px-6 py-2 hover:bg-zinc-200" href="{{ .Paginator.Next.URL }}">Next →</a>
-      {{- end -}}
+    <div class="lg:sticky lg:top-8 mb-13" data-pagefind-ignore="all">
+
+      {{- partial "content/aside-banner.html" . -}}
+
+        <nav class="bg-zinc-100 dark:bg-bg-dimmed-secondary rounded-2xl backdrop-blur-sm border border-gray-200 dark:border-border-dimmed-primary p-6 toc-nav">
+
+          <div class="mb-4 pb-3 border-b border-b-gray-200 dark:border-b-border-dimmed-primary">
+            <h2 class="text-sm font-bold text-zinc-700 dark:text-text-dimmed-primary uppercase tracking-wide flex items-center gap-2">
+              <svg aria-hidden="true" focusable="false" class="octicon octicon-list-unordered" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Table of Contents</h2>
+          </div>
+
+          <div class="toc-scroll-wrapper lg:overflow-y-auto">
+
+            <div id="archive-toc" class="toc-content-wrapper">
+            </div>
+
+          </div>
+        </nav>
+
     </div>
-  
-  </section>
 
-  <aside class="md:col-span-1">
-
-    {{- partial "content/aside.html" . -}}
-    
   </aside>
 
-  </div>
+</div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Summary Toggle
+        document.querySelectorAll('.toggle-summary').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const wrapper = btn.closest('.group');
+            const summary = wrapper.querySelector('.summary-content');
+            if (summary) {
+              summary.classList.toggle('hidden');
+            }
+          });
+        });
+
+        // Dynamic TOC Generation
+        const tocContainer = document.getElementById('archive-toc');
+        // Select both Month headers (h3) and Article titles (h4)
+        const archiveHeaders = document.querySelectorAll('.archive-list h3, .archive-list h4');
+
+        if (tocContainer && archiveHeaders.length > 0) {
+          const nav = document.createElement('nav');
+          nav.id = 'TableOfContents';
+          const ul = document.createElement('ul');
+
+          let currentMonthLi = null;
+          let currentMonthUl = null;
+
+          archiveHeaders.forEach((header, index) => {
+            // Create ID if missing
+            if (!header.id) {
+              // Use text content for ID, sanitized, or fallback to index
+              const text = header.textContent.trim();
+              const slug = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+              header.id = slug || `archive-header-${index}`;
+            }
+
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `#${header.id}`;
+
+            // For h4 (articles), we want just the title, not the date/toggle
+            if (header.tagName.toLowerCase() === 'h4') {
+                const link = header.querySelector('a');
+                a.textContent = link ? link.textContent.trim() : header.textContent.trim();
+            } else {
+                // For h3 (months), remove the count
+                const clone = header.cloneNode(true);
+                const span = clone.querySelector('span');
+                if (span) span.remove();
+                a.textContent = clone.textContent.trim();
+            }
+
+            li.appendChild(a);
+
+            if (header.tagName.toLowerCase() === 'h3') {
+              // Month header
+              ul.appendChild(li);
+              currentMonthLi = li;
+              currentMonthUl = document.createElement('ul');
+              currentMonthLi.appendChild(currentMonthUl);
+            } else if (header.tagName.toLowerCase() === 'h4') {
+              // Article header
+              if (currentMonthUl) {
+                currentMonthUl.appendChild(li);
+              } else {
+                // Fallback if no month header seen yet (unlikely with current layout)
+                ul.appendChild(li);
+              }
+            }
+          });
+
+          nav.appendChild(ul); // Fix: Append ul to nav
+          tocContainer.innerHTML = ''; // Clear existing content
+          tocContainer.appendChild(nav);
+        }
+      });
+    </script>
 
 {{ end }}

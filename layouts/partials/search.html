@@ -1,10 +1,609 @@
-<div id="search-bar" class="block mt-3 close">
-	<form id="search" class="flex items-stretch">
-		<input class="w-full block px-6 py-2 rounded-l-full focus:outline-none border border-zinc-200" type="text" placeholder="Search...">
-		<button class="flex items-center px-7 py-2.5 rounded-r-full border border-zinc-200 ">
-			<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="group-hover:animate-pulse" viewBox="0 0 16 16">
-				<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-			</svg>
-		</button>
-	</form>
+<div id="search-modal"
+  class="hidden fixed inset-0 z-50 flex items-start justify-center mt-24 p-4 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-out"
+  aria-modal="true" role="dialog">
+
+  <div id="modal-content"
+    class="relative w-[90%] max-w-3xl max-h-[85vh] bg-white dark:bg-bg-dimmed-primary rounded-3xl overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.3),0_4px_8px_3px_rgba(0,0,0,0.15)] opacity-0 scale-95 transition-all duration-300 ease-out">
+
+    <div class="sticky top-0 z-10 bg-white dark:bg-bg-dimmed-primary border-b border-gray-200 dark:border-border-dimmed-subtle">
+      <div class="flex items-center gap-4 p-4 md:p-6">
+        <svg class="w-6 h-6 text-gray-600 dark:text-text-dimmed-primary shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+
+        <input id="search-input" class="flex-1 bg-transparent text-lg text-gray-900 dark:text-text-dimmed-primary
+                              focus:outline-none placeholder:text-gray-500 dark:placeholder-zinc-400 w-full" type="search" placeholder="搜索文章..."
+          autocomplete="off" autocorrect="off" spellcheck="false" aria-label="搜索输入">
+
+        <button id="close-button" type="button"
+          class="p-3 rounded-full text-gray-600 dark:text-text-dimmed-primary hover:bg-gray-100 dark:hover:bg-bg-dimmed-secondary active:bg-gray-50 dark:active:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-600/20 transition-colors active:scale-95"
+          aria-label="关闭搜索">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-col max-h-[calc(85vh-80px)]">
+
+      <!-- 搜索结果区域 -->
+      <div class="flex-1 overflow-hidden flex flex-col">
+
+        <div id="search-loading" class="text-center p-10 text-gray-500 dark:text-text-dimmed-primary hidden shrink-0">
+          <div class="relative mx-auto mb-4 w-8 h-8">
+            <div class="absolute inset-0 rounded-full border-4 border-blue-600/20"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-600 animate-spin">
+            </div>
+          </div>
+          <p class="text-sm">正在加载搜索...</p>
+        </div>
+
+        <div id="search-no-results" class="text-center p-10 text-gray-500 dark:text-text-dimmed-primary hidden shrink-0">
+          <svg class="w-16 h-16 mx-auto mb-4 opacity-60" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+          <h3 class="text-base font-medium mb-2">未找到结果</h3>
+          <p class="text-sm">请尝试其他搜索词</p>
+        </div>
+
+        <div id="search-initial-prompt"
+          class="flex-1 flex items-center justify-center text-center p-10 text-gray-500 dark:text-text-dimmed-primary overflow-y-auto">
+          <div>
+            <svg class="w-16 h-16 mx-auto mb-4 opacity-60" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+            </svg>
+            <h3 class="text-base font-medium mb-2">开始搜索</h3>
+            <p class="text-sm">输入关键词来查找文章</p>
+          </div>
+        </div>
+
+        <div id="search-results-container" class="flex-1 overflow-y-auto min-h-0">
+          <div id="search-results-list" class="divide-y divide-gray-100">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 底部固定区域：搜索结果提示信息和分页 -->
+      <div class="shrink-0 border-t border-gray-200 bg-white dark:bg-bg-dimmed-secondary dark:border-border-dimmed-subtle">
+
+        <!-- 搜索结果提示信息 -->
+        <div id="search-stats" class="px-4 md:px-6 py-3 text-sm text-zinc-600 dark:text-text-dimmed-primary hidden">
+        </div>
+
+        <!-- 分页导航 -->
+        <div id="search-pagination" class="hidden px-4 md:px-6 py-4 mb-12">
+          <div class="flex items-center justify-center gap-2">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
 </div>
+
+<script>
+  (function () {
+    'use strict';
+
+    const searchToggleBtn = document.querySelector('[data-target="search-bar"]');
+    const modal = document.getElementById('search-modal');
+    const modalContent = document.getElementById('modal-content');
+    const closeBtn = document.getElementById('close-button');
+    const searchInput = document.getElementById('search-input');
+    const searchIcon = document.getElementById('path1');
+    const closeIcon = document.getElementById('path2');
+
+    let resourcesLoaded = false;
+    let pagefindInstance = null;
+    let allSearchResults = [];
+    let currentPage = 1;
+    const RESULTS_PER_PAGE = 20;
+
+    // 切换搜索按钮图标
+    function toggleSearchIcon(open) {
+      if (searchIcon && closeIcon) {
+        if (open) {
+          searchIcon.classList.add('hidden');
+          closeIcon.classList.remove('hidden');
+        } else {
+          searchIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        }
+      }
+    }
+
+    // 打开 Modal
+    function openModal() {
+      searchInput.value = '';
+      modal.classList.remove('hidden');
+
+      setTimeout(() => {
+        modal.classList.add('opacity-100');
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
+        searchInput.focus();
+      }, 10);
+
+      toggleSearchIcon(true);
+
+      if (!resourcesLoaded) {
+        loadPagefindResources();
+      }
+    }
+
+    // 关闭 Modal
+    function closeModal() {
+      modal.classList.add('opacity-0');
+      modalContent.classList.add('opacity-0', 'scale-95');
+      modalContent.classList.remove('opacity-100', 'scale-100');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        searchInput.value = '';
+        clearResults();
+        toggleSearchIcon(false);
+      }, 300);
+    }
+
+    // 清除结果
+    function clearResults() {
+      const resultsList = document.getElementById('search-results-list');
+      const stats = document.getElementById('search-stats');
+      const pagination = document.getElementById('search-pagination');
+      const initialPrompt = document.getElementById('search-initial-prompt');
+      const noResults = document.getElementById('search-no-results');
+      const loading = document.getElementById('search-loading');
+
+      if (resultsList) resultsList.innerHTML = '';
+      if (stats) stats.classList.add('hidden');
+      if (pagination) pagination.classList.add('hidden');
+      if (noResults) noResults.classList.add('hidden');
+      if (loading) loading.classList.add('hidden');
+      if (initialPrompt) initialPrompt.classList.remove('hidden');
+
+      // 重置分页状态
+      allSearchResults = [];
+      currentPage = 1;
+    }
+
+    // 懒加载 Pagefind 资源
+    function loadPagefindResources() {
+      if (resourcesLoaded) return Promise.resolve();
+
+      const loading = document.getElementById('search-loading');
+      const initialPrompt = document.getElementById('search-initial-prompt');
+
+      if (loading) loading.classList.remove('hidden');
+      if (initialPrompt) initialPrompt.classList.add('hidden');
+
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/pagefind/pagefind.js';
+        script.type = 'module';
+
+        script.onload = () => {
+          setTimeout(() => {
+            const possibleGlobals = [
+              'Pagefind',
+              'pagefind',
+              'wasm_bindgen',
+              '__wbg_init'
+            ];
+
+            let found = false;
+            for (const name of possibleGlobals) {
+              if (typeof window[name] !== 'undefined') {
+                pagefindInstance = window[name];
+
+                if (typeof pagefindInstance === 'function' && name === 'Pagefind') {
+                  try {
+                    pagefindInstance = new pagefindInstance();
+                  } catch (e) { }
+                }
+
+                found = true;
+                break;
+              }
+            }
+
+            if (found) {
+              resourcesLoaded = true;
+              if (loading) loading.classList.add('hidden');
+              if (initialPrompt) initialPrompt.classList.remove('hidden');
+              resolve();
+            } else {
+              import('/pagefind/pagefind.js')
+                .then(module => {
+                  pagefindInstance = module;
+                  resourcesLoaded = true;
+                  if (loading) loading.classList.add('hidden');
+                  if (initialPrompt) initialPrompt.classList.remove('hidden');
+                  resolve();
+                })
+                .catch(err => {
+                  if (loading) {
+                    loading.innerHTML = `<p class="text-red-500 text-sm">搜索资源加载失败</p>`;
+                  }
+                  reject(err);
+                });
+            }
+          }, 200);
+        };
+
+        script.onerror = () => {
+          if (loading) {
+            loading.innerHTML = '<p class="text-red-500 text-sm">搜索资源加载失败</p>';
+          }
+          reject(new Error('Failed to load Pagefind'));
+        };
+
+        document.head.appendChild(script);
+      });
+    }
+
+    // 执行搜索
+    let searchTimeout = null;
+
+    async function performSearch(query) {
+      const resultsList = document.getElementById('search-results-list');
+      const stats = document.getElementById('search-stats');
+      const pagination = document.getElementById('search-pagination');
+      const initialPrompt = document.getElementById('search-initial-prompt');
+      const noResults = document.getElementById('search-no-results');
+      const loading = document.getElementById('search-loading');
+
+      clearTimeout(searchTimeout);
+
+      if (!query.trim()) {
+        clearResults();
+        return;
+      }
+
+      if (!resourcesLoaded || !pagefindInstance) {
+        return;
+      }
+
+      if (loading) loading.classList.remove('hidden');
+      if (initialPrompt) initialPrompt.classList.add('hidden');
+      if (noResults) noResults.classList.add('hidden');
+      if (resultsList) resultsList.innerHTML = '';
+
+      searchTimeout = setTimeout(async () => {
+        try {
+          const startTime = performance.now();
+
+          // 检查 Pagefind 实例是否需要初始化
+          if (pagefindInstance.init && !pagefindInstance.raw_ptr) {
+            await pagefindInstance.init();
+          }
+
+          const searchResults = await pagefindInstance.search(query, {
+            sort: { date: 'desc' }
+          });
+
+          const duration = Math.round(performance.now() - startTime);
+
+          if (loading) loading.classList.add('hidden');
+
+          if (!searchResults || searchResults.results.length === 0) {
+            if (noResults) noResults.classList.remove('hidden');
+            if (stats) stats.classList.add('hidden');
+            if (pagination) pagination.classList.add('hidden');
+            if (resultsList) resultsList.innerHTML = '';
+            return;
+          }
+
+          // 提取所有结果的数据
+          const processedResults = [];
+          for (const result of searchResults.results) {
+            try {
+              const data = await result.data();
+              processedResults.push({
+                result: result,
+                data: data,
+                dateValue: extractDateValue(data)
+              });
+            } catch (error) {
+              // Skip results that can't be loaded
+            }
+          }
+
+          // 分组逻辑：标题匹配 vs 其他匹配
+          const lowerQuery = query.toLowerCase();
+          const titleMatches = [];
+          const otherMatches = [];
+
+          for (const item of processedResults) {
+            const title = (item.data.meta.title || '').toLowerCase();
+            if (title.includes(lowerQuery)) {
+              titleMatches.push(item);
+            } else {
+              otherMatches.push(item);
+            }
+          }
+
+          // 组内按日期降序排序
+          const dateSort = (a, b) => {
+            if (a.dateValue === null) return 1;
+            if (b.dateValue === null) return -1;
+            return b.dateValue - a.dateValue;
+          };
+
+          titleMatches.sort(dateSort);
+          otherMatches.sort(dateSort);
+
+          // 合并结果：标题匹配在前
+          allSearchResults = [...titleMatches, ...otherMatches];
+
+          // 重置分页
+          currentPage = 1;
+
+          if (stats) {
+            const totalResults = allSearchResults.length;
+            const totalPages = Math.ceil(totalResults / RESULTS_PER_PAGE);
+            stats.textContent = `找到 ${totalResults} 个结果 (${duration}ms)，每页 10 个结果。`;
+            stats.classList.remove('hidden');
+          }
+
+          renderCurrentPage();
+
+        } catch (error) {
+          if (loading) loading.classList.add('hidden');
+          if (resultsList) {
+            resultsList.innerHTML = '<div class="p-6 text-red-500 text-sm">搜索出错，请重试</div>';
+          }
+        }
+      }, 300);
+    }
+
+    // 提取日期值用于排序
+    function extractDateValue(data) {
+      // 优先获取 data.meta.date
+      if (data.meta && data.meta.date) {
+        const dateValue = data.meta.date;
+        if (typeof dateValue === 'number') {
+          return dateValue > 10000000000 ? dateValue : dateValue * 1000;
+        }
+        if (typeof dateValue === 'string') {
+          const date = new Date(dateValue);
+          if (!isNaN(date.getTime())) {
+            return date.getTime();
+          }
+        }
+      }
+      // 其次尝试获取排序用的时间戳
+      if (data.meta && data.meta.sort && data.meta.sort.date) {
+        const sortDate = data.meta.sort.date;
+        if (typeof sortDate === 'number') {
+          return sortDate > 10000000000 ? sortDate : sortDate * 1000;
+        }
+      }
+      return null;
+    }
+
+    // 渲染当前页的搜索结果
+    function renderCurrentPage() {
+      const resultsList = document.getElementById('search-results-list');
+      const pagination = document.getElementById('search-pagination');
+      const paginationContainer = pagination.querySelector('.flex');
+
+      if (!resultsList) return;
+
+      const startIndex = (currentPage - 1) * RESULTS_PER_PAGE;
+      const endIndex = Math.min(startIndex + RESULTS_PER_PAGE, allSearchResults.length);
+      const currentResults = allSearchResults.slice(startIndex, endIndex);
+
+      resultsList.innerHTML = '';
+
+      for (const item of currentResults) {
+        const result = renderResultItem(item.data);
+        if (result) {
+          resultsList.appendChild(result);
+        }
+      }
+
+      // 更新分页信息
+      if (allSearchResults.length > RESULTS_PER_PAGE) {
+        pagination.classList.remove('hidden');
+        const totalPages = Math.ceil(allSearchResults.length / RESULTS_PER_PAGE);
+
+        // 生成分页控件，参考 list.html 的样式
+        paginationContainer.innerHTML = '';
+
+        // 上一页按钮
+        if (currentPage > 1) {
+          const prevBtn = document.createElement('button');
+          prevBtn.className = 'inline-flex items-center justify-center w-10 h-10 rounded-full border border-zinc-300 dark:border-bg-dimmed-primary hover:bg-zinc-100 dark:hover:bg-bg-dimmed-secondary transition-colors duration-200 cursor-pointer';
+          prevBtn.setAttribute('aria-label', 'Previous page');
+          prevBtn.onclick = () => goToPage(currentPage - 1);
+          prevBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    `;
+          paginationContainer.appendChild(prevBtn);
+        } else {
+          const disabledPrev = document.createElement('span');
+          disabledPrev.className = 'inline-flex items-center justify-center w-10 h-10 rounded-full border border-zinc-200 dark:border-bg-dimmed-primary text-zinc-400 dark:text-text-dimmed-primary cursor-not-allowed';
+          disabledPrev.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    `;
+          paginationContainer.appendChild(disabledPrev);
+        }
+
+        // 页码显示
+        const pageSpan = document.createElement('span');
+        pageSpan.className = 'px-4 py-2 text-sm text-zinc-600 dark:text-text-dimmed-primary';
+        pageSpan.textContent = `${currentPage} / ${totalPages}`;
+        paginationContainer.appendChild(pageSpan);
+
+        // 下一页按钮
+        if (currentPage < totalPages) {
+          const nextBtn = document.createElement('button');
+          nextBtn.className = 'inline-flex items-center justify-center w-10 h-10 rounded-full border border-zinc-300 dark:border-bg-dimmed-primary hover:bg-zinc-100 dark:hover:bg-bg-dimmed-secondary transition-colors duration-200 cursor-pointer';
+          nextBtn.setAttribute('aria-label', 'Next page');
+          nextBtn.onclick = () => goToPage(currentPage + 1);
+          nextBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    `;
+          paginationContainer.appendChild(nextBtn);
+        } else {
+          const disabledNext = document.createElement('span');
+          disabledNext.className = 'inline-flex items-center justify-center w-10 h-10 rounded-full border border-zinc-200 dark:border-bg-dimmed-primary text-zinc-400 dark:text-text-dimmed-primary cursor-not-allowed';
+          disabledNext.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    `;
+          paginationContainer.appendChild(disabledNext);
+        }
+      } else {
+        pagination.classList.add('hidden');
+      }
+    }
+
+    // 跳转到指定页
+    function goToPage(page) {
+      const totalPages = Math.ceil(allSearchResults.length / RESULTS_PER_PAGE);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderCurrentPage();
+
+        // 滚动到搜索结果容器顶部
+        const resultsContainer = document.getElementById('search-results-container');
+        if (resultsContainer) {
+          resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    // 渲染单个搜索结果项
+    function renderResultItem(data) {
+      try {
+        let dateValue = null;
+
+        // 优先获取 data.meta.date，它应该是一个 ISO 8601 字符串
+        if (data.meta && data.meta.date) {
+          dateValue = data.meta.date;
+        }
+        // 其次尝试获取排序用的时间戳
+        else if (data.meta && data.meta.sort && data.meta.sort.date) {
+          dateValue = data.meta.sort.date;
+        }
+
+        let formattedDate = '未知日期';
+        if (dateValue) {
+          try {
+            let date;
+
+            // 1. 如果是数字 (时间戳)
+            if (typeof dateValue === 'number') {
+              // 转换为毫秒
+              const timestamp = dateValue > 10000000000 ? dateValue : dateValue * 1000;
+              date = new Date(timestamp);
+            }
+            // 2. 如果是 ISO 格式的字符串
+            else if (typeof dateValue === 'string') {
+              // 直接使用字符串构造 Date 对象
+              date = new Date(dateValue);
+            }
+
+            // 检查日期是否有效 (避免 Invalid Date)
+            if (date && !isNaN(date.getTime())) {
+              formattedDate = date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+            } else {
+              throw new Error("Parsed date is invalid");
+            }
+
+          } catch (e) {
+            formattedDate = String(dateValue);
+          }
+        }
+
+        const resultItem = document.createElement('a');
+        resultItem.href = data.url;
+        resultItem.className = 'block p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-bg-dimmed-secondary active:bg-gray-100 dark:active:bg-bg-dimmed-secondary transition-colors';
+        resultItem.setAttribute('target', '_blank');
+
+        resultItem.innerHTML = `
+                    <div class="mb-2">
+                        <h3 class="text-base font-medium text-gray-900 dark:text-text-dimmed-primary mb-1">
+                            ${data.meta.title || data.url}
+                        </h3>
+                        <p class="text-sm text-blue-600 mb-2">
+                            ${formattedDate}
+                        </p>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-text-dimmed-secondary line-clamp-2">
+                        ${data.excerpt || '点击查看详情...'}
+                    </p>
+                `;
+
+        return resultItem;
+
+      } catch (error) {
+        return null;
+      }
+    }
+
+    // 事件监听器
+    if (searchToggleBtn) {
+      searchToggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (modal.classList.contains('hidden')) {
+          openModal();
+        } else {
+          closeModal();
+        }
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        performSearch(e.target.value);
+      });
+    }
+
+    // ESC 键关闭 Modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    // 点击背景关闭 Modal
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+    }
+
+    // 阻止 Modal 内容区域点击事件冒泡
+    if (modalContent) {
+      modalContent.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+  })();
+</script>

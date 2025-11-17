@@ -1,0 +1,22 @@
+{{- with .Site.Params.powered_by -}}
+  {{- $powered_by := . -}}
+  {{- $showHugo := or (eq $powered_by "full") (eq $powered_by "hugo") -}}
+  {{- $showTheme := or (eq $powered_by "full") (eq $powered_by "theme") -}}
+
+  {{- if or $showHugo $showTheme -}}
+  <p class="text-sm sm:text-right inline">
+    <span class="mx-1">Powered by</span>
+    {{- if $showHugo -}}
+      <a class="inline-block decoration-auto hover:underline" href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">{{ partial "icon.html" (dict "name" "hugo-color" "class" "inline-block mb-1 h-4 w-4") }}Hugo</a>
+    {{- end -}}
+
+    {{- if and $showHugo $showTheme -}}
+      <span class="mx-1">&</span>
+    {{- end -}}
+
+    {{- if $showTheme -}}
+      <a class="inline-block decoration-auto hover:underline" href="https://github.com/eallion/pehe" target="_blank" rel="noopener noreferrer">{{ partial "icon.html" (dict "name" "github" "class" "inline-block mb-1 h-4 h-4") }}Pehe</a>
+    {{- end -}}
+  </p>
+  {{- end -}}
+{{- end -}}

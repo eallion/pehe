@@ -1,0 +1,36 @@
+<section class="w-full">
+  <div class="mx-auto max-w-4xl p-0 mt-16 mb-12 md:my-24">
+    <div class="flex flex-col items-center justify-center space-y-4">
+
+      <div class="shrink-0 mt-12 mb-18">
+        <a href="/{{- with .Site.Params.mainSections -}}{{- index . 0 -}}{{- end -}}" target="_self" aria-label="blog" alt="blog">
+          <img
+            class="h-36 w-36 rounded-full object-cover ring-4 ring-gray-200 dark:ring-bg-dimmed-secondary"
+            width="144"
+            height="144"
+            alt="Charles Chin"
+            src="{{- with .Site.Params.logo -}}{{- . -}}{{- end -}}"
+          ></a>
+      </div>
+
+      <div class="flex items-center justify-center hover:cursor-text text-gray-800 dark:text-text-dimmed-primary">
+        <span class="text-5xl">
+          {{- with .Site.Params.svg_title -}}
+            {{- partial "icon.html" (dict "name" "title" "class" "h-13") -}}
+          {{- else -}}
+            {{- .Site.Title -}}
+          {{- end -}}
+        </span>
+      </div>
+
+      <div class="text-center">
+          <p class="text-xl opacity-90">{{- with .Site.Params.description -}}{{- . -}}{{- end -}}</p>
+      </div>
+
+      <div class="flex">
+          {{ partial "content/social-media.html" . }}
+      </div>
+
+    </div>
+  </div>
+</section>
