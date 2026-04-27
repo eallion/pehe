@@ -7,43 +7,43 @@
 <link rel="dns-prefetch" href="{{ .Site.Params.preconnect }}">
 <!-- Dark Mode Prevention Script -->
 <script>
-  // 立即执行的匿名函数，防止变量污染全局
-  (function() {
-    const storageKey = 'theme';
-    const className = 'dark';
-    const htmlClass = document.documentElement.classList;
+	// 立即执行的匿名函数，防止变量污染全局
+	(function() {
+		const storageKey = 'theme';
+		const className = 'dark';
+		const htmlClass = document.documentElement.classList;
 
-    function getTheme() {
-      // 1. 检查本地存储
-      if (localStorage.getItem(storageKey)) {
-        return localStorage.getItem(storageKey);
-      }
-      // 2. 检查系统偏好
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
+		function getTheme() {
+			// 1. 检查本地存储
+			if (localStorage.getItem(storageKey)) {
+				return localStorage.getItem(storageKey);
+			}
+			// 2. 检查系统偏好
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		}
 
-    // 设置初始状态
-    const theme = getTheme();
-    if (theme === 'dark') {
-      htmlClass.add(className);
-      updateThemeColor('#1c2128');
-    } else {
-      htmlClass.remove(className);
-      updateThemeColor('#ffffff');
-    }
+		// 设置初始状态
+		const theme = getTheme();
+		if (theme === 'dark') {
+			htmlClass.add(className);
+			updateThemeColor('#1c2128');
+		} else {
+			htmlClass.remove(className);
+			updateThemeColor('#ffffff');
+		}
 
-    function updateThemeColor(color) {
-      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-      metaThemeColors.forEach((meta, index) => {
-        if (index === 0) {
-          meta.setAttribute('content', color);
-          meta.removeAttribute('media');
-        } else {
-          meta.remove();
-        }
-      });
-    }
-  })();
+		function updateThemeColor(color) {
+			const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+			metaThemeColors.forEach((meta, index) => {
+				if (index === 0) {
+					meta.setAttribute('content', color);
+					meta.removeAttribute('media');
+				} else {
+					meta.remove();
+				}
+			});
+		}
+	})();
 </script>
 <!-- Dynamic title for SEO -->
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
@@ -67,11 +67,11 @@
 <meta name="twitter:description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.description | default .Summary }}{{ end }}" />
 <meta name="twitter:image" content="https://og.eallion.com/api/og?title={{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
 {{ with .Site.Params.social }}
-  {{ range . }}
-    {{ if eq .name "Twitter" }}
-      <meta name="twitter:site" content="{{ .url | replaceRE "^https?://(www\\.)?(twitter|x)\\.com/?" "@" | strings.TrimSuffix "/" }}" />
-    {{ end }}
-  {{ end }}
+	{{ range . }}
+		{{ if eq .name "Twitter" }}
+			<meta name="twitter:site" content="{{ .url | replaceRE "^https?://(www\\.)?(twitter|x)\\.com/?" "@" | strings.TrimSuffix "/" }}" />
+		{{ end }}
+	{{ end }}
 {{ end }}
 
 
@@ -83,31 +83,32 @@
 
 {{/* Site Verification */}}
 {{ with .Site.Params.verification.google }}
-  <meta name="google-site-verification" content="{{ . }}">
+	<meta name="google-site-verification" content="{{ . }}">
 {{ end }}
 {{ with .Site.Params.verification.bing }}
-  <meta name="msvalidate.01" content="{{ . }}">
+	<meta name="msvalidate.01" content="{{ . }}">
 {{ end }}
 {{ with .Site.Params.verification.pinterest }}
-  <meta name="p:domain_verify" content="{{ . }}">
+	<meta name="p:domain_verify" content="{{ . }}">
 {{ end }}
 {{ with .Site.Params.verification.yandex }}
-  <meta name="yandex-verification" content="{{ . }}">
+	<meta name="yandex-verification" content="{{ . }}">
 {{ end }}
 {{ with .Site.Params.verification.fediverse }}
-  <meta name="fediverse:creator" content="{{ . }}">
+	<meta name="fediverse:creator" content="{{ . }}">
 {{ end }}
 
 {{/* Me */}}
 {{ with .Site.Params.Author.name }}
-  <meta name="author" content="{{ . }}">
+	<meta name="author" content="{{ . }}">
 {{ end }}
 {{ range .Site.Params.Social }}
-  {{ if .url }}
-    <link href="{{ .url }}" rel="me">
-  {{ end }}
+	{{ if .url }}
+		<link href="{{ .url }}" rel="me">
+	{{ end }}
 {{ end }}
 
 <!-- RSS -->
 {{ if .IsHome }}
-<link rel="alternate" type="application/rss+xml" href="/index.xml" title="{{ site.Title }}">{{ end }}
+	<link rel="alternate" type="application/rss+xml" href="/index.xml" title="{{ site.Title }}">
+{{ end }}

@@ -1,50 +1,50 @@
 <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col relative">
-  <div class="flex items-center">
-    <div class="flex items-center">
-      <button type="button" class="h-[42px] flex items-center space-x-2 rounded-full border hover:cursor-pointer py-1 pr-[5px] pl-3 lg:pl-1.5 group bg-zinc-100 hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:hover:bg-bg-dimmed-subtle border-zinc-300 dark:border-zinc-600 toggle-button" data-target="menu-bar" aria-label="menu">
-        {{ partial "icon.html" (dict "name" "menu" "class" "h-6 w-6 lg:hidden") }}
-          {{ with .Site.Params.logo }}
-            <span class="rounded-full p-1 block">
-              <img src="{{ . }}" class="rounded-full block w-6 h-6 object-cover" alt="logo" width="32" height="32" loading="lazy">
-            </span>
-          {{ else }}
-            <span class="bg-blue-500 fill-white rounded-full p-1.5">
-              {{ partial "icon.html" (dict "name" "logo-fallback" "class" "group-hover:animate-spin bi bi-egg-fried fill-white") }}
-            </span>
-          {{ end }}
-      </button>
-      <a href="/" target="_self" class="h-8 ml-6 pt-1.5" alt="{{ .Site.Title }}" aria-label="Home">
-          {{- with .Site.Params.svg_title -}}
-            {{- partial "icon.html" (dict "name" . "class" "h-6") -}}
-          {{- else -}}
-            {{- .Site.Title -}}
-          {{- end -}}
-      </a>
-    </div>
+	<div class="flex items-center">
+		<div class="flex items-center">
+			<button type="button" class="h-[42px] flex items-center space-x-2 rounded-full border hover:cursor-pointer py-1 pr-[5px] pl-3 lg:pl-1.5 group bg-zinc-100 hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:hover:bg-bg-dimmed-subtle border-zinc-300 dark:border-zinc-600 toggle-button" data-target="menu-bar" aria-label="menu">
+				{{ partial "icon.html" (dict "name" "menu" "class" "h-6 w-6 lg:hidden") }}
+				{{ with .Site.Params.logo }}
+					<span class="rounded-full p-1 block">
+						<img src="{{ . }}" class="rounded-full block w-6 h-6 object-cover" alt="logo" width="32" height="32" loading="lazy">
+					</span>
+				{{ else }}
+					<span class="bg-blue-500 fill-white rounded-full p-1.5">
+						{{ partial "icon.html" (dict "name" "logo-fallback" "class" "group-hover:animate-spin bi bi-egg-fried fill-white") }}
+					</span>
+				{{ end }}
+			</button>
+			<a href="/" target="_self" class="h-8 ml-6 pt-1.5" alt="{{ .Site.Title }}" aria-label="Home">
+				{{- with .Site.Params.svg_title -}}
+					{{- partial "icon.html" (dict "name" . "class" "h-6") -}}
+				{{- else -}}
+					{{- .Site.Title -}}
+				{{- end -}}
+			</a>
+		</div>
 
-    {{- /* menu will show inline on desktop inside the right-side controls */ -}}
-    <div class="flex items-center ml-auto space-x-2">
-      {{- /* desktop-visible menu placed before search inside right controls */ -}}
-      {{- partial "menu.html" (dict "menuID" "main" "page" .) -}}
-      <!-- Search Button -->
-      <button type="button" class="flex items-center rounded-full p-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200" data-target="search-bar" aria-label="search">
-        <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <path id="path1" class="transition-all ease-linear" d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-          <path id="path2" class="transition-all ease-linear hidden" d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"></path>
-        </svg>
-      </button>
+		{{- /* menu will show inline on desktop inside the right-side controls */ -}}
+		<div class="flex items-center ml-auto space-x-2">
+			{{- /* desktop-visible menu placed before search inside right controls */ -}}
+			{{- partial "menu.html" (dict "menuID" "main" "page" .) -}}
+			<!-- Search Button -->
+			<button type="button" class="flex items-center rounded-full p-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200" data-target="search-bar" aria-label="search">
+				<svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+					<path id="path1" class="transition-all ease-linear" d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+					<path id="path2" class="transition-all ease-linear hidden" d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"></path>
+				</svg>
+			</button>
 
-      <!-- Dark Mode Toggle Button -->
-      <button type="button" id="theme-toggle" aria-label="Toggle Dark Mode" class="flex items-center justify-center rounded-full p-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200">
-        <svg class="hidden dark:block text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
+			<!-- Dark Mode Toggle Button -->
+			<button type="button" id="theme-toggle" aria-label="Toggle Dark Mode" class="flex items-center justify-center rounded-full p-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-bg-dimmed-secondary dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200">
+				<svg class="hidden dark:block text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+				</svg>
 
-        <svg class="block dark:hidden text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-      </button>
-    </div>
-  </div>
-  {{- partial "search.html" . -}}
+				<svg class="block dark:hidden text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+				</svg>
+			</button>
+		</div>
+	</div>
+	{{- partial "search.html" . -}}
 </div>

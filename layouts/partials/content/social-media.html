@@ -1,22 +1,22 @@
 {{- with .Site.Params.social -}}
-<ul id="social-media" class="flex items-center space-x-4 text-zinc-900 dark:text-zinc-300">
-  {{- range . -}}
-    {{- $icon := .icon -}}
-    {{- $name := lower .name -}}
-    {{- $url := .url -}}
+	<ul id="social-media" class="flex items-center space-x-4 text-zinc-900 dark:text-zinc-300">
+		{{- range . -}}
+			{{- $icon := .icon -}}
+			{{- $name := lower .name -}}
+			{{- $url := .url -}}
 
-    {{- /* 确保 icon 和 url 存在 */ -}}
-    {{- if and $icon $url -}}
-    <li>
-      <a class="w-12 h-12 rounded-full bg-white dark:bg-bg-dimmed-primary hover:bg-zinc-200 dark:hover:text-zinc-800 flex items-center justify-center p-2"
-         href="{{ $url }}"
-         target="_blank"
-         rel="noopener noreferrer"
-         aria-label="{{ $name }}">
-         {{- partial "icon.html" (dict "name" $icon "class" "h-6 w-6") -}}
-      </a>
-    </li>
-    {{- end -}}
-  {{- end -}}
-</ul>
+			{{- /* 确保 icon 和 url 存在 */ -}}
+			{{- if and $icon $url -}}
+				<li>
+					<a class="w-12 h-12 rounded-full bg-white dark:bg-bg-dimmed-primary hover:bg-zinc-200 dark:hover:text-zinc-800 flex items-center justify-center p-2"
+						href="{{ $url }}"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="{{ $name }}">
+						{{- partial "icon.html" (dict "name" $icon "class" "h-6 w-6") -}}
+					</a>
+				</li>
+			{{- end -}}
+		{{- end -}}
+	</ul>
 {{- end -}}

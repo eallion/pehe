@@ -1,26 +1,26 @@
 {{ define "main" }}
 
-  {{ if .Site.Params.hero }}
-    {{- partial "home/hero.html" . -}}
-  {{ end }}
+{{ if .Site.Params.hero }}
+	{{- partial "home/hero.html" . -}}
+{{ end }}
 
-  {{- partial "home/feature.html" . -}}
+{{- partial "home/feature.html" . -}}
 
-  <!-- {{- partial "anynow.html" . -}} -->
+<!-- {{- partial "anynow.html" . -}} -->
 
-  {{ with .Site.Params.selection_category }}
-    {{- partial "home/selection.html" (dict "ctx" $ "cat" .) -}}
-  {{ end }}
+{{ with .Site.Params.selection_category }}
+	{{- partial "home/selection.html" (dict "ctx" $ "cat" .) -}}
+{{ end }}
 
-  <hr class="my-8 border-gray-200 dark:border-gray-600">
+<hr class="my-8 border-gray-200 dark:border-gray-600">
 
-  {{- partial "home/recent.html" . -}}
+{{- partial "home/recent.html" . -}}
 
-  {{- if eq .Site.Params.Follow "mastodon" -}}
-    {{- partial "content/mastodon-follow.html" . -}}
-  {{- else -}}
-    {{/* 包含所有其他情况：未设置/空值/设置为 "newsletter"/设置为其他任何值 */}}
-    {{- partial "content/newsletter.html" . -}}
-  {{- end -}}
+{{- if eq .Site.Params.Follow "mastodon" -}}
+	{{- partial "content/mastodon-follow.html" . -}}
+{{- else -}}
+	{{/* 包含所有其他情况：未设置/空值/设置为 "newsletter"/设置为其他任何值 */}}
+	{{- partial "content/newsletter.html" . -}}
+{{- end -}}
 
 {{ end }}

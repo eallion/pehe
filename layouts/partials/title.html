@@ -10,11 +10,11 @@
 {{ $nonAsciiCount := 0 }}
 
 {{ range split $title "" }}
-    {{ if findRE $asciiRegex . }}
-        {{ $asciiCount = add $asciiCount 1 }}
-    {{ else }}
-        {{ $nonAsciiCount = add $nonAsciiCount 1 }}
-    {{ end }}
+	{{ if findRE $asciiRegex . }}
+		{{ $asciiCount = add $asciiCount 1 }}
+	{{ else }}
+		{{ $nonAsciiCount = add $nonAsciiCount 1 }}
+	{{ end }}
 {{ end }}
 
 {{/* 计算中文/宽字符比例 (0.0 到 1.0) */}}
@@ -27,8 +27,8 @@
 {{ $weightedLength := add (mul $nonAsciiCount 1.1) (mul $asciiCount 0.6) }}
 
 <div class="feature-title-container"
-     style="--title-total-length: {{ $totalLength }};
-            --title-chinese-ratio: {{ $chineseRatio }};
-            --title-weighted-length: {{ math.Round $weightedLength }};">
-    <span class="dynamic-title">{{ $title }}</span>
+	style="--title-total-length: {{ $totalLength }};
+	--title-chinese-ratio: {{ $chineseRatio }};
+	--title-weighted-length: {{ math.Round $weightedLength }};">
+	<span class="dynamic-title">{{ $title }}</span>
 </div>

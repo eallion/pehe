@@ -1,90 +1,90 @@
 <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
-  <div class="flex flex-wrap space-y-6 mb-4">
+	<div class="flex flex-wrap space-y-6 mb-4">
 
-    <div class="w-full md:w-3/5 flex flex-col space-y-4 md:pr-8 lg:pr-10">
-      <div class="flex items-center group">
-        <a href="{{ .Site.BaseURL }}" aria-label="blog title">
-          <img src="{{ .Site.Params.logo }}" alt="{{ .Site.Title }}" class="w-8 h-8 rounded-full mr-2"></img>
-        </a>
-        <span class="pt-2 hover:cursor-text">
-          {{- with .Site.Params.svg_title -}}
-            {{- partial "icon.html" (dict "name" "title" "class" "") -}}
-          {{- else -}}
-            {{- .Site.Title -}}
-          {{- end -}}
-        </span>
-      </div>
+		<div class="w-full md:w-3/5 flex flex-col space-y-4 md:pr-8 lg:pr-10">
+			<div class="flex items-center group">
+				<a href="{{ .Site.BaseURL }}" aria-label="blog title">
+					<img src="{{ .Site.Params.logo }}" alt="{{ .Site.Title }}" class="w-8 h-8 rounded-full mr-2"></img>
+				</a>
+				<span class="pt-2 hover:cursor-text">
+					{{- with .Site.Params.svg_title -}}
+						{{- partial "icon.html" (dict "name" "title" "class" "") -}}
+					{{- else -}}
+						{{- .Site.Title -}}
+					{{- end -}}
+				</span>
+			</div>
 
-      {{ with .Site.Params.slogan }}
-        <div class="group relative w-fit">
-            <p class="font-semibold transition-opacity duration-300 group-hover:opacity-0">
-                {{ . }}
-            </p>
-            {{ with $.Site.Params.slogan_hover }}
-                <p class="font-semibold absolute top-0 left-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    {{ . }}
-                </p>
-            {{ end }}
-        </div>
-      {{ end }}
+			{{ with .Site.Params.slogan }}
+				<div class="group relative w-fit">
+					<p class="font-semibold transition-opacity duration-300 group-hover:opacity-0">
+						{{ . }}
+					</p>
+					{{ with $.Site.Params.slogan_hover }}
+						<p class="font-semibold absolute top-0 left-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+							{{ . }}
+						</p>
+					{{ end }}
+				</div>
+			{{ end }}
 
-      {{ with .Site.Params.Description }}
-        <p>
-          {{ . | safeHTML }}
-        </p>
-      {{ end }}
+			{{ with .Site.Params.Description }}
+				<p>
+					{{ . | safeHTML }}
+				</p>
+			{{ end }}
 
-    </div>
+		</div>
 
-    <div class="self-center flex flex-col w-full md:w-2/5">
+		<div class="self-center flex flex-col w-full md:w-2/5">
 
-    {{ partial "content/social-media.html" . }}
+			{{ partial "content/social-media.html" . }}
 
-    </div>
+		</div>
 
-    {{ partial "footer/pledged.html" . }}
+		{{ partial "footer/pledged.html" . }}
 
-  </div>
+	</div>
 
-  <div class="my-4">
-    <ul class="flex flex-wrap items-center space-x-4">
-      {{ range .Site.Menus.footer }}
-        {{- $isExternal := or (not .Page) (hasPrefix .URL "http") -}}
-        <li class="inline-block">
-          <a href="{{ .URL | safeURL }}"
-            class="decoration-auto hover:underline"
-            title="{{ .Name }}"
-            {{ if $isExternal }}
-              target="_blank"
-              rel="{{ with .Params.rel }}{{ . }}{{ else }}noopener noreferrer external{{ end }}"
-            {{ else }}
-              {{ with .Params.rel }}rel="{{ . }}"{{ end }}
-            {{ end }}>
-            {{ if .Pre }}
-              <span class="icon">
-                {{ partial "icon.html" (dict "name" .Pre "class" "inline-block h-4 w-4") }}
-              </span>
-            {{ end }}
-            {{ .Name | markdownify }}
-            {{ if .Post }}
-              <span class="icon">
-                {{ partial "icon.html" (dict "name" .Post "class" "inline-block h-4 w-4") }}
-              </span>
-            {{ end }}
-          </a>
-        </li>
-      {{ end }}
-    </ul>
-  </div>
+	<div class="my-4">
+		<ul class="flex flex-wrap items-center space-x-4">
+			{{ range .Site.Menus.footer }}
+				{{- $isExternal := or (not .Page) (hasPrefix .URL "http") -}}
+				<li class="inline-block">
+					<a href="{{ .URL | safeURL }}"
+						class="decoration-auto hover:underline"
+						title="{{ .Name }}"
+						{{ if $isExternal }}
+							target="_blank"
+							rel="{{ with .Params.rel }}{{ . }}{{ else }}noopener noreferrer external{{ end }}"
+						{{ else }}
+							{{ with .Params.rel }}rel="{{ . }}"{{ end }}
+						{{ end }}>
+						{{ if .Pre }}
+							<span class="icon">
+								{{ partial "icon.html" (dict "name" .Pre "class" "inline-block h-4 w-4") }}
+							</span>
+						{{ end }}
+						{{ .Name | markdownify }}
+						{{ if .Post }}
+							<span class="icon">
+								{{ partial "icon.html" (dict "name" .Post "class" "inline-block h-4 w-4") }}
+							</span>
+						{{ end }}
+					</a>
+				</li>
+			{{ end }}
+		</ul>
+	</div>
 
-  <div class="border-t border-gray-200 dark:border-border-dimmed-primary pt-4">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+	<div class="border-t border-gray-200 dark:border-border-dimmed-primary pt-4">
+		<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
 
-      {{ partial "footer/copyright.html" . }}
-      {{ partial "footer/powered.html" . }}
+			{{ partial "footer/copyright.html" . }}
+			{{ partial "footer/powered.html" . }}
 
-    </div>
-  </div>
+		</div>
+	</div>
 
 </div>
