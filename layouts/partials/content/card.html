@@ -27,36 +27,36 @@
 					width="{{ $img.Width }}" height="{{ $img.Height }}" style="width: 100%; height: 100%; object-fit: cover;">
 			{{- end }}
 		{{- else }}
-			{{- /* 4. 远程图片：使用 StyleName.card/alt_card + picture 以提供主格式和备用格式，回退到未加后缀的原始 URL */}}
-			{{- $format := "avif" -}}
-			{{- $altFormat := "webp" -}}
-			{{- $style := "" -}}
-			{{- $altStyle := "" -}}
-			{{- if site.Params.StyleName }}
-				{{- $format = default $format site.Params.StyleName.format }}
-				{{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
-				{{- $style = site.Params.StyleName.card }}
-				{{- $altStyle = site.Params.StyleName.alt_card }}
+		{{- /* 4. 远程图片：使用 StyleName.card/alt_card + picture 以提供主格式和备用格式，回退到未加后缀的原始 URL */}}
+		{{- $format := "avif" -}}
+		{{- $altFormat := "webp" -}}
+		{{- $style := "" -}}
+		{{- $altStyle := "" -}}
+		{{- if and site.Params.enableStyleName site.Params.StyleName }}
+			{{- $format = default $format site.Params.StyleName.format }}
+			{{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
+			{{- $style = site.Params.StyleName.card }}
+			{{- $altStyle = site.Params.StyleName.alt_card }}
+		{{- end }}
+
+		<picture>
+			{{- if and (ne $imgUrl "") (ne $style "") }}
+				<source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $style }}" type="image/{{ $format }}">
+			{{- end }}
+			{{- if and (ne $imgUrl "") (ne $altStyle "") }}
+				<source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $altStyle }}" type="image/{{ $altFormat }}">
 			{{- end }}
 
-			<picture>
-				{{- if and (ne $imgUrl "") (ne $style "") }}
-					<source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $style }}" type="image/{{ $format }}">
-				{{- end }}
-				{{- if and (ne $imgUrl "") (ne $altStyle "") }}
-					<source srcset="{{ printf "%s%s%s" $imgUrl site.Params.StyleName.delimiter $altStyle }}" type="image/{{ $altFormat }}">
-				{{- end }}
-
-				{{- $fallback := $imgUrl -}}
-				{{- if eq $fallback "" }}
-					{{- $fallback = .Site.Params.defaultFeature -}}
-				{{- end }}
-				<img loading="lazy"
-					class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer"
-					src="{{ $fallback }}"
-					alt="{{ $.Name }}"
-					style="width: 100%; height: 100%; object-fit: cover;">
-			</picture>
+			{{- $fallback := $imgUrl -}}
+			{{- if eq $fallback "" }}
+				{{- $fallback = .Site.Params.defaultFeature -}}
+			{{- end }}
+			<img loading="lazy"
+				class="object-cover group-hover:scale-105 transition duration-500 cursor-pointer"
+				src="{{ $fallback }}"
+				alt="{{ $.Name }}"
+				style="width: 100%; height: 100%; object-fit: cover;">
+		</picture>
 		{{- end }}
 
 		{{- /* 计算文章作者 id（优先使用 frontmatter.author(s)，否则使用站点默认 Author.id） */}}

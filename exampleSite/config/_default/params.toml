@@ -47,7 +47,7 @@ follow = "mastodon"
 showFollow = false
 
 # Default Feature Image
-defaultFeature = "https://images.eallion.com/directus/files/ce35a8bb-fbda-468c-9aa8-d3599e538566.jpg"
+defaultFeature = "https://unsplash.com/photos/a-car-speeds-along-a-road-through-a-field-NIHB3qVxU0E"
 
 # Site Social Media
 [[social]]
@@ -86,6 +86,9 @@ defaultFeature = "https://images.eallion.com/directus/files/ce35a8bb-fbda-468c-9
     { github = "https://github.com/eallion" },
     { steam = "https://steamcommunity.com/id/eallion" }
   ]
+
+# 是否开启 CDN 图片样式处理（StyleName）
+enableStyleName = true
 
 [StyleName]
   # CDN 里的处理处理样式，如：https://cloud.tencent.com/document/product/436/42214
