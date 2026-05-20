@@ -11,7 +11,7 @@
 	"publisher": {
 	"@id": "{{ .Site.BaseURL }}#person"
 	},
-	"inLanguage": "{{ .Site.LanguageCode }}"
+	"inLanguage": "{{ .Site.Language.Locale }}"
 	},
 	{
 	"@type": "Person",
@@ -45,7 +45,7 @@
 		"url": "https://og.eallion.com/api/og?title={{ .Title }}"
 		},
 		"wordCount": "{{ .WordCount }}",
-		"inLanguage": "{{ .Site.LanguageCode }}",
+		"inLanguage": "{{ .Site.Language.Locale }}",
 		"mainEntityOfPage": {
 		"@type": "WebPage",
 		"@id": "{{ .Permalink }}"
