@@ -231,6 +231,29 @@ theme = 'pehe'
     assets/js/custom/*.js
     ```
 
+11. Extend Head
+
+    You can add custom scripts, stylesheets, meta tags, or HTML elements to the head of every page (e.g., for verification meta tags, extra tracking scripts, or custom styles) by creating an `extend-head.html` file in your project's `layouts/partials/` directory:
+
+    ```html
+    layouts/partials/extend-head.html
+    ```
+
+    It will be automatically included at the end of the page `<head>`.
+
+12. Extend Footer
+
+    You can add custom scripts, or HTML elements to the footer of every page (e.g., for analytics, extra tracking scripts, or custom widgets) by creating an `extend-footer.html` file in your project's `layouts/partials/` directory:
+
+    ```html
+    layouts/partials/extend-footer.html
+    ```
+
+    It will be automatically included at the end of the page `<footer>`.
+
+
+
+
 ## License
 
 Pehtheme Hugo is MIT Licensed. For more details, see the [LICENSE](https://github.com/eallion/pehe/blob/main/LICENSE) file.

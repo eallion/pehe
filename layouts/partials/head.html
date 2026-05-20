@@ -112,3 +112,8 @@
 {{ if .IsHome }}
 	<link rel="alternate" type="application/rss+xml" href="/index.xml" title="{{ site.Title }}">
 {{ end }}
+
+{{/* Extend head - eg. for extra stylesheets, meta tags, etc. */}}
+{{ if templates.Exists "partials/extend-head.html" }}
+	{{ partialCached "extend-head.html" . }}
+{{ end }}
