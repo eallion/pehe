@@ -32,7 +32,7 @@ Renders a menu for the given menu ID.
 		{{- $attrs = merge $attrs (dict "aria-current" "page") }}
 	{{- else if $page.HasMenuCurrent .Menu . }}
 		{{- /* Add the "ancestor" class if the link is an ancestor of the current page */}}
-		{{- $attrs = merge $attrs (dict "class" "ancestor") }}
+		{{- $attrs = merge $attrs (dict "class" (printf "%s %s" $attrs.class "ancestor")) }}
 		{{- /* Add the "aria-current" attribute */}}
 		{{- $attrs = merge $attrs (dict "aria-current" "true") }}
 	{{- end }}
