@@ -1,5 +1,6 @@
 {{- $doRedirect := default true .Page.Site.Params.redirect -}}
 {{- $safeHosts := .Page.Site.Params.safe_hosts -}}
+{{- $siteHost := (urls.Parse .Page.Site.BaseURL).Host }}
 
 {{- if $doRedirect -}}
 	{{ $url := urls.Parse .Destination }}
@@ -9,13 +10,9 @@
 	{{ if or (eq $url.Scheme "http") (eq $url.Scheme "https") }}
 
 		{{- /* 使用 in 函数检查 $host 是否在 $safeHosts 列表中 */ -}}
-		{{- if in $safeHosts $host }}
-			{{- /* 属于白名单链接 */ -}}
+		{{- if or (in $safeHosts $host) (eq $host $siteHost) (hasPrefix .Destination "#") }}
+			{{- /* 属于白名单链接或站点自身域名 */ -}}
 			<a href="{{ .Destination }}" target="_blank" rel="noopener noreferrer" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
-
-		{{- else if or (eq $host "www.eallion.com") (hasPrefix .Destination "#") -}}
-			{{- /* 处理 www.eallion.com (虽然它可能已经在白名单中，但保留以防万一) 或锚点 */ -}}
-			<a href="{{ .Destination }}" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
 
 		{{- else -}}
 			{{- /* 外部链接，使用跳转 */ -}}

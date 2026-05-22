@@ -54,18 +54,28 @@
 <link rel="canonical" href="{{ .Permalink }}" />
 
 <!-- Open Graph -->
+{{- $ogImage := "" -}}
+{{- if site.Params.ogImageURL -}}
+  {{- $ogTitle := site.Title -}}
+  {{- if not .IsHome -}}
+    {{- $ogTitle = .Title -}}
+  {{- end -}}
+  {{- $ogImage = printf "%s%s" site.Params.ogImageURL $ogTitle -}}
+{{- else -}}
+  {{- $ogImage = .Params.image | default site.Params.defaultFeature -}}
+{{- end -}}
 <meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
 <meta property="og:description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.description | default .Summary }}{{ end }}" />
 <meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}" />
 <meta property="og:url" content="{{ .Permalink }}" />
-<meta property="og:image" content="https://og.eallion.com/api/og?title={{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+<meta property="og:image" content="{{ $ogImage }}" />
 <meta property="og:site_name" content="{{ site.Title }}" />
 
 <!-- Twitter Cards -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
 <meta name="twitter:description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Params.description | default .Summary }}{{ end }}" />
-<meta name="twitter:image" content="https://og.eallion.com/api/og?title={{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+<meta name="twitter:image" content="{{ $ogImage }}" />
 {{ with .Site.Params.social }}
 	{{ range . }}
 		{{ if eq .name "Twitter" }}

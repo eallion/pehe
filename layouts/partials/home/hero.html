@@ -8,7 +8,7 @@
 						class="h-36 w-36 rounded-full object-cover ring-4 ring-gray-200 dark:ring-bg-dimmed-secondary"
 						width="144"
 						height="144"
-						alt="Charles Chin"
+						alt="{{ .Site.Params.Author.name | default "Author" }}"
 						src="{{- with .Site.Params.logo -}}{{- . -}}{{- end -}}"
 					>
 				</a>

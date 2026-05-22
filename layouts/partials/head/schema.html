@@ -42,7 +42,7 @@
 		},
 		"image": {
 		"@type": "ImageObject",
-		"url": "https://og.eallion.com/api/og?title={{ .Title }}"
+		"url": "{{ if site.Params.ogImageURL }}{{ printf "%s%s" site.Params.ogImageURL .Title }}{{ else }}{{ .Params.image | default site.Params.defaultFeature }}{{ end }}"
 		},
 		"wordCount": "{{ .WordCount }}",
 		"inLanguage": "{{ .Site.Language.Locale }}",

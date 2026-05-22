@@ -49,6 +49,50 @@ showFollow = false
 # Default Feature Image
 defaultFeature = "https://unsplash.com/photos/a-car-speeds-along-a-road-through-a-field-NIHB3qVxU0E"
 
+# OG Image URL (for social sharing cards, optional)
+# If set, uses this API URL to generate OG images
+# If not set, falls back to page image or defaultFeature
+ogImageURL = "https://og.eallion.com/api/og?title="
+
+# Mastodon handle (default fallback for follow section)
+mastodonID = "@eallion@e5n.cc"
+
+# Comment system (giscus | waline | utterances | twikoo | disqus)
+[comment]
+  system = "giscus"
+  autoLoad = false
+
+  [comment.giscus]
+    repo = "eallion/eallion.com"
+    repoID = "MDEwOlJlcG9zaXRvcnkyNjI2Njk1MDg="
+    category = "Giscus"
+    categoryID = "DIC_kwDOD6gExM4CS9eF"
+    lang = "zh-CN"
+
+  [comment.waline]
+    serverURL = ""
+    lang = "zh-CN"
+    pageview = false
+    version = "3.0.0"
+    cdnCSS = ""
+    cdnJS = ""
+
+  [comment.utterances]
+    repo = ""
+    label = "comments"
+    theme = "github-light"
+    darkTheme = "github-dark"
+
+  [comment.twikoo]
+    envID = ""
+    region = ""
+    lang = "zh-CN"
+    version = "1.6.39"
+    cdn = ""
+
+  [comment.disqus]
+    shortname = ""
+
 # Site Social Media
 [[social]]
   name = "Mastodon"
