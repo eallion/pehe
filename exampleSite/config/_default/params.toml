@@ -20,8 +20,8 @@ redirect = true
 # 外链跳转白名单域名列表
 safe_hosts = [
   "creativecommons.org",
-  "e5n.cc",
-  "eallion.com",
+  "*.e5n.cc",
+  "*.eallion.com",
   "github.com",
   "gov.cn",
   "kubaicai.com"
@@ -60,7 +60,8 @@ mastodonID = "@eallion@e5n.cc"
 # Comment system (giscus | waline | utterances | twikoo | disqus)
 [comment]
   system = "giscus"
-  autoLoad = false
+  autoLoad = true
+  linkRedirect = false
 
   [comment.giscus]
     repo = "eallion/eallion.com"
