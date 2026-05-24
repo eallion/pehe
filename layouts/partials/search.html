@@ -521,9 +521,9 @@
 
 			// 检查日期是否有效 (避免 Invalid Date)
 			if (date && !isNaN(date.getTime())) {
-			  formattedDate = date.toLocaleDateString('zh-CN', {
+			  formattedDate = date.toLocaleDateString('en-US', {
 				year: 'numeric',
-				month: 'long',
+				month: 'short',
 				day: 'numeric'
 			  });
 			} else {

@@ -1,15 +1,15 @@
 {{ define "main" }}
 {{- partial "content/breadcrumb.html" . -}}
 
-<div class="pb-14" data-pagefind-ignore="all">
+<div class="pb-14">
 
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-		<article class="md:col-span-2 prose lg:prose-lg dark:prose-invert">
+		<article class="md:col-span-2 prose lg:prose-lg dark:prose-invert" data-pagefind-body>
 
 			<header class="not-prose mb-14">
 
-				<h1 class="text-4xl font-bold">{{ .Title }}</h1>
+				<h1 class="text-4xl font-bold" data-pagefind-meta="title">{{ .Title }}</h1>
 
 			</header>
 
