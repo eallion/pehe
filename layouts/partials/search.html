@@ -12,9 +12,10 @@
 						d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
 				</svg>
 
-				<input id="search-input" class="flex-1 bg-transparent text-lg text-gray-900 dark:text-text-dimmed-primary
-					focus:outline-none placeholder:text-gray-500 dark:placeholder-zinc-400 w-full" type="search" placeholder="搜索文章..."
-					autocomplete="off" autocorrect="off" spellcheck="false" aria-label="搜索输入">
+				<input id="search-input"
+					class="flex-1 bg-transparent text-lg text-gray-900 dark:text-text-dimmed-primary focus:outline-none placeholder:text-gray-500 dark:placeholder-zinc-400 w-full"
+					type="search" placeholder="正在加载搜索..." autocomplete="off" autocorrect="off" spellcheck="false"
+					aria-label="搜索输入" disabled>
 
 				<button id="close-button" type="button"
 					class="p-3 rounded-full text-gray-600 dark:text-text-dimmed-primary hover:bg-gray-100 dark:hover:bg-bg-dimmed-secondary active:bg-gray-50 dark:active:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-600/20 transition-colors active:scale-95"
@@ -119,6 +120,27 @@
 	  }
 	}
 
+	// 显示加载状态（禁用输入框）
+	function showLoadingState() {
+	  const loading = document.getElementById('search-loading');
+	  const initialPrompt = document.getElementById('search-initial-prompt');
+	  searchInput.disabled = true;
+	  searchInput.placeholder = '正在加载搜索...';
+	  if (loading) loading.classList.remove('hidden');
+	  if (initialPrompt) initialPrompt.classList.add('hidden');
+	}
+
+	// 搜索就绪（启用输入框）
+	function enableSearchInput() {
+	  const loading = document.getElementById('search-loading');
+	  const initialPrompt = document.getElementById('search-initial-prompt');
+	  searchInput.disabled = false;
+	  searchInput.placeholder = '搜索文章...';
+	  if (loading) loading.classList.add('hidden');
+	  if (initialPrompt) initialPrompt.classList.remove('hidden');
+	  searchInput.focus();
+	}
+
 	// 打开 Modal
 	function openModal() {
 	  searchInput.value = '';
@@ -128,14 +150,16 @@
 		modal.classList.add('opacity-100');
 		modalContent.classList.remove('opacity-0', 'scale-95');
 		modalContent.classList.add('opacity-100', 'scale-100');
-		searchInput.focus();
+
+		if (resourcesLoaded) {
+		  enableSearchInput();
+		} else {
+		  showLoadingState();
+		  loadPagefindResources();
+		}
 	  }, 10);
 
 	  toggleSearchIcon(true);
-
-	  if (!resourcesLoaded) {
-		loadPagefindResources();
-	  }
 	}
 
 	// 关闭 Modal
@@ -166,7 +190,13 @@
 	  if (pagination) pagination.classList.add('hidden');
 	  if (noResults) noResults.classList.add('hidden');
 	  if (loading) loading.classList.add('hidden');
-	  if (initialPrompt) initialPrompt.classList.remove('hidden');
+	  if (initialPrompt) {
+		if (resourcesLoaded) {
+		  initialPrompt.classList.remove('hidden');
+		} else {
+		  initialPrompt.classList.add('hidden');
+		}
+	  }
 
 	  // 重置分页状态
 	  allSearchResults = [];
@@ -215,16 +245,14 @@
 
 			if (found) {
 			  resourcesLoaded = true;
-			  if (loading) loading.classList.add('hidden');
-			  if (initialPrompt) initialPrompt.classList.remove('hidden');
+			  enableSearchInput();
 			  resolve();
 			} else {
 			  import('/pagefind/pagefind.js')
 				.then(module => {
 				  pagefindInstance = module;
 				  resourcesLoaded = true;
-				  if (loading) loading.classList.add('hidden');
-				  if (initialPrompt) initialPrompt.classList.remove('hidden');
+				  enableSearchInput();
 				  resolve();
 				})
 				.catch(err => {
