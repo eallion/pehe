@@ -1,0 +1,23 @@
+{{- $h2svg := `<svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="0.875em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12.5V12a3 3 0 0 1 3-3h.172a2.828 2.828 0 0 1 2 4.829L15 19h6M3 5v7m0 0v7m0-7h8m0-7v7m0 0v7"/></svg>` -}}
+{{- $h3svg := `<svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="0.875em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h6l-4 4h1a3 3 0 1 1-2.83 3.999M3 5v7m0 0v7m0-7h8m0-7v7m0 0v7"/></svg>` -}}
+{{- $h4svg := `<svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="0.875em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m18 9l-2.5 8H20m0 0h1m-1 0v-3m0 3v2M3 5v7m0 0v7m0-7h8m0-7v7m0 0v7"/></svg>` -}}
+{{- $h5svg := `<svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="0.875em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 9h-4l-1.25 5.016a3 3 0 0 1 3.555-.717a3 3 0 1 1-3.555 4.685M3 5v7m0 0v7m0-7h8m0-7v7m0 0v7"/></svg>` -}}
+{{- $h6svg := `<svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="0.875em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.402 14.525A2.974 2.974 0 0 0 16.5 18.6a3.01 3.01 0 0 0 4.099-1.092a2.973 2.973 0 0 0-1.099-4.075a3.01 3.01 0 0 0-4.098 1.092m0 0L19 8M3 5v7m0 0v7m0-7h8m0-7v7m0 0v7"/></svg>` -}}
+
+{{- if eq .Level 1 -}}
+  <h{{ .Level }} id="{{ .Anchor }}">{{ .Text | safeHTML }}</h{{ .Level }}>
+{{- else if and (ge .Level 2) (le .Level 6) -}}
+  {{- $icon := index (slice $h2svg $h3svg $h4svg $h5svg $h6svg) (sub .Level 2) -}}
+  {{- $hashOpacity := index (slice "opacity-75" "opacity-60" "opacity-50" "opacity-40" "opacity-40") (sub .Level 2) -}}
+  {{- $h2border := "" -}}
+  {{- if eq .Level 2 -}}
+    {{- $h2border = "border-b border-current/10 pb-1.5" -}}
+  {{- end -}}
+  <h{{ .Level }} id="{{ .Anchor }}" class="group flex items-center scroll-mt-20 {{ $h2border }}">
+    <a href="#{{ .Anchor }}" class="{{ $hashOpacity }} hover:opacity-80 transition-opacity duration-150 mr-1 no-underline text-inherit" aria-label="Permalink to this heading">#</a>
+    <span>{{ .Text | safeHTML }}</span>
+    <span class="shrink-0 opacity-0 group-hover:opacity-60 hover:opacity-100 transition-opacity duration-150 ease-in-out ml-1" aria-hidden="true">{{ $icon | safeHTML }}</span>
+  </h{{ .Level }}>
+{{- else -}}
+  <h{{ .Level }} id="{{ .Anchor }}">{{ .Text | safeHTML }}</h{{ .Level }}>
+{{- end -}}
