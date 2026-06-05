@@ -158,8 +158,9 @@
 
 	{{/* 获取 front matter 中的 comments 字段的值，如果未设置则默认为 true */}}
 	{{- $showComments := default true .Params.showComments -}}
+	{{- $commentEnable := default true site.Params.comment.enable -}}
 
-	{{- if eq $showComments true -}}
+	{{- if and $commentEnable (eq $showComments true) -}}
 		{{- /* 只有当 comments 为 true 时才渲染 comments.html */ -}}
 		{{- partial "comments.html" . -}}
 	{{- end -}}
