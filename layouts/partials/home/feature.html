@@ -50,7 +50,7 @@
 				{{- $altFormat := "webp" -}}
 				{{- $style := "" -}}
 				{{- $altStyle := "" -}}
-				{{- if and site.Params.enableStyleName site.Params.StyleName }}
+				{{- if site.Params.StyleName }}
 					{{- $format = default $format site.Params.StyleName.format }}
 					{{- $altFormat = default $altFormat site.Params.StyleName.alt_format }}
 					{{- $style = site.Params.StyleName.featured }}
