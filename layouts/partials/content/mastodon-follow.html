@@ -1,30 +1,34 @@
-{{- $defaultMastodonID := site.Params.mastodonID | default "@eallion@e5n.cc" -}}
-{{- $mastodonID := "" -}}
+{{- $mastodonID := site.Params.mastodonID -}}
 {{- $email := "" -}}
 {{- $mastodonURL := "" -}}
 
-{{- range .Site.Params.Author.social -}}
-	{{- with .mastodon -}}
-		{{- $mastodonID = . -}}
+{{- /* 1. 优先用 site.Params.mastodonID，没有则从 Author.social 获取 */ -}}
+{{- if not $mastodonID -}}
+	{{- range .Site.Params.Author.social -}}
+		{{- with .mastodon -}}
+			{{- $mastodonID = . -}}
+		{{- end -}}
 	{{- end -}}
+{{- end -}}
+
+{{- /* 2. 还没设则用硬编码默认值 */ -}}
+{{- if not $mastodonID -}}
+	{{- $mastodonID = "@eallion@e5n.cc" -}}
+{{- end -}}
+
+{{- /* 3. 获取 email */ -}}
+{{- range .Site.Params.Author.social -}}
 	{{- with .email -}}
 		{{- $email = . -}}
 	{{- end -}}
 {{- end -}}
 
-{{- /* 1. 如果配置中未提供 mastodon ID，则使用默认值 */ -}}
-{{- if not $mastodonID -}}
-	{{- $mastodonID = $defaultMastodonID -}}
-{{- end -}}
-
-{{- /* 2. 使用 $mastodonID 构造 $mastodonURL */ -}}
-{{- if $mastodonID -}}
-	{{- $parts := split $mastodonID "@" -}}
-	{{- if ge (len $parts) 3 -}}
-		{{- $domain := index $parts 2 -}}
-		{{- $user := index $parts 1 -}}
-		{{- $mastodonURL = printf "https://%s/@%s" $domain $user -}}
-	{{- end -}}
+{{- /* 4. 构造 Mastodon URL */ -}}
+{{- $parts := split $mastodonID "@" -}}
+{{- if ge (len $parts) 3 -}}
+	{{- $domain := index $parts 2 -}}
+	{{- $user := index $parts 1 -}}
+	{{- $mastodonURL = printf "https://%s/@%s" $domain $user -}}
 {{- end -}}
 
 <div class="max-w-7xl mx-auto my-16 rounded-3xl bg-linear-to-b from-[#6364FF] to-[#563ACC]">
