@@ -9,8 +9,19 @@
 	{{- /* 检查链接是否是 HTTP(S) */ -}}
 	{{ if or (eq $url.Scheme "http") (eq $url.Scheme "https") }}
 
-		{{- /* 使用 in 函数检查 $host 是否在 $safeHosts 列表中 */ -}}
-		{{- if or (in $safeHosts $host) (eq $host $siteHost) (hasPrefix .Destination "#") }}
+		{{- $isSafe := false -}}
+		{{- range $safeHosts -}}
+			{{- $rule := . -}}
+			{{- if hasPrefix $rule "*." -}}
+				{{- $suffix := replace $rule "*." "" -}}
+				{{- if or (eq $host $suffix) (hasSuffix $host (print "." $suffix)) -}}
+					{{- $isSafe = true -}}
+				{{- end -}}
+			{{- else if eq $host $rule -}}
+				{{- $isSafe = true -}}
+			{{- end -}}
+		{{- end -}}
+		{{- if or $isSafe (eq $host $siteHost) (hasPrefix .Destination "#") }}
 			{{- /* 属于白名单链接或站点自身域名 */ -}}
 			<a href="{{ .Destination }}" target="_blank" rel="noopener noreferrer" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
 
