@@ -1,12 +1,10 @@
-<div class="lg:sticky lg:top-8 mb-13" data-pagefind-ignore="all">
-
+<div class="mb-6" data-pagefind-ignore="all">
 	{{- partial "content/aside-banner.html" . -}}
-
-	{{- $toc := .TableOfContents -}}
-	{{- if and (ne $toc "") (ne $toc "<nav id=\"TableOfContents\"></nav>") -}}
-		{{- partial "content/aside-toc.html" . -}}
-	{{- else -}}
-		{{- partial "content/aside-no-toc.html" . -}}
-	{{- end -}}
-
 </div>
+
+{{- $toc := .TableOfContents -}}
+{{- if and (ne $toc "") (ne $toc "<nav id=\"TableOfContents\"></nav>") -}}
+	{{- partial "content/aside-toc.html" . -}}
+{{- else -}}
+	{{- partial "content/aside-no-toc.html" . -}}
+{{- end -}}

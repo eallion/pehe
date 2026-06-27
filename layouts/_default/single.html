@@ -184,13 +184,19 @@
 </article>
 
 <!-- Aside -->
-<aside class="md:col-span-1 hidden md:block">
+<aside class="md:col-span-1 hidden md:block" data-pagefind-ignore="all">
 
 	{{- partial "content/aside.html" . -}}
 
 </aside>
 
 </div>
+
+{{/* Mobile TOC (outside aside, visible only on mobile) */}}
+{{- $toc := .TableOfContents -}}
+{{- if and (ne $toc "") (ne $toc "<nav id=\"TableOfContents\"></nav>") -}}
+	{{- partial "content/toc-mobile.html" . -}}
+{{- end -}}
 <div class="-mt-14">
 	{{- $showFollow := true -}}
 	{{- if isset .Site.Params "showfollow" -}}

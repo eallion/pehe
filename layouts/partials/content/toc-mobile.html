@@ -1,0 +1,26 @@
+{{/* Mobile TOC trigger + dialog (rendered outside aside, visible only on mobile) */}}
+
+{{/* Trigger button */}}
+<button class="toc-mobile-trigger" id="toc-mobile-trigger" type="button" aria-label="Table of Contents">
+	<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<path d="M21 5H3"></path><path d="M15 12H3"></path><path d="M17 19H3"></path>
+	</svg>
+	On this page
+</button>
+
+{{/* Dialog */}}
+<dialog class="toc-mobile-dialog" id="toc-mobile-dialog">
+	<div class="toc-mobile-content">
+		<div class="toc-mobile-header">
+			<span>On this page</span>
+			<button class="toc-mobile-close" id="toc-mobile-close" type="button" aria-label="Close">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+				</svg>
+			</button>
+		</div>
+		<div class="toc-mobile-list" id="toc-mobile-list">
+			{{/* JS clones desktop TOC here on init */}}
+		</div>
+	</div>
+</dialog>
