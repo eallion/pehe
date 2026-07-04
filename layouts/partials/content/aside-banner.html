@@ -1,7 +1,5 @@
 <div class="rounded-2xl p-8 text-zinc-700 dark:text-text-dimmed-primary bg-zinc-100 dark:bg-bg-dimmed-secondary mb-10 flex-col items-center justify-center gap-6 hidden md:flex">
 
-	<!-- {{- partial "anynow.html" . -}} -->
-
 	<div class="shrink-0">
 		<img class="h-20 w-20 rounded-full object-cover ring-4 ring-white dark:ring-text-dimmed-tertiary shadow-lg" width="144" height="144" alt="{{ .Site.Title }}" src="{{ with .Site.Params.Author.avatar }}{{ . }}{{ else }} {{ .Site.Params.logo }} {{ end }}">
 	</div>

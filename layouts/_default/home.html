@@ -6,8 +6,6 @@
 
 {{- partial "home/feature.html" . -}}
 
-<!-- {{- partial "anynow.html" . -}} -->
-
 {{ with .Site.Params.selection_category }}
 	{{- partial "home/selection.html" (dict "ctx" $ "cat" .) -}}
 {{ end }}

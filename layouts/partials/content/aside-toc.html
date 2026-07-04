@@ -1,14 +1,24 @@
 {{/* Desktop TOC only (inside aside, hidden on mobile) */}}
 <div class="sticky top-8" data-pagefind-ignore="all">
-	<div class="toc-header flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-text-dimmed-secondary mb-3 px-1">
+	<a href="#article" class="toc-header flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-text-dimmed-secondary mb-3 px-1 cursor-pointer hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors">
 		<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 			<path d="M21 5H3"></path><path d="M15 12H3"></path><path d="M17 19H3"></path>
 		</svg>
 		On this page
-	</div>
+	</a>
 	<div class="toc-scroll-area">
 		<div class="toc-inner" id="toc-inner">
 			{{ .TableOfContents }}
 		</div>
 	</div>
+	{{- $showComments := default true .Params.showComments -}}
+	{{- $commentEnable := default true site.Params.comment.enable -}}
+	{{- if and $commentEnable (eq $showComments true) -}}
+	<a href="#content-footer" class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-text-dimmed-secondary mt-3 px-1 cursor-pointer hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+			<path fill="currentColor" d="M9 22a1 1 0 0 1-1-1v-3H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6.1l-3.7 3.71c-.2.19-.45.29-.7.29zm1-6v3.08L13.08 16H20V4H4v12z"/>
+		</svg>
+		评论
+	</a>
+	{{- end -}}
 </div>
