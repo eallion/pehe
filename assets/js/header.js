@@ -1,18 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const header = document.getElementById('page-header');
-  if (!header) return;
+  const headerBar = document.getElementById('ds-header-bar') || document.getElementById('page-header');
+  const pageHeader = document.getElementById('page-header');
+  if (!headerBar && !pageHeader) return;
 
-  const handleScroll = () => {
-    if (window.scrollY > 0) {
-      header.classList.remove('py-6');
-      header.classList.add('py-3');
-      header.classList.add('shadow-sm');
-    } else {
-      header.classList.add('py-6');
-      header.classList.remove('py-3');
-      header.classList.remove('shadow-sm');
+  const updateHeader = () => {
+    const isScrolled = window.scrollY > 80;
+    if (headerBar) {
+      if (isScrolled) {
+        headerBar.classList.add('is-scrolled');
+      } else {
+        headerBar.classList.remove('is-scrolled');
+      }
+    }
+    if (pageHeader && pageHeader !== headerBar) {
+      if (isScrolled) {
+        pageHeader.classList.add('is-scrolled');
+      } else {
+        pageHeader.classList.remove('is-scrolled');
+      }
     }
   };
 
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener('scroll', updateHeader, { passive: true });
+  updateHeader();
 });

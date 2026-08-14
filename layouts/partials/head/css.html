@@ -8,7 +8,8 @@
 		{{- end }}
 	{{- end }}
 {{- end }}
-{{- with resources.Get "css/toc.css" }}
+{{- /* 用户自定义样式：若存在 assets/css/custom.css 则自动加载，不存在则安全忽略 */ -}}
+{{- with resources.Get "css/custom.css" }}
 	{{- if eq hugo.Environment "development" }}
 		<link rel="stylesheet" href="{{ .RelPermalink }}">
 	{{- else }}

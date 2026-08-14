@@ -204,7 +204,7 @@ function createObserver(headings, tocLinks, findLinkByHeading, updateActiveVisua
         let minDist = Infinity;
         for (const h of headings) {
           const rect = h.getBoundingClientRect();
-          const dist = Math.abs(rect.top - 80);
+          const dist = Math.abs(rect.top - 96);
           if (dist < minDist) {
             minDist = dist;
             closest = h;
@@ -213,7 +213,7 @@ function createObserver(headings, tocLinks, findLinkByHeading, updateActiveVisua
         updateActiveVisuals(findLinkByHeading(closest));
       }
     },
-    { threshold: 0.9, rootMargin: '-80px 0px -60% 0px' }
+    { threshold: 0.9, rootMargin: '-96px 0px -60% 0px' }
   );
 }
 

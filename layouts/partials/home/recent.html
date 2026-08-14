@@ -11,7 +11,7 @@
 		{{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
 		{{ $paginatedPages := .Paginate $pages }}
 		{{ $filteredPages := after 1 $paginatedPages.Pages }}
-		{{ range first 6 $filteredPages }}
+		{{ range $filteredPages }}
 
 			{{- partial "content/card" . -}}
 

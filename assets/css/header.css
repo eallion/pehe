@@ -1,0 +1,303 @@
+/* DeepSeek Harness (dsh) Header Floating Pill & Shrink Animation */
+.ds-header-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  width: min(100% - 32px, 1280px);
+  margin: 0 auto;
+  padding: 12px 0 0;
+  pointer-events: none;
+  transition: padding 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@media (min-width: 768px) {
+  .ds-header-wrapper {
+    width: min(100% - 96px, 1280px);
+    padding: 16px 0 0;
+  }
+}
+
+.ds-header-bar {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: transparent;
+  pointer-events: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.35s ease,
+              border-color 0.35s ease,
+              box-shadow 0.35s ease,
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center top;
+  position: relative;
+}
+
+.ds-header-bar svg {
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+.ds-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ds-header-bar .toggle-button {
+  flex-shrink: 0;
+}
+@media (min-width: 1024px) {
+  .ds-header-bar .toggle-button {
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    aspect-ratio: 1 / 1 !important;
+    justify-content: center !important;
+  }
+}
+
+/* Dark Mode / Hero Dark Header Styles */
+.dark .ds-header-bar,
+body.ds-has-hero .ds-header-bar {
+  color: #ffffff;
+}
+
+.dark .ds-header-bar a,
+.dark .ds-header-bar button,
+body.ds-has-hero .ds-header-bar a,
+body.ds-has-hero .ds-header-bar button {
+  color: #ffffff;
+}
+
+.dark .ds-header-bar .ds-nav-btn,
+body.ds-has-hero .ds-header-bar .ds-nav-btn {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.dark .ds-header-bar .ds-nav-btn:hover,
+body.ds-has-hero .ds-header-bar .ds-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+/* Light Mode (non-hero) Header Styles */
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar {
+  color: #1e232c;
+}
+
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar a,
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar button {
+  color: #1e232c;
+}
+
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #1e232c;
+}
+
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Scrolled Animation -> Shrink into floating menu bar in Dark Mode (dsh: maxWidth 1280 -> 980/1180) */
+.dark .ds-header-bar.is-scrolled {
+  width: 100%;
+  max-width: min(100%, 980px);
+  padding: 6px 6px 6px 16px;
+  background: rgba(18, 22, 28, 0.85) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Scrolled Animation -> Shrink into floating menu bar in Light Mode (dsh) */
+html:not(.dark) .ds-header-bar.is-scrolled {
+  width: 100%;
+  max-width: min(100%, 980px);
+  padding: 6px 6px 6px 16px;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+}
+
+/* Hero page (ds-has-hero) scrolled in Light Mode: dark text/icons on the light bar */
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled,
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled a,
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled button {
+  color: #1e232c;
+}
+
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled .ds-nav-btn {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #1e232c;
+}
+
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled .ds-nav-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Hero page scrolled in Light Mode: menu links turn dark */
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a {
+  color: rgba(30, 35, 44, 0.85) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a:hover {
+  color: #1e232c !important;
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a[aria-current="page"] {
+  color: #1e232c !important;
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Large screens: dsh keeps a wider bar (1180) when viewport >= 1560px */
+@media (min-width: 1560px) {
+  .dark .ds-header-bar.is-scrolled,
+  html:not(.dark) .ds-header-bar.is-scrolled {
+    max-width: min(100%, 1180px);
+  }
+}
+
+/* Ensure #menu-bar is completely transparent on desktop in all modes */
+@media (min-width: 1024px) {
+  .ds-header-bar #menu-bar,
+  .dark .ds-header-bar #menu-bar,
+  html.dark .ds-header-bar #menu-bar,
+  body.ds-has-hero .ds-header-bar #menu-bar {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* Compact Nav links inside ds-header-bar */
+.ds-header-bar #menu-bar ul {
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 4px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.ds-header-bar #menu-bar li {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.ds-header-bar #menu-bar a {
+  padding: 6px 14px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  border-radius: 9999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap !important;
+}
+
+/* Dark Mode / Hero Dark Header Menu Links */
+.dark .ds-header-bar #menu-bar a,
+html.dark .ds-header-bar #menu-bar a,
+body.ds-has-hero .ds-header-bar #menu-bar a {
+  color: rgba(255, 255, 255, 0.85) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.dark .ds-header-bar #menu-bar a:hover,
+html.dark .ds-header-bar #menu-bar a:hover,
+body.ds-has-hero .ds-header-bar #menu-bar a:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .ds-header-bar #menu-bar a[aria-current="page"],
+html.dark .ds-header-bar #menu-bar a[aria-current="page"],
+body.ds-has-hero .ds-header-bar #menu-bar a[aria-current="page"] {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* Light Mode Menu Links */
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a {
+  color: rgba(30, 35, 44, 0.85) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a:hover {
+  color: #1e232c !important;
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="page"] {
+  color: #1e232c !important;
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Mobile dropdown menu cleanup when opened on mobile */
+@media (max-width: 1023px) {
+  .dark .ds-header-bar #menu-bar,
+  html.dark .ds-header-bar #menu-bar {
+    background-color: rgba(28, 33, 40, 0.95) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    margin-top: 8px;
+    padding: 12px;
+  }
+  .dark .ds-header-bar #menu-bar a,
+  html.dark .ds-header-bar #menu-bar a {
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+  }
+}

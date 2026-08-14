@@ -89,6 +89,25 @@
 
 
 {{- partialCached "head/css.html" . -}}
+<!-- No-JS fallback: keep header text & icons white when JavaScript is disabled (must load after all CSS to win specificity) -->
+<noscript>
+	<style>
+		.ds-header-bar,
+		.ds-header-bar a,
+		.ds-header-bar button,
+		.ds-header-bar .ds-nav-btn,
+		html:not(.dark) body:not(.ds-has-hero) .ds-header-bar#ds-header-bar #menu-bar a,
+		html:not(.dark) body:not(.ds-has-hero) .ds-header-bar#ds-header-bar #menu-bar a:hover,
+		html:not(.dark) body:not(.ds-has-hero) .ds-header-bar#ds-header-bar #menu-bar a[aria-current="page"] {
+			color: #ffffff !important;
+		}
+		.ds-header-bar svg {
+			color: #ffffff !important;
+			fill: currentColor !important;
+			stroke: currentColor !important;
+		}
+	</style>
+</noscript>
 {{- partialCached "head/favicon.html" . -}}
 {{- partial "head/schema.html" . -}}
 {{- /* template "_internal/google_analytics.html" . */ -}}

@@ -5,22 +5,29 @@
 @import './article.css';
 @import './chroma.css';
 @import './gfm-table.css';
-@import '../../assets/css/header.css';
+@import './header.css';
 @import './toc.css';
-@import '../../assets/css/theme.css';
-
-/* @plugin 'tailwindcss-github-markdown'; */
+@import './theme.css';
 
 @plugin '@tailwindcss/typography';
 
-/* 主题内置模板与脚本源码扫描 */
+/* 主题内置模板与脚本源码扫描 (相对于 themes/pehe/assets/css/) */
 @source '../../layouts/**/*.html';
 @source '../../layouts/**/*.js';
 @source '../../assets/**/*.js';
 
-/* exampleSite 内容与配置扫描 */
-@source '../content/**/*.md';
-@source '../config/**/*.toml';
+/* exampleSite 源码扫描 */
+@source '../../exampleSite/layouts/**/*.html';
+@source '../../exampleSite/content/**/*.md';
+@source '../../exampleSite/config/**/*.toml';
+
+/* 站点根目录模板、文章与配置扫描 (从 themes/pehe/assets/css/ 向上 4 级到项目根目录) */
+@source '../../../../layouts/**/*.html';
+@source '../../../../layouts/**/*.js';
+@source '../../../../assets/**/*.js';
+@source '../../../../content/**/*.md';
+@source '../../../../config/**/*.toml';
+@source '../../../../hugo_stats.json';
 
 @theme {
   /* Fonts */
