@@ -1,7 +1,7 @@
 {{- with .Site.Params.social -}}
 	<ul id="social-media" class="flex items-center space-x-4 text-zinc-900 dark:text-zinc-300">
 		{{- range . -}}
-			{{- $icon := .icon -}}
+			{{- $icon := replaceRE "(-full)?-color$" "" .icon -}}
 			{{- $name := lower .name -}}
 			{{- $url := .url -}}
 

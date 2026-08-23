@@ -75,12 +75,15 @@
         {{ range $index, $item := . }}
           {{ $isFirst := eq $index 0 }}
           {{ $rel := "noopener noreferrer" }}
-          {{ $key := lower (or $item.icon $item.name "") }}
-          {{ $action := "查看" }}
-          {{ if or (in $followPlatforms $key) (in $followPlatforms (lower $item.name)) (in $followPlatforms (lower $item.icon)) }}
-            {{ $action = "关注" }}
+          {{ $cleanIcon := replaceRE "(-full)?-color$" "" (lower (or $item.icon "")) }}
+          {{ $action := $item.action }}
+          {{ if not $action }}
+            {{ $action = "查看" }}
+            {{ if or (in $followPlatforms $cleanIcon) (in $followPlatforms (lower $item.name)) }}
+              {{ $action = "关注" }}
+            {{ end }}
           {{ end }}
-          {{ if eq (lower $item.name) "mastodon" }}
+          {{ if or (eq (lower $item.name) "mastodon") (eq $cleanIcon "mastodon") }}
             {{ $rel = "me noopener noreferrer" }}
           {{ end }}
           {{ $label := printf "%s %s" $action $item.name }}
@@ -167,12 +170,15 @@
     <div class="flex md:hidden flex-wrap items-center gap-ds-4 order-3 mt-4">
       {{ range . }}
         {{ $rel := "noopener noreferrer" }}
-        {{ $key := lower (or .icon .name "") }}
-        {{ $action := "查看" }}
-        {{ if or (in $followPlatforms $key) (in $followPlatforms (lower .name)) (in $followPlatforms (lower .icon)) }}
-          {{ $action = "关注" }}
+        {{ $cleanIcon := replaceRE "(-full)?-color$" "" (lower (or .icon "")) }}
+        {{ $action := .action }}
+        {{ if not $action }}
+          {{ $action = "查看" }}
+          {{ if or (in $followPlatforms $cleanIcon) (in $followPlatforms (lower .name)) }}
+            {{ $action = "关注" }}
+          {{ end }}
         {{ end }}
-        {{ if eq (lower .name) "mastodon" }}
+        {{ if or (eq (lower .name) "mastodon") (eq $cleanIcon "mastodon") }}
           {{ $rel = "me noopener noreferrer" }}
         {{ end }}
         {{ $label := printf "%s %s" $action .name }}
