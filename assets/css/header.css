@@ -301,3 +301,62 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
     padding: 8px 12px !important;
   }
 }
+
+/* ============================================================
+   Header Brand BLOG Badge (Light / Dark / Hero Responsive Gradient)
+   ============================================================ */
+.ds-header-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 1px;
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.ds-header-badge-inner {
+  display: inline-block;
+  padding: 2px 7px 1px 7px;
+  border-radius: 7px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* 1. Dark Mode & Hero Transparent State (sitting on dark fluid canvas) */
+.dark .ds-header-badge,
+body.ds-has-hero .ds-header-badge {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0.04) 65%, rgba(255, 255, 255, 0.4) 100%);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+}
+
+.dark .ds-header-badge-inner,
+body.ds-has-hero .ds-header-badge-inner {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 2. Light Mode: Non-Hero pages (articles, archives, search, etc.) */
+html:not(.dark) body:not(.ds-has-hero) .ds-header-badge {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.08) 35%, rgba(0, 0, 0, 0.04) 65%, rgba(0, 0, 0, 0.24) 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+html:not(.dark) body:not(.ds-has-hero) .ds-header-badge-inner {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: rgba(30, 35, 44, 0.88);
+}
+
+/* 3. Light Mode: Hero page when scrolled (transforms into light floating capsule) */
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled .ds-header-badge {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.08) 35%, rgba(0, 0, 0, 0.04) 65%, rgba(0, 0, 0, 0.24) 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled .ds-header-badge-inner {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: rgba(30, 35, 44, 0.88);
+}
+
