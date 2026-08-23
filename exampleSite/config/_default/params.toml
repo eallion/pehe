@@ -1,5 +1,5 @@
 hero = true
-heroStyle = "pehe" # hero 风格: "pehe" (原版简约头像风格) | "dsh" (DeepSeek Harness 动态流体风格)
+heroStyle = "pehe" # hero 风格："pehe" (原版简约头像风格) | "dsh" (DeepSeek Harness 动态流体风格)
 selection_category = "精选"
 isoCode = "zh-cn"
 rtl = false
@@ -101,6 +101,7 @@ mastodonID = "@eallion@e5n.cc"
   name = "Mastodon"
   url = "https://e5n.cc/@eallion"
   icon = "mastodon"
+  action = "关注" # 可选，显式指定 "关注" 或 "查看"
 [[social]]
   name = "GitHub"
   url = "https://github.com/eallion"
