@@ -45,9 +45,16 @@
 				{{ end }}
 			</li> -->
 
+			{{- $cc := .Site.Params.creativecommons | default "by-sa" -}}
+			{{- $ccUrl := printf "https://creativecommons.org/licenses/%s/4.0/deed.zh-hans" $cc -}}
+			{{- $ccText := printf "CC %s 4.0" (upper $cc) -}}
+			{{- if or (eq $cc "zero") (eq $cc "cc0") -}}
+				{{- $ccUrl = "https://creativecommons.org/publicdomain/zero/1.0/deed.zh-hans" -}}
+				{{- $ccText = "CC0 1.0" -}}
+			{{- end -}}
 			<li class="before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2">
-				<a href="https://creativecommons.org/licenses/{{ .Site.Params.creativecommons | default "by-sa" }}/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">
-					CC BY-SA 4.0
+				<a href="{{ $ccUrl }}" target="_blank" rel="noopener noreferrer">
+					{{ $ccText }}
 				</a>
 			</li>
 		</ul>
