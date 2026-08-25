@@ -1,7 +1,15 @@
-{{- /* Hero Dispatcher: 支持根据配置切换 dsh 风格与原版 pehe 风格 */ -}}
+{{- /* Hero Dispatcher: 支持根据配置切换 pehe, dsh, image, video 等多套风格并提供未来扩展通道 */ -}}
 {{- $heroStyle := site.Params.heroStyle | default site.Params.hero_style | default "dsh" -}}
 {{- if eq $heroStyle "pehe" -}}
   {{- partial "home/hero-pehe.html" . -}}
-{{- else -}}
+{{- else if or (eq $heroStyle "dsh") (eq $heroStyle "image") (eq $heroStyle "video") -}}
   {{- partial "home/hero-dsh.html" . -}}
+{{- else -}}
+  {{- /* 预留未来任意独立新增风格 hero-<style>.html 的动态加载通道 */ -}}
+  {{- $partialPath := printf "home/hero-%s.html" $heroStyle -}}
+  {{- if templates.Exists (printf "partials/%s" $partialPath) -}}
+    {{- partial $partialPath . -}}
+  {{- else -}}
+    {{- partial "home/hero-dsh.html" . -}}
+  {{- end -}}
 {{- end -}}

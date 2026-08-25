@@ -23,23 +23,173 @@
 	{{- $scratch.Add "total" .WordCount -}}
 {{- end -}}
 {{- $totalWords := $scratch.Get "total" -}}
+{{- $heroStyle := site.Params.heroStyle | default site.Params.hero_style | default "dsh" -}}
+{{- $imageUrl := site.Params.imageUrl | default site.Params.imageURL | default site.Params.heroImage | default site.Params.heroImageUrl | default site.Params.hero_image_url | default site.Params.hero_image -}}
+{{- $videoUrl := site.Params.videoURL | default site.Params.videoUrl | default site.Params.heroVideo | default site.Params.heroVideoUrl | default site.Params.hero_video_url | default site.Params.hero_video -}}
+{{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "mp4") -}}
+{{- $dogeVcode := site.Params.heroStyleDogecloudVcode | default site.Params.heroStyleDogecloudVCode | default site.Params.hero_style_dogecloud_vcode | default site.Params.dogecloudVcode | default "" -}}
+{{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
+{{- $dogePlayToken := site.Params.heroStyleDogecloudPlayToken | default site.Params.heroStyleDogecloudPlaytoken | default site.Params.hero_style_dogecloud_play_token | default site.Params.dogecloudPlayToken | default "" -}}
+{{- $dogeVtype := site.Params.heroStyleDogecloudVtype | default site.Params.heroStyleDogecloudVType | default site.Params.hero_style_dogecloud_vtype | default site.Params.dogecloudVtype | default "" -}}
 <section class="ds-hero-root relative flex items-center -mt-20 md:-mt-24">
-  <!-- WebGL2 Fluid Simulation Canvas Background -->
-  <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none ds-hero-mask">
-    <canvas id="ds-fluid-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
-  </div>
-
-  <!-- 3D Digitile Snail Matrix Canvas Layer -->
-  <div class="absolute inset-0 z-2 hidden md:flex items-center justify-center pointer-events-none overflow-hidden" style="mix-blend-mode:screen">
-    <div class="w-200 h-200 -ml-50 -mt-50 shrink-0">
-      <canvas id="ds-snail-canvas" class="w-full h-full block" width="800" height="800"></canvas>
+  {{- if eq $heroStyle "image" -}}
+    <!-- Static Image Background (0% GPU/WebGL Canvas Overhead) -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+      {{ with $imageUrl }}
+        <img src="{{ . }}" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover object-center" fetchpriority="high" decoding="async" />
+      {{ else }}
+        <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
+      {{ end }}
+      <!-- Contrast & Readability Overlay -->
+      <div class="absolute inset-0 bg-black/40 backdrop-brightness-[0.85]"></div>
+      <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%]"></div>
     </div>
-  </div>
+  {{- else if eq $heroStyle "video" -}}
+    <!-- Dynamic Video Background (0% GPU WebGL Canvas Overhead, 100% Strictly Muted) -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+      {{- if eq $heroStyleFmt "dogecloud" -}}
+        <div id="ds-doge-player" class="absolute inset-0 w-full h-full ds-doge-container"></div>
+        {{ with $dogeVcode }}
+          <script type="text/javascript" src="https://player.dogecloud.com/js/loader"></script>
+          <script>
+            (function() {
+              function initDogePlayer() {
+                var container = document.getElementById('ds-doge-player');
+                if (!container || typeof DogePlayer === 'undefined') return;
+                try {
+                  var player = new DogePlayer({
+                    container: container,
+                    userId: {{ $dogeUserId }},
+                    vcode: '{{ . }}',
+                    {{ if $dogePlayToken }}playToken: '{{ $dogePlayToken }}',{{ end }}
+                    {{ if $dogeVtype }}vtype: {{ $dogeVtype }},{{ end }}
+                    autoPlay: true,
+                    muted: true,
+                    volume: 0,
+                    loop: true,
+                    hasCover: false,
+                    switcher: {
+                      controller: false,
+                      controllerAutoHide: false,
+                      bar: false,
+                      playBtn: false,
+                      volumeBtn: false,
+                      clickPause: false,
+                      full: false,
+                      webfull: false,
+                      time: false,
+                      speed: false,
+                      quality: false,
+                      keyboardSeek: false,
+                      keyboardVolume: false,
+                      notice: false
+                    },
+                    events: {
+                      ready: function() {
+                        try {
+                          if (player.muted) player.muted(true);
+                          if (player.volume) player.volume(0);
+                          if (player.play) player.play();
+                        } catch(e) {}
+                        var v = container.querySelector('video');
+                        if (v) {
+                          v.muted = true;
+                          v.volume = 0;
+                          v.loop = true;
+                          v.setAttribute('muted', '');
+                          v.setAttribute('playsinline', '');
+                          v.setAttribute('loop', '');
+                          v.style.objectFit = 'cover';
+                          v.style.width = '100%';
+                          v.style.height = '100%';
+                        }
+                      },
+                      ended: function() {
+                        try {
+                          if (player.seek) player.seek(0);
+                          if (player.play) player.play();
+                        } catch(e) {}
+                      }
+                    }
+                  });
 
-  <!-- 2D Interactive Physics Spring Grid Canvas -->
-  <div class="absolute inset-0 z-5 hidden md:block pointer-events-none ds-hero-mask">
-    <canvas id="ds-grid-canvas" class="absolute top-0 left-0 w-full h-full bg-transparent"></canvas>
-  </div>
+                  // 标签页切回、窗口重新获得焦点及 bfcache 恢复时自动唤醒继续播放
+                  var resumeDoge = function() {
+                    if (document.hidden) return;
+                    try {
+                      if (player && typeof player.play === 'function') player.play();
+                    } catch(e) {}
+                    var v = container.querySelector('video');
+                    if (v && v.paused) {
+                      v.play().catch(function() {});
+                    }
+                  };
+                  document.addEventListener('visibilitychange', function() {
+                    if (!document.hidden) resumeDoge();
+                  });
+                  window.addEventListener('focus', resumeDoge);
+                  window.addEventListener('pageshow', resumeDoge);
+                } catch(e) {
+                  console.error('DogePlayer Error:', e);
+                }
+              }
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDogePlayer);
+              } else {
+                initDogePlayer();
+              }
+            })();
+          </script>
+        {{ else }}
+          <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
+        {{ end }}
+      {{- else -}}
+        {{ with $videoUrl }}
+          <video id="ds-hero-video" class="absolute inset-0 w-full h-full object-cover object-center" autoplay loop muted playsinline preload="auto">
+            <source src="{{ . }}" type="video/mp4">
+          </video>
+          <script>
+            (function() {
+              var resumeNative = function() {
+                if (document.hidden) return;
+                var v = document.getElementById('ds-hero-video');
+                if (v && v.paused) {
+                  v.play().catch(function() {});
+                }
+              };
+              document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) resumeNative();
+              });
+              window.addEventListener('focus', resumeNative);
+              window.addEventListener('pageshow', resumeNative);
+            })();
+          </script>
+        {{ else }}
+          <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
+        {{ end }}
+      {{- end -}}
+      <!-- Contrast & Readability Overlay -->
+      <div class="absolute inset-0 bg-black/45 backdrop-brightness-[0.8]"></div>
+      <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.65)_100%]"></div>
+    </div>
+  {{- else -}}
+    <!-- WebGL2 Fluid Simulation Canvas Background -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none ds-hero-mask">
+      <canvas id="ds-fluid-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+    </div>
+
+    <!-- 3D Digitile Snail Matrix Canvas Layer -->
+    <div class="absolute inset-0 z-2 hidden md:flex items-center justify-center pointer-events-none overflow-hidden" style="mix-blend-mode:screen">
+      <div class="w-200 h-200 -ml-50 -mt-50 shrink-0">
+        <canvas id="ds-snail-canvas" class="w-full h-full block" width="800" height="800"></canvas>
+      </div>
+    </div>
+
+    <!-- 2D Interactive Physics Spring Grid Canvas -->
+    <div class="absolute inset-0 z-5 hidden md:block pointer-events-none ds-hero-mask">
+      <canvas id="ds-grid-canvas" class="absolute top-0 left-0 w-full h-full bg-transparent"></canvas>
+    </div>
+  {{- end -}}
 
   <!-- Content Grid Container (left + right columns as one block) -->
   <div class="ds-hero-content ds-container grid grid-cols-1 gap-ds-9 items-center pt-28 md:pt-36 md:grid-cols-[60fr_40fr] pb-ds-11 w-full mx-auto">
@@ -159,7 +309,7 @@
               </div>
             </div>
           </div>
-          <div id="ds-code-start" class="ds-whisper col-start-1 row-start-1 text-[13px] text-ds-primary leading-relaxed invisible"></div>
+          <div id="ds-code-start" class="ds-whisper col-start-1 row-start-1 text-[13px] text-ds-primary leading-relaxed hidden"></div>
         </div>
       </div>
     </div>
@@ -465,6 +615,35 @@ html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a[aria-cur
   color: #1e232c !important;
   background-color: rgba(0, 0, 0, 0.08) !important;
   border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* DogeCloud Video Background Container */
+.ds-doge-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ds-doge-container .dplayer,
+.ds-doge-container .dplayer-video-wrap,
+.ds-doge-container video,
+.ds-doge-container iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border: none !important;
+  pointer-events: none !important;
+}
+.ds-doge-container .dplayer-controller-mask,
+.ds-doge-container .dplayer-controller,
+.ds-doge-container .dplayer-notice-list,
+.ds-doge-container .dplayer-danmaku {
+  display: none !important;
 }
 
 /* Large screens: dsh keeps a wider bar (1180) when viewport >= 1560px */
@@ -963,11 +1142,10 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
   position: relative;
   overflow: hidden;
 }
-/* Loading / error placeholders must match the card's 2-line content height
-   (2 × 1.625em line-height) plus the article's py-1 (8px), so swapping to the
-   loaded card doesn't change the height and cause a flash. */
+/* Loading / error placeholders match the card's 5-line content height
+   (5 × 1.625em line-height) plus the article's py-1 (8px). */
 .ds-w-loading {
-  min-height: calc(2 * 1.625em + 8px);
+  min-height: calc(5 * 1.625em + 8px);
 }
 /* The visible card lives in normal flow. */
 .ds-w-card {
@@ -1002,15 +1180,15 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
   transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Post body: strictly fixed to 2 lines height by default, matching Tab 1 stats height */
+/* Post body: strictly fixed to 5 lines height by default (insufficient text won't shrink) */
 .ds-w-content {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
-  line-clamp: 2;
+  line-clamp: 5;
   overflow: hidden;
-  height: calc(2 * 1.625em);
-  min-height: calc(2 * 1.625em);
+  height: calc(5 * 1.625em);
+  min-height: calc(5 * 1.625em);
   line-height: 1.625;
   text-overflow: ellipsis;
   transition: height 0.25s ease;
@@ -1023,7 +1201,7 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
   line-clamp: unset;
   overflow: visible;
   height: auto;
-  min-height: calc(2 * 1.625em);
+  min-height: calc(5 * 1.625em);
 }
 
 /* Floating 显示更多 button: overlaid at the bottom-center of the 2nd line when collapsed, in flow when expanded */
@@ -2556,24 +2734,26 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
   }
 
   // Initialize on DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initHeaderIntegration();
-      initFluidShader();
-      initSnailDigitile();
-      initGridCanvas();
-      initHeroInteractions();
-      initSocialAccordion();
-      initMottoTypewriter();
-    });
-  } else {
+  const startAll = () => {
     initHeaderIntegration();
-    initFluidShader();
-    initSnailDigitile();
-    initGridCanvas();
+    if (document.getElementById('ds-fluid-canvas')) {
+      initFluidShader();
+    }
+    if (document.getElementById('ds-snail-canvas')) {
+      initSnailDigitile();
+    }
+    if (document.getElementById('ds-grid-canvas')) {
+      initGridCanvas();
+    }
     initHeroInteractions();
     initSocialAccordion();
     initMottoTypewriter();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startAll);
+  } else {
+    startAll();
   }
 })();
 </script>

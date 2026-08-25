@@ -1,5 +1,12 @@
 hero = true
-heroStyle = "pehe" # hero 风格："pehe" (原版简约头像风格) | "dsh" (DeepSeek Harness 动态流体风格)
+heroStyle = "pehe" # hero 风格："pehe" (原版简约头像风格) | "dsh" (DeepSeek Harness 动态流体风格) | "image" (静态图片背景) | "video" (动态视频背景)
+# imageUrl = "/images/hero-bg.webp" # heroStyle = "image" 时的背景图片地址
+# heroStyleFmt = "mp4" # heroStyle = "video" 时的视频格式："mp4" | "dogecloud"
+# videoURL = "/videos/hero-bg.mp4" # 当 heroStyleFmt = "mp4" 时的视频文件地址
+# heroStyleDogecloudUserId = 1 # 多吉云用户 ID (可根据个人信息控制台填入，默认 1)
+# heroStyleDogecloudVcode = "" # 当 heroStyleFmt = "dogecloud" 时的多吉云视频 vcode (视频 ID)
+# heroStyleDogecloudPlayToken = "" # 开启防盗链时的播放 Token（可选）
+# heroStyleDogecloudVtype = 5 # 指定多吉云默认清晰度 ID（可选）
 selection_category = "精选"
 isoCode = "zh-cn"
 rtl = false
@@ -11,8 +18,8 @@ preconnect = ["https://e.content-delivery-network.cn", "https://images.eallion.c
 creativecommons = "by-sa"
 copyright_name = "eallion.com"
 icp = "浙ICP备16031768号-2"
-description = 'Gemini, Millennials, Normie, Kōjigen, N24SWD, AIWS, Upekkha. Geeker, Gamer, Blogger.'
-keywords = ["Gemini", "Millennials", "Normie", "Kōjigen", "N24SWD", "AIWS", "Upekkha", "Geeker", "Gamer", "Blogger"]
+description = 'Gemini, Millennials, Tiger, Normie, Kōjigen, N24SWD, AIWS, Upekkha. Geeker, Gamer, Blogger.'
+keywords = ["Gemini", "Millennials", "Tiger", "Normie", "Kōjigen", "N24SWD", "AIWS", "Upekkha", "Geeker", "Gamer", "Blogger"]
 mainSections = 'blog'
 archiveSize = 0 # <- Set the desired number of posts per archive page
 
@@ -33,7 +40,7 @@ not_by_ai = true
 # 是否全站显示作者信息
 showAuthor = false
 
-nonbot = "https://nonbot.org/submissions/view/9cefed7c-dc57-4832-84ec-197314fda979"
+nonbot = "https://nonbot.org/pledged/view/9cefed7c-dc57-4832-84ec-197314fda979"
 
 # Powered_by to set: | hugo | theme | full |
 powered_by = "full"
@@ -44,19 +51,19 @@ svg_title = "eallion"
 # Global Follow to set: | mastodon | newsletter |
 follow = "mastodon"
 
+# Mastodon handle (default fallback for follow section)
+mastodonID = "@eallion@e5n.cc"
+
 # 是否显示 Follow/Newsletter 区域
 showFollow = false
 
 # Default Feature Image
-defaultFeature = "https://unsplash.com/photos/a-car-speeds-along-a-road-through-a-field-NIHB3qVxU0E"
+defaultFeature = "https://e.content-delivery-network.cn/ghost/content/images/custom/ce35a8bb-fbda-468c-9aa8-d3599e538566.jpg"
 
 # OG Image URL (for social sharing cards, optional)
 # If set, uses this API URL to generate OG images
 # If not set, falls back to page image or defaultFeature
 ogImageURL = "https://og.eallion.com/api/og?title="
-
-# Mastodon handle (default fallback for follow section)
-mastodonID = "@eallion@e5n.cc"
 
 # Comment system (giscus | waline | utterances | twikoo | disqus)
 [comment]
@@ -87,11 +94,11 @@ mastodonID = "@eallion@e5n.cc"
     darkTheme = "github-dark"
 
   [comment.twikoo]
-    envID = ""
+    envID = "twikoo.eallion.com"
     region = ""
     lang = "zh-CN"
-    version = "1.6.39"
-    cdn = ""
+    version = "1.7.11"
+    cdn = "https://registry.npmmirror.com/twikoo/1.7.11/files/dist/twikoo.min.js"
 
   [comment.disqus]
     shortname = ""
@@ -100,7 +107,7 @@ mastodonID = "@eallion@e5n.cc"
 [[social]]
   name = "Mastodon"
   url = "https://e5n.cc/@eallion"
-  icon = "mastodon"
+  icon = "mastodon-color"
   action = "关注" # 可选，显式指定 "关注" 或 "查看"
 [[social]]
   name = "GitHub"
@@ -109,7 +116,11 @@ mastodonID = "@eallion@e5n.cc"
 [[social]]
   name = "Twitter"
   url = "https://twitter.com/eallion"
-  icon = "twitter"
+  icon = "twitter-color"
+[[social]]
+  name = "Reddit"
+  url = "https://www.reddit.com/user/eallion"
+  icon = "reddit-color"
 [[social]]
   name = "Steam"
   url = "https://steamcommunity.com/id/eallion"
@@ -141,16 +152,16 @@ enableStyleName = true
 [StyleName]
   # CDN 里的处理处理样式，如：https://cloud.tencent.com/document/product/436/42214
   delimiter = "!"
-  format = "avif"
-  style = "hugo.avif"
-  featured = "hugo_featured.avif"
-  card = "hugo_card.avif"
-  list = "hugo_list.avif"
-  alt_format = "webp"
-  alt_style = "hugo.webp"
-  alt_featured = "hugo_featured.webp"
-  alt_card = "hugo_card.webp"
-  alt_list = "hugo_list.webp"
+  format = "webp"
+  style = "hugo.webp"
+  featured = "hugo_featured.webp"
+  card = "hugo_card.webp"
+  list = "hugo_list.webp"
+  alt_format = "avif"
+  alt_style = "hugo.avif"
+  alt_featured = "hugo_featured.avif"
+  alt_card = "hugo_card.avif"
+  alt_list = "hugo_list.avif"
 
 [verification]
   google = "9Mvl_9FEM5JphVmp-u9ljtlChFohWuBBFjlSS89QKVU"
