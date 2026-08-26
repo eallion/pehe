@@ -1,2 +1,132 @@
-{{- /* Hero Video: 统一复用 dsh 核心模板排版与样式，零代码冗余 */ -}}
-{{- partial "home/hero-dsh.html" . -}}
+<!-- Dynamic Video Background (0% GPU WebGL Canvas Overhead, 100% Strictly Muted) -->
+{{- $videoUrl := site.Params.videoURL | default site.Params.videoUrl | default site.Params.heroVideo | default site.Params.heroVideoUrl | default site.Params.hero_video_url | default site.Params.hero_video -}}
+{{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "mp4") -}}
+{{- $dogeVcode := site.Params.heroStyleDogecloudVcode | default site.Params.heroStyleDogecloudVCode | default site.Params.hero_style_dogecloud_vcode | default site.Params.dogecloudVcode | default "" -}}
+{{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
+{{- $dogePlayToken := site.Params.heroStyleDogecloudPlayToken | default site.Params.heroStyleDogecloudPlaytoken | default site.Params.hero_style_dogecloud_play_token | default site.Params.dogecloudPlayToken | default "" -}}
+{{- $dogeVtype := site.Params.heroStyleDogecloudVtype | default site.Params.heroStyleDogecloudVType | default site.Params.hero_style_dogecloud_vtype | default site.Params.dogecloudVtype | default "" -}}
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+  {{- if eq $heroStyleFmt "dogecloud" -}}
+    <div id="ds-doge-player" class="absolute inset-0 w-full h-full ds-doge-container"></div>
+    {{ with $dogeVcode }}
+      <script type="text/javascript" src="https://player.dogecloud.com/js/loader"></script>
+      <script>
+        (function() {
+          function initDogePlayer() {
+            var container = document.getElementById('ds-doge-player');
+            if (!container || typeof DogePlayer === 'undefined') return;
+            try {
+              var player = new DogePlayer({
+                container: container,
+                userId: {{ $dogeUserId }},
+                vcode: '{{ . }}',
+                {{ if $dogePlayToken }}playToken: '{{ $dogePlayToken }}',{{ end }}
+                {{ if $dogeVtype }}vtype: {{ $dogeVtype }},{{ end }}
+                autoPlay: true,
+                muted: true,
+                volume: 0,
+                loop: true,
+                hasCover: false,
+                switcher: {
+                  controller: false,
+                  controllerAutoHide: false,
+                  bar: false,
+                  playBtn: false,
+                  volumeBtn: false,
+                  clickPause: false,
+                  full: false,
+                  webfull: false,
+                  time: false,
+                  speed: false,
+                  quality: false,
+                  keyboardSeek: false,
+                  keyboardVolume: false,
+                  notice: false
+                },
+                events: {
+                  ready: function() {
+                    try {
+                      if (player.muted) player.muted(true);
+                      if (player.volume) player.volume(0);
+                      if (player.play) player.play();
+                    } catch(e) {}
+                    var v = container.querySelector('video');
+                    if (v) {
+                      v.muted = true;
+                      v.volume = 0;
+                      v.loop = true;
+                      v.setAttribute('muted', '');
+                      v.setAttribute('playsinline', '');
+                      v.setAttribute('loop', '');
+                      v.style.objectFit = 'cover';
+                      v.style.width = '100%';
+                      v.style.height = '100%';
+                    }
+                  },
+                  ended: function() {
+                    try {
+                      if (player.seek) player.seek(0);
+                      if (player.play) player.play();
+                    } catch(e) {}
+                  }
+                }
+              });
+
+              var resumeDoge = function() {
+                if (document.hidden) return;
+                try {
+                  if (player && typeof player.play === 'function') player.play();
+                } catch(e) {}
+                var v = container.querySelector('video');
+                if (v && v.paused) {
+                  v.play().catch(function() {});
+                }
+              };
+              document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) resumeDoge();
+              });
+              window.addEventListener('focus', resumeDoge);
+              window.addEventListener('pageshow', resumeDoge);
+            } catch(e) {
+              console.error('DogePlayer Error:', e);
+            }
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDogePlayer);
+          } else {
+            initDogePlayer();
+          }
+        })();
+      </script>
+    {{ else }}
+      <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
+    {{ end }}
+  {{- else -}}
+    {{ with $videoUrl }}
+      <video id="ds-hero-video" class="absolute inset-0 w-full h-full object-cover object-center" autoplay loop muted playsinline preload="auto">
+        <source src="{{ . }}" type="video/mp4">
+      </video>
+      <script>
+        (function() {
+          var resumeNative = function() {
+            if (document.hidden) return;
+            var v = document.getElementById('ds-hero-video');
+            if (v && v.paused) {
+              v.play().catch(function() {});
+            }
+          };
+          document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) resumeNative();
+          });
+          window.addEventListener('focus', resumeNative);
+          window.addEventListener('pageshow', resumeNative);
+        })();
+      </script>
+    {{ else }}
+      <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
+    {{ end }}
+  {{- end -}}
+  <!-- Contrast & Readability Overlay -->
+  <div class="absolute inset-0 bg-black/45 backdrop-brightness-[0.8]"></div>
+  <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.65)_100%]"></div>
+</div>

@@ -3,7 +3,7 @@
 	<head>
 		{{ partial "head.html" . }}
 	</head>
-	<body class="bg-white dark:bg-bg-dimmed-primary text-gray-800 dark:text-text-dimmed-primary leading-relaxed">
+	<body class="bg-white dark:bg-bg-dimmed-primary text-gray-800 dark:text-text-dimmed-primary leading-relaxed{{ if and .IsHome (site.Params.hero | default false) }} ds-has-hero{{ end }}">
 		<header id="page-header" class="ds-header-wrapper">
 			{{- partial "header.html" . -}}
 		</header>

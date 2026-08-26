@@ -1,1335 +1,21 @@
-<!-- DeepSeek Harness Hero 1:1 Replica -->
-{{- /* 站点统计（与 content/stats-partial.html 逻辑一致） */ -}}
-{{- $articleCount := 0 -}}
-{{- range .Site.RegularPages -}}
-	{{- if eq .Type "blog" -}}
-		{{- $articleCount = add $articleCount 1 -}}
-	{{- end -}}
-{{- end -}}
-{{- $categories := slice -}}
-{{- $tags := slice -}}
-{{- range .Site.RegularPages -}}
-	{{- if .Params.categories -}}
-		{{- $categories = union $categories .Params.categories -}}
-	{{- end -}}
-	{{- if .Params.tags -}}
-		{{- $tags = union $tags .Params.tags -}}
-	{{- end -}}
-{{- end -}}
-{{- $categoryCount := len $categories -}}
-{{- $tagCount := len $tags -}}
-{{- $scratch := newScratch -}}
-{{- range (where .Site.Pages "Kind" "page") -}}
-	{{- $scratch.Add "total" .WordCount -}}
-{{- end -}}
-{{- $totalWords := $scratch.Get "total" -}}
-{{- $heroStyle := site.Params.heroStyle | default site.Params.hero_style | default "dsh" -}}
-{{- $imageUrl := site.Params.imageUrl | default site.Params.imageURL | default site.Params.heroImage | default site.Params.heroImageUrl | default site.Params.hero_image_url | default site.Params.hero_image -}}
-{{- $videoUrl := site.Params.videoURL | default site.Params.videoUrl | default site.Params.heroVideo | default site.Params.heroVideoUrl | default site.Params.hero_video_url | default site.Params.hero_video -}}
-{{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "mp4") -}}
-{{- $dogeVcode := site.Params.heroStyleDogecloudVcode | default site.Params.heroStyleDogecloudVCode | default site.Params.hero_style_dogecloud_vcode | default site.Params.dogecloudVcode | default "" -}}
-{{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
-{{- $dogePlayToken := site.Params.heroStyleDogecloudPlayToken | default site.Params.heroStyleDogecloudPlaytoken | default site.Params.hero_style_dogecloud_play_token | default site.Params.dogecloudPlayToken | default "" -}}
-{{- $dogeVtype := site.Params.heroStyleDogecloudVtype | default site.Params.heroStyleDogecloudVType | default site.Params.hero_style_dogecloud_vtype | default site.Params.dogecloudVtype | default "" -}}
-<section class="ds-hero-root relative flex items-center -mt-20 md:-mt-24">
-  {{- if eq $heroStyle "image" -}}
-    <!-- Static Image Background (0% GPU/WebGL Canvas Overhead) -->
-    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-      {{ with $imageUrl }}
-        <img src="{{ . }}" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover object-center" fetchpriority="high" decoding="async" />
-      {{ else }}
-        <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
-      {{ end }}
-      <!-- Contrast & Readability Overlay -->
-      <div class="absolute inset-0 bg-black/40 backdrop-brightness-[0.85]"></div>
-      <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%]"></div>
-    </div>
-  {{- else if eq $heroStyle "video" -}}
-    <!-- Dynamic Video Background (0% GPU WebGL Canvas Overhead, 100% Strictly Muted) -->
-    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-      {{- if eq $heroStyleFmt "dogecloud" -}}
-        <div id="ds-doge-player" class="absolute inset-0 w-full h-full ds-doge-container"></div>
-        {{ with $dogeVcode }}
-          <script type="text/javascript" src="https://player.dogecloud.com/js/loader"></script>
-          <script>
-            (function() {
-              function initDogePlayer() {
-                var container = document.getElementById('ds-doge-player');
-                if (!container || typeof DogePlayer === 'undefined') return;
-                try {
-                  var player = new DogePlayer({
-                    container: container,
-                    userId: {{ $dogeUserId }},
-                    vcode: '{{ . }}',
-                    {{ if $dogePlayToken }}playToken: '{{ $dogePlayToken }}',{{ end }}
-                    {{ if $dogeVtype }}vtype: {{ $dogeVtype }},{{ end }}
-                    autoPlay: true,
-                    muted: true,
-                    volume: 0,
-                    loop: true,
-                    hasCover: false,
-                    switcher: {
-                      controller: false,
-                      controllerAutoHide: false,
-                      bar: false,
-                      playBtn: false,
-                      volumeBtn: false,
-                      clickPause: false,
-                      full: false,
-                      webfull: false,
-                      time: false,
-                      speed: false,
-                      quality: false,
-                      keyboardSeek: false,
-                      keyboardVolume: false,
-                      notice: false
-                    },
-                    events: {
-                      ready: function() {
-                        try {
-                          if (player.muted) player.muted(true);
-                          if (player.volume) player.volume(0);
-                          if (player.play) player.play();
-                        } catch(e) {}
-                        var v = container.querySelector('video');
-                        if (v) {
-                          v.muted = true;
-                          v.volume = 0;
-                          v.loop = true;
-                          v.setAttribute('muted', '');
-                          v.setAttribute('playsinline', '');
-                          v.setAttribute('loop', '');
-                          v.style.objectFit = 'cover';
-                          v.style.width = '100%';
-                          v.style.height = '100%';
-                        }
-                      },
-                      ended: function() {
-                        try {
-                          if (player.seek) player.seek(0);
-                          if (player.play) player.play();
-                        } catch(e) {}
-                      }
-                    }
-                  });
+<!-- WebGL2 Fluid Simulation Canvas Background -->
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none ds-hero-mask">
+  <canvas id="ds-fluid-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+</div>
 
-                  // 标签页切回、窗口重新获得焦点及 bfcache 恢复时自动唤醒继续播放
-                  var resumeDoge = function() {
-                    if (document.hidden) return;
-                    try {
-                      if (player && typeof player.play === 'function') player.play();
-                    } catch(e) {}
-                    var v = container.querySelector('video');
-                    if (v && v.paused) {
-                      v.play().catch(function() {});
-                    }
-                  };
-                  document.addEventListener('visibilitychange', function() {
-                    if (!document.hidden) resumeDoge();
-                  });
-                  window.addEventListener('focus', resumeDoge);
-                  window.addEventListener('pageshow', resumeDoge);
-                } catch(e) {
-                  console.error('DogePlayer Error:', e);
-                }
-              }
-              if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initDogePlayer);
-              } else {
-                initDogePlayer();
-              }
-            })();
-          </script>
-        {{ else }}
-          <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
-        {{ end }}
-      {{- else -}}
-        {{ with $videoUrl }}
-          <video id="ds-hero-video" class="absolute inset-0 w-full h-full object-cover object-center" autoplay loop muted playsinline preload="auto">
-            <source src="{{ . }}" type="video/mp4">
-          </video>
-          <script>
-            (function() {
-              var resumeNative = function() {
-                if (document.hidden) return;
-                var v = document.getElementById('ds-hero-video');
-                if (v && v.paused) {
-                  v.play().catch(function() {});
-                }
-              };
-              document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) resumeNative();
-              });
-              window.addEventListener('focus', resumeNative);
-              window.addEventListener('pageshow', resumeNative);
-            })();
-          </script>
-        {{ else }}
-          <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
-        {{ end }}
-      {{- end -}}
-      <!-- Contrast & Readability Overlay -->
-      <div class="absolute inset-0 bg-black/45 backdrop-brightness-[0.8]"></div>
-      <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.65)_100%]"></div>
-    </div>
-  {{- else -}}
-    <!-- WebGL2 Fluid Simulation Canvas Background -->
-    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none ds-hero-mask">
-      <canvas id="ds-fluid-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
-    </div>
-
-    <!-- 3D Digitile Snail Matrix Canvas Layer -->
-    <div class="absolute inset-0 z-2 hidden md:flex items-center justify-center pointer-events-none overflow-hidden" style="mix-blend-mode:screen">
-      <div class="w-200 h-200 -ml-50 -mt-50 shrink-0">
-        <canvas id="ds-snail-canvas" class="w-full h-full block" width="800" height="800"></canvas>
-      </div>
-    </div>
-
-    <!-- 2D Interactive Physics Spring Grid Canvas -->
-    <div class="absolute inset-0 z-5 hidden md:block pointer-events-none ds-hero-mask">
-      <canvas id="ds-grid-canvas" class="absolute top-0 left-0 w-full h-full bg-transparent"></canvas>
-    </div>
-  {{- end -}}
-
-  <!-- Content Grid Container (left + right columns as one block) -->
-  <div class="ds-hero-content ds-container grid grid-cols-1 gap-ds-9 items-center pt-28 md:pt-36 md:grid-cols-[60fr_40fr] pb-ds-11 w-full mx-auto">
-    
-    <!-- Left Column: Title & CTA -->
-    <div class="flex flex-col gap-ds-7 order-1">
-      <div class="ds-hero-enter flex flex-col gap-ds-4 items-start" style="--enter-y:24px;--enter-blur:10px;animation-duration:0.9s">
-        <p data-hero-preview-label="true" class="whitespace-nowrap font-ds-sans text-base font-medium leading-none tracking-[-0.01em] text-white sm:text-[17px] md:text-lg pl-0.75">
-          大大的小蜗牛 的 博客
-        </p>
-        <h1 class="ds-text-hero text-ds-primary" style="letter-spacing:0.2px">
-          <span class="text-7xl"><svg height="1em" fill="currentColor" viewBox="0 0 196 36"><path fill="none" d="M0 0h196v36H0z"></path><path d="M195.036 10.656q-.504.108-1.367.396-.828.288-1.513.612-.455.192-.606.32l.03.076q.612 1.692.612 3.744.0 2.124-.576 3.78-.54 1.62-1.836 2.52-1.26.9-3.456.9-1.194.0-2.137-.296-.155.23-.346.548-.324.504-.324 1.008.0.396.395.648.432.252 1.332.324l3.492.325q2.448.215 3.636 1.475t1.189 3.6q0 1.728-.829 2.916-.792 1.188-2.412 1.764-1.62.612-4.139.612-1.908.0-3.456-.432-1.513-.396-2.413-1.26-.864-.864-.864-2.268.0-1.08.504-1.907a5 5 0 011.296-1.369q.578-.42 1.194-.707-.902-.236-1.41-.77-.684-.72-.683-1.583.0-1.296.719-2.196a18 18 0 011.529-1.573q-1.129-.904-1.708-2.386-.613-1.657-.613-3.78.0-2.413.685-4.033.684-1.656 2.016-2.484 1.367-.864 3.347-.864 2.053.0 3.349 1.044.597.466 1.049 1.08.345-.443 1.146-1.044a10.8 10.8.0 012.16-1.26zm-10.584 17.63a16 16 0 00-.647.658 5 5 0 00-.72.9 2.14 2.14.0 00-.288 1.08q0 .936.792 1.404.828.468 2.916.468 2.051.0 3.023-.504 1.008-.468 1.008-1.512.0-.648-.252-1.08-.252-.396-.863-.648-.613-.252-1.765-.36zM77.378.0q2.953.0 4.68 1.116 1.728 1.116 2.484 3.168.792 2.052.792 4.932v11.088q0 2.844-.792 4.969-.756 2.124-2.483 3.311-1.728 1.152-4.681 1.152-2.952.0-4.716-1.152-1.763-1.152-2.52-3.275-.755-2.16-.756-5.04V9.216q0-2.88.757-4.932.791-2.088 2.52-3.168Q74.425.0 77.377.0m44.063 8.316q2.592.0 3.96 1.62 1.368 1.584 1.584 3.852l-2.735.972a9 9 0 00-.433-1.872q-.288-.828-.827-1.26-.54-.468-1.404-.468-.936.0-1.512.649-.54.612-.54 1.475.0.54.216 1.08.252.504.828 1.008l3.672 3.384q.756.684 1.404 1.476a6.9 6.9.0 011.116 1.8q.432 1.008.432 2.34.0 1.764-.721 2.952a4.6 4.6.0 01-2.015 1.8q-1.296.576-3.025.576-2.555.0-4.103-1.584-1.548-1.62-1.764-4.248l3.203-.971q.288 1.98.973 2.987.684.972 2.016.972 1.044.0 1.584-.576.54-.612.54-1.62.0-.9-.396-1.62t-1.296-1.476l-3.564-3.06a10 10 0 01-1.836-2.088q-.72-1.152-.72-2.988.0-1.656.648-2.772a4.34 4.34.0 011.872-1.728q1.224-.612 2.843-.612m49.698.0q2.303.0 3.599.936 1.332.936 1.872 2.664.576 1.728.577 4.068v6.048q0 2.34-.577 4.069-.54 1.727-1.872 2.663-1.296.936-3.599.936t-3.636-.936q-1.332-.936-1.908-2.663-.54-1.729-.54-4.069v-6.048q0-2.34.54-4.068.576-1.728 1.908-2.664t3.636-.936M11.305 3.276H4.068v9.648h5.869v2.88H4.068v10.692h7.308v2.916H0V.252h11.305zM29.42 29.412h-3.853l-1.332-7.344h-5.94l-1.403 7.344h-3.817L19.27.252h3.923zm7.026-2.916H43.9v2.916H32.38V.252h4.068zm14.309.0h7.452v2.916h-11.52V.252h4.068zm14.453 2.916h-3.996V.252h3.996zM101.133.062q1.449.0 2.449.75 1 .7 1.5 2.1.5 1.35.5 3.3v23.2h-3.649v-22.4q0-2.25-.701-3.15-.65-.95-2.05-.95-1.25.0-2.55.75t-2.45 1.95v23.8h-3.65V.512h3.65v3a12.4 12.4.0 013.15-2.45 7.53 7.53.0 013.801-1m44.196.19q1.98.0 3.42.433 1.476.431 2.448 1.33.972.901 1.441 2.305.468 1.369.467 3.24.0 1.8-.467 3.132-.433 1.296-1.368 2.052-.9.756-2.34.972 1.764.396 2.843 1.368 1.08.936 1.584 2.448.54 1.476.54 3.564.0 1.872-.432 3.42-.431 1.548-1.367 2.629-.9 1.08-2.341 1.69-1.404.577-3.348.577h-7.776V.252zm16.071 29.16h-3.852V.252h3.852zm9.739-18.252q-1.116.0-1.584.684-.468.648-.576 1.692-.073 1.044-.073 2.233v6.515q0 1.152.073 2.232.108 1.044.576 1.692t1.584.648 1.548-.648q.468-.648.54-1.692.108-1.08.108-2.232V15.77q0-1.188-.108-2.233-.072-1.044-.54-1.692-.434-.684-1.548-.684M77.378 3.168q-1.62.0-2.484.648-.828.612-1.116 1.8-.288 1.152-.288 2.772v12.78q0 1.62.288 2.844.288 1.188 1.116 1.872.864.648 2.484.648t2.448-.648q.828-.684 1.116-1.872.288-1.224.289-2.844V8.388q0-1.62-.289-2.772-.288-1.188-1.116-1.8-.828-.648-2.448-.648M142.7 26.496h2.737q2.735.0 3.635-1.26.936-1.296.936-4.14.0-1.836-.504-3.06-.468-1.26-1.548-1.872-1.044-.648-2.844-.648H142.7zm43.659-15.444q-.792.0-1.296.324-.467.288-.755.9-.252.576-.361 1.44a24 24 0 00-.071 1.98q0 .972.071 1.8.109.829.361 1.44.252.612.719.972.504.324 1.296.324.793.0 1.261-.288.468-.324.684-.9.252-.576.324-1.404.107-.864.107-1.944t-.071-1.944q-.072-.864-.324-1.44-.252-.611-.72-.936-.469-.324-1.225-.324m-167.523 8.1h4.86l-2.448-13.14zM142.7 12.42h2.412q1.728.0 2.7-.468.972-.504 1.369-1.584.395-1.08.395-2.807.0-2.016-.612-2.916t-1.907-1.117q-1.296-.252-3.385-.252h-.972zm-28.64-8.676q0 2.808-.792 4.392-.793 1.548-2.773 1.656l-.684-1.44q1.116-.072 1.512-1.043.433-.972.433-2.989h-1.908V.252h4.212z"></path></svg></span>  
-        </h1>
-      </div>
-
-      <div class="ds-hero-enter max-w-140 flex flex-col gap-ds-2" style="--enter-y:20px;--enter-blur:8px;animation-delay:0.15s">
-        <p class="ds-text-body text-ds-description">
-          <i>Chance favors the prepared mind. - Louis Pasteur</i>
-        </p>
-        <p class="ds-text-body text-ds-description">
-          <span id="ds-motto-type" aria-live="polite"></span><span class="ds-motto-caret" aria-hidden="true"></span>
-        </p>
-        <p class="ds-text-body text-ds-description ds-keywords">
-          <span class="ds-keywords-line"><span class="ds-keyword">Gemini</span>, <span class="ds-keyword">Millennials</span>, <span class="ds-keyword">Tiger</span>, <span class="ds-keyword">Normie</span>, <span class="ds-keyword">Kōjigen</span>, <span class="ds-keyword">N24SWD</span>, <span class="ds-keyword">AIWS</span>, <span class="ds-keyword">Upekkhā</span>.</span><br />
-          <span class="ds-keywords-line"><span class="ds-keyword">Geeker</span>, <span class="ds-keyword">Gamer</span>, <span class="ds-keyword">Blogger</span>.</span>
-        </p>
-      </div>
-
-      <!-- Desktop CTA Buttons -->
-      {{- $followPlatforms := slice "mastodon" "twitter" "x" "threads" "bluesky" "weibo" "instagram" "facebook" "youtube" "tiktok" "bilibili" "fediverse" "pixelfed" "line" "telegram" "douban" -}}
-      {{ with .Site.Params.social }}
-      <div class="ds-hero-enter hidden md:flex flex-wrap items-center gap-ds-4 mt-ds-2 ds-social-group" style="--enter-y:16px;animation-duration:0.7s;animation-delay:0.3s">
-        {{ range $index, $item := . }}
-          {{ $isFirst := eq $index 0 }}
-          {{ $rel := "noopener noreferrer" }}
-          {{ $cleanIcon := replaceRE "(-full)?-color$" "" (lower (or $item.icon "")) }}
-          {{ $action := $item.action }}
-          {{ if not $action }}
-            {{ $action = "查看" }}
-            {{ if or (in $followPlatforms $cleanIcon) (in $followPlatforms (lower $item.name)) }}
-              {{ $action = "关注" }}
-            {{ end }}
-          {{ end }}
-          {{ if or (eq (lower $item.name) "mastodon") (eq $cleanIcon "mastodon") }}
-            {{ $rel = "me noopener noreferrer" }}
-          {{ end }}
-          {{ $label := printf "%s %s" $action $item.name }}
-          <a class="ds-btn-secondary ds-btn-m ds-social-btn{{ if $isFirst }} is-expanded{{ end }}" href="{{ $item.url }}" target="_blank" rel="{{ $rel }}" aria-label="{{ $label }}">
-            {{ partial "icon.html" (dict "name" $item.icon "class" "h-5 w-5 fill-current shrink-0") }}
-            <span class="ds-social-label">{{ $label }}</span>
-          </a>
-        {{ end }}
-      </div>
-      {{ end }}
-    </div>
-
-    <!-- Right Column: Interactive Terminal Card -->
-    <div class="ds-hero-enter flex flex-col gap-ds-3 order-2" style="--enter-y:20px;animation-duration:0.9s;animation-delay:0.4s">
-      <!-- Tabs -->
-      <div class="flex gap-ds-1 px-ds-1 ml-1.5">
-        <button id="ds-tab-web" type="button" class="ds-tab-btn is-active px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-primary bg-black/20 backdrop-blur-xl border-white/8">
-          统计 / Stats
-        </button>
-        <button id="ds-tab-start" type="button" class="ds-tab-btn px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-description hover:text-ds-primary bg-transparent border-transparent">
-          说说 / Whisper
-        </button>
-      </div>
-
-      <!-- Terminal Box -->
-      <div class="rounded-ds-media border border-white/8 bg-black/20 backdrop-blur-xl -mt-3.25 shadow-[0_8px_32px_rgba(0,0,0,0.37)]">
-        <div class="relative flex items-center justify-between px-ds-4 py-ds-3 border-b border-white/6">
-          <div class="flex items-center gap-1.75">
-            <span class="w-2.75 h-2.75 rounded-full bg-[#ff5f57] inline-block"></span>
-            <span class="w-2.75 h-2.75 rounded-full bg-[#febc2e] inline-block"></span>
-            <span class="w-2.75 h-2.75 rounded-full bg-[#28c840] inline-block"></span>
-          </div>
-          <div class="flex items-center">
-            <a id="ds-detail-link" href="/stats/" aria-label="博客统计" class="flex items-center gap-ds-2 text-ds-description text-xs cursor-pointer hover:text-ds-primary transition-colors select-none">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="14" height="14" aria-hidden="true">
-                <path d="M0 0h640v640H0z" fill="none"/>
-                <path fill="currentColor" d="M384 64c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L265.3 329.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L512 173.3V256c0 17.7 14.3 32 32 32s32-14.3 32-32V96c0-17.7-14.3-32-32-32zm-240 96c-44.2 0-80 35.8-80 80v256c0 44.2 35.8 80 80 80h256c44.2 0 80-35.8 80-80v-80c0-17.7-14.3-32-32-32s-32 14.3-32 32v80c0 8.8-7.2 16-16 16H144c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16h80c17.7 0 32-14.3 32-32s-14.3-32-32-32z"/>
-              </svg>
-              <span>详情</span>
-            </a>
-            <a id="ds-w-media" href="#" target="_blank" rel="noopener noreferrer" aria-label="包含媒体" title="包含媒体" class="ds-meta flex items-center text-ds-description text-xs cursor-pointer hover:text-ds-primary transition-colors select-none hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-            </a>
-            <span id="ds-w-time" class="ds-meta text-ds-description text-xs hidden"></span>
-            <a id="ds-w-detail-link" href="/whisper/" aria-label="说说详情" class="ds-meta flex items-center gap-ds-2 text-ds-description text-xs cursor-pointer hover:text-ds-primary transition-colors select-none hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="14" height="14" aria-hidden="true">
-                <path d="M0 0h640v640H0z" fill="none"/>
-                <path fill="currentColor" d="M384 64c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L265.3 329.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L512 173.3V256c0 17.7 14.3 32 32 32s32-14.3 32-32V96c0-17.7-14.3-32-32-32zm-240 96c-44.2 0-80 35.8-80 80v256c0 44.2 35.8 80 80 80h256c44.2 0 80-35.8 80-80v-80c0-17.7-14.3-32-32-32s-32 14.3-32 32v80c0 8.8-7.2 16-16 16H144c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16h80c17.7 0 32-14.3 32-32s-14.3-32-32-32z"/>
-              </svg>
-              <span>详情</span>
-            </a>
-          </div>
-          <span id="ds-w-progress" class="ds-w-progress hidden" aria-hidden="true"></span>
-        </div>
-        <div class="p-ds-5 grid items-center">
-          <div id="ds-code-web" class="col-start-1 row-start-1 font-mono text-sm text-ds-primary leading-relaxed">
-            <div class="grid grid-cols-4 gap-x-2 sm:gap-x-4 items-center h-[42.25px]">
-              <div class="flex flex-col items-center justify-center gap-y-0.5">
-                <span class="text-ds-description text-xs leading-none">文章</span>
-                <span class="font-bold text-sm leading-tight">{{ $articleCount }}</span>
-              </div>
-              <div class="flex flex-col items-center justify-center gap-y-0.5">
-                <span class="text-ds-description text-xs leading-none">分类</span>
-                <span class="font-bold text-sm leading-tight">{{ $categoryCount }}</span>
-              </div>
-              <div class="flex flex-col items-center justify-center gap-y-0.5">
-                <span class="text-ds-description text-xs leading-none">标签</span>
-                <span class="font-bold text-sm leading-tight">{{ $tagCount }}</span>
-              </div>
-              <div class="flex flex-col items-center justify-center gap-y-0.5">
-                <span class="text-ds-description text-xs leading-none">字数</span>
-                <span class="font-bold text-sm leading-tight">{{ div $totalWords 1000 }}k</span>
-              </div>
-            </div>
-          </div>
-          <div id="ds-code-start" class="ds-whisper col-start-1 row-start-1 text-[13px] text-ds-primary leading-relaxed hidden"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mobile CTA Buttons -->
-    {{- $followPlatforms := slice "mastodon" "twitter" "x" "threads" "bluesky" "weibo" "instagram" "facebook" "youtube" "tiktok" "bilibili" "fediverse" "pixelfed" "line" "telegram" "douban" -}}
-    {{ with .Site.Params.social }}
-    <div class="flex md:hidden flex-wrap items-center gap-ds-4 order-3 mt-4">
-      {{ range . }}
-        {{ $rel := "noopener noreferrer" }}
-        {{ $cleanIcon := replaceRE "(-full)?-color$" "" (lower (or .icon "")) }}
-        {{ $action := .action }}
-        {{ if not $action }}
-          {{ $action = "查看" }}
-          {{ if or (in $followPlatforms $cleanIcon) (in $followPlatforms (lower .name)) }}
-            {{ $action = "关注" }}
-          {{ end }}
-        {{ end }}
-        {{ if or (eq (lower .name) "mastodon") (eq $cleanIcon "mastodon") }}
-          {{ $rel = "me noopener noreferrer" }}
-        {{ end }}
-        {{ $label := printf "%s %s" $action .name }}
-        <a class="ds-btn-secondary ds-btn-m w-full flex items-center justify-center gap-2" href="{{ .url }}" target="_blank" rel="{{ $rel }}" aria-label="{{ $label }}">
-          {{ partial "icon.html" (dict "name" .icon "class" "h-5 w-5 fill-current shrink-0") }}
-          <span class="inline-flex items-center leading-none">{{ $label }}</span>
-        </a>
-      {{ end }}
-    </div>
-    {{ end }}
-
+<!-- 3D Digitile Snail Matrix Canvas Layer -->
+<div class="absolute inset-0 z-2 hidden md:flex items-center justify-center pointer-events-none overflow-hidden" style="mix-blend-mode:screen">
+  <div class="w-200 h-200 -ml-50 -mt-50 shrink-0">
+    <canvas id="ds-snail-canvas" class="w-full h-full block" width="800" height="800"></canvas>
   </div>
+</div>
 
-  <!-- Hero Bottom Section (Modern Interactive Glass Announcement Card) -->
-  <div class="ds-hero-bottom ds-hero-enter z-10 flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-auto w-full max-w-4xl mx-auto pb-8 md:pb-0 md:absolute md:bottom-8 md:left-0 md:right-0" style="--enter-y:24px;--enter-blur:8px;animation-duration:0.9s;animation-delay:0.5s">
-    {{- $latestPosts := first 1 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
-    {{- if eq (len $latestPosts) 0 -}}
-      {{- $latestPosts = first 1 (where .Site.RegularPages "Kind" "page") -}}
-    {{- end -}}
-    {{- range $latestPosts -}}
-      <a href="{{ .RelPermalink }}" class="group relative flex flex-col items-center gap-2 px-5 py-3.5 sm:px-6 sm:py-4 rounded-ds-media border border-white/8 hover:border-white/20 bg-black/20 hover:bg-black/30 backdrop-blur-xl transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:scale-[1.01] max-w-2xl w-full mx-auto cursor-pointer no-underline">
-        
-        <!-- Row 1: Badges & Meta Info -->
-        <div class="flex flex-wrap items-center justify-center gap-2 text-xs text-white/60">
-          <span class="inline-flex items-center rounded-[6px] p-[1px]" style="background:linear-gradient(135deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.04) 65%, rgba(255,255,255,0.28) 100%);box-shadow:0 0 12px rgba(255,255,255,0.08)">
-            <span class="px-2 py-0.5 rounded-[5px] bg-black/30 font-mono text-[11px] font-semibold text-white/95 uppercase tracking-wider">New</span>
-          </span>
+<!-- 2D Interactive Physics Spring Grid Canvas -->
+<div class="absolute inset-0 z-5 hidden md:block pointer-events-none ds-hero-mask">
+  <canvas id="ds-grid-canvas" class="absolute top-0 left-0 w-full h-full bg-transparent"></canvas>
+</div>
 
-          {{ with .Params.categories }}
-            {{ range first 1 . }}
-              <span class="w-1 h-1 rounded-full bg-white/30"></span>
-              <span class="text-cyan-300/90 font-medium">{{ . }}</span>
-            {{ end }}
-          {{ end }}
-
-          <span class="w-1 h-1 rounded-full bg-white/30"></span>
-          <time datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ .Date.Format "Jan 02, 2006" }}</time>
-
-          <span class="w-1 h-1 rounded-full bg-white/30 hidden sm:inline-block"></span>
-          <span class="hidden sm:inline-block">{{ .ReadingTime }} 分钟阅读</span>
-        </div>
-
-        <!-- Row 2: Title with Hover Arrow Indicator -->
-        <div class="flex items-center justify-center gap-2 text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-cyan-300 transition-colors text-center leading-snug">
-          <span class="line-clamp-1">{{ .Title }}</span>
-          <svg class="size-4.5 w-4.5 h-4.5 sm:size-5 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1 text-white/50 group-hover:text-cyan-300 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
-        </div>
-
-        <!-- Row 3: Summary / Excerpt Snippet -->
-        {{ $summaryText := "" }}
-        {{ if .Description }}
-          {{ $summaryText = .Description }}
-        {{ else if .Params.summary }}
-          {{ $summaryText = .Params.summary }}
-        {{ else if .Summary }}
-          {{ $summaryText = .Summary | plainify }}
-        {{ end }}
-        {{ with $summaryText }}
-          <p class="text-xs sm:text-[13px] text-white/60 line-clamp-1 max-w-xl text-center font-normal leading-relaxed m-0">
-            {{ . | truncate 80 }}
-          </p>
-        {{ end }}
-
-      </a>
-    {{- end -}}
-
-    <!-- Row 3: Circular Scroll Down Button -->
-    <button type="button" onclick="window.scrollTo({ top: window.innerHeight - 60, behavior: 'smooth' });" class="ds-scroll-down-btn group flex items-center justify-center size-9 md:size-10 rounded-full border border-white/20 hover:border-cyan-400/60 bg-white/5 hover:bg-white/15 text-white/70 hover:text-cyan-300 transition-all duration-300 backdrop-blur-sm cursor-pointer shadow-lg hover:scale-110" aria-label="向下滚动">
-      <svg class="size-4 md:size-5 w-4 md:w-5 h-4 md:h-5 transition-transform duration-300 group-hover:translate-y-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </button>
-  </div>
-
-</section>
-
-<!-- DeepSeek Harness Encapsulated Styles -->
-<style>
-:root, html, body {
-  overflow-x: clip;
-}
-
-.ds-scroll-down-btn {
-  animation: ds-bounce 2.4s ease-in-out infinite;
-}
-@keyframes ds-bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-.ds-scroll-down-btn:hover {
-  animation-play-state: paused;
-}
-
-/* dsh Header Fixed Wrapper */
-.ds-header-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  width: min(100% - 32px, 1280px);
-  margin: 0 auto;
-  padding: 12px 0 0;
-  pointer-events: none;
-  transition: padding 0.4s ease;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-@media (min-width: 768px) {
-  .ds-header-wrapper {
-    width: min(100% - 96px, 1280px);
-    padding: 16px 0 0;
-  }
-}
-
-/* dsh Header Bar (unscrolled state) */
-.ds-header-bar {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  border: 1px solid transparent;
-  background: transparent;
-  pointer-events: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transition: max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.35s ease,
-              border-color 0.35s ease,
-              box-shadow 0.35s ease,
-              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-  transform-origin: center top;
-  position: relative;
-}
-
-.ds-header-bar svg {
-  shape-rendering: geometricPrecision;
-  text-rendering: geometricPrecision;
-}
-
-.ds-nav-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  border-width: 1px;
-  border-style: solid;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.ds-header-bar .toggle-button {
-  flex-shrink: 0;
-}
-@media (min-width: 1024px) {
-  .ds-header-bar .toggle-button {
-    width: 38px !important;
-    height: 38px !important;
-    padding: 0 !important;
-    aspect-ratio: 1 / 1 !important;
-    justify-content: center !important;
-  }
-}
-
-/* Dark Mode / Hero Dark Header Styles */
-.dark .ds-header-bar,
-body.ds-has-hero .ds-header-bar {
-  color: #ffffff;
-}
-
-.dark .ds-header-bar a,
-.dark .ds-header-bar button,
-body.ds-has-hero .ds-header-bar a,
-body.ds-has-hero .ds-header-bar button {
-  color: #ffffff;
-}
-
-.dark .ds-header-bar .ds-nav-btn,
-body.ds-has-hero .ds-header-bar .ds-nav-btn {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-}
-
-.dark .ds-header-bar .ds-nav-btn:hover,
-body.ds-has-hero .ds-header-bar .ds-nav-btn:hover {
-  background-color: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.24);
-}
-
-/* Light Mode (non-hero) Header Styles */
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar {
-  color: #1e232c;
-}
-
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar a,
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar button {
-  color: #1e232c;
-}
-
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: #1e232c;
-}
-
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  border-color: rgba(0, 0, 0, 0.15);
-}
-
-/* Scrolled Animation -> Shrink into floating menu bar in Dark Mode (dsh: maxWidth 1280 -> 980/1180) */
-.dark .ds-header-bar.is-scrolled {
-  width: 100%;
-  max-width: 980px;
-  padding: 6px 6px 6px 16px;
-  background: rgba(18, 22, 28, 0.85) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: rgba(255, 255, 255, 0.14) !important;
-  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  transform: translateY(-2px);
-}
-
-/* Scrolled Animation -> Shrink into floating menu bar in Light Mode (dsh) */
-html:not(.dark) .ds-header-bar.is-scrolled {
-  width: 100%;
-  max-width: 980px;
-  padding: 6px 6px 6px 16px;
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02);
-  transform: translateY(-2px);
-}
-
-/* Hero page (ds-has-hero) scrolled in Light Mode: dark text/icons on the light bar */
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled,
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled a,
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled button {
-  color: #1e232c;
-}
-
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled .ds-nav-btn {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: #1e232c;
-}
-
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled .ds-nav-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  border-color: rgba(0, 0, 0, 0.15);
-}
-
-/* Hero page scrolled in Light Mode: menu links turn dark */
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a {
-  color: rgba(30, 35, 44, 0.85) !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border-color: transparent !important;
-}
-
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a:hover {
-  color: #1e232c !important;
-  background-color: rgba(0, 0, 0, 0.06) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a[aria-current="page"] {
-  color: #1e232c !important;
-  background-color: rgba(0, 0, 0, 0.08) !important;
-  border-color: rgba(0, 0, 0, 0.12) !important;
-}
-
-/* DogeCloud Video Background Container */
-.ds-doge-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-}
-.ds-doge-container .dplayer,
-.ds-doge-container .dplayer-video-wrap,
-.ds-doge-container video,
-.ds-doge-container iframe {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  border: none !important;
-  pointer-events: none !important;
-}
-.ds-doge-container .dplayer-controller-mask,
-.ds-doge-container .dplayer-controller,
-.ds-doge-container .dplayer-notice-list,
-.ds-doge-container .dplayer-danmaku {
-  display: none !important;
-}
-
-/* Large screens: dsh keeps a wider bar (1180) when viewport >= 1560px */
-@media (min-width: 1560px) {
-  .dark .ds-header-bar.is-scrolled,
-  html:not(.dark) .ds-header-bar.is-scrolled {
-    max-width: 1180px;
-  }
-}
-
-/* Ensure #menu-bar is completely transparent on desktop in all modes */
-@media (min-width: 1024px) {
-  .ds-header-bar #menu-bar,
-  .dark .ds-header-bar #menu-bar,
-  html.dark .ds-header-bar #menu-bar,
-  body.ds-has-hero .ds-header-bar #menu-bar {
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-  }
-}
-
-/* Compact Nav links inside ds-header-bar */
-.ds-header-bar #menu-bar ul {
-  margin: 0 !important;
-  padding: 0 !important;
-  gap: 4px !important;
-  background: transparent !important;
-  background-color: transparent !important;
-}
-
-.ds-header-bar #menu-bar li {
-  margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-  background-color: transparent !important;
-}
-
-.ds-header-bar #menu-bar a {
-  padding: 6px 14px !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
-  line-height: 1.4 !important;
-  border-radius: 9999px !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  white-space: nowrap !important;
-}
-
-/* Dark Mode / Hero Dark Header Menu Links */
-.dark .ds-header-bar #menu-bar a,
-html.dark .ds-header-bar #menu-bar a,
-body.ds-has-hero .ds-header-bar #menu-bar a {
-  color: rgba(255, 255, 255, 0.85) !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border-color: transparent !important;
-}
-
-.dark .ds-header-bar #menu-bar a:hover,
-html.dark .ds-header-bar #menu-bar a:hover,
-body.ds-has-hero .ds-header-bar #menu-bar a:hover {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-.dark .ds-header-bar #menu-bar a[aria-current="page"],
-html.dark .ds-header-bar #menu-bar a[aria-current="page"],
-body.ds-has-hero .ds-header-bar #menu-bar a[aria-current="page"] {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.16) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Light Mode Menu Links */
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a {
-  color: rgba(30, 35, 44, 0.85) !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border-color: transparent !important;
-}
-
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a:hover {
-  color: #1e232c !important;
-  background-color: rgba(0, 0, 0, 0.06) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="page"] {
-  color: #1e232c !important;
-  background-color: rgba(0, 0, 0, 0.08) !important;
-  border-color: rgba(0, 0, 0, 0.12) !important;
-}
-
-/* Mobile dropdown menu cleanup when opened on mobile */
-@media (max-width: 1023px) {
-  .dark .ds-header-bar #menu-bar,
-  html.dark .ds-header-bar #menu-bar {
-    background-color: rgba(28, 33, 40, 0.95) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 16px !important;
-    margin-top: 8px;
-    padding: 12px;
-  }
-  .dark .ds-header-bar #menu-bar a,
-  html.dark .ds-header-bar #menu-bar a {
-    border-radius: 8px !important;
-    padding: 8px 12px !important;
-  }
-}
-
-.ds-hero-root {
-  width: 100vw;
-  max-width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  box-sizing: border-box;
-  min-height: 100vh;
-  min-height: 100svh;
-  overflow: hidden;
-  --ds-color-brand: #6799fe;
-  --ds-color-brand-deep: #fff;
-  --ds-color-text-primary: #fff;
-  --ds-color-text-description: hsla(0, 0%, 100%, 0.6);
-  --ds-color-bg-page: #0a0a0a;
-  --ds-color-border-default: hsla(0, 0%, 100%, 0.08);
-  --ds-btn-primary-bg: #fff;
-  --ds-btn-primary-text: #0a0a0a;
-  --ds-btn-primary-hover-bg: rgba(0, 0, 0, 0.2);
-  --ds-btn-secondary-bg: hsla(0, 0%, 100%, 0.06);
-  --ds-btn-secondary-text: #fff;
-  --ds-btn-secondary-border: hsla(0, 0%, 100%, 0.15);
-  --ds-btn-secondary-hover-border: hsla(0, 0%, 100%, 0.6);
-  --ds-btn-secondary-hover-bg: hsla(0, 0%, 100%, 0.2);
-  --ds-radius-pill: 100px;
-  --ds-radius-media: 10px;
-  --ds-space-1: 4px;
-  --ds-space-2: 8px;
-  --ds-space-3: 12px;
-  --ds-space-4: 16px;
-  --ds-space-5: 24px;
-  --ds-space-6: 32px;
-  --ds-space-7: 40px;
-  --ds-space-9: 80px;
-  --ds-space-11: 160px;
-  --ds-blur-glass: 12px;
-  --ds-font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans SC", sans-serif;
-  background-color: var(--ds-color-bg-page);
-  color: var(--ds-color-text-primary);
-  font-family: var(--ds-font-sans);
-}
-
-@media (min-width: 768px) {
-  .ds-hero-root {
-    min-height: 100vh;
-    min-height: 100svh;
-    height: 100vh;
-    height: 100svh;
-  }
-}
-
-/* Content block: the left (title/CTA) and right (terminal card) columns are
-   treated as a single unit. On mobile it stays in normal flow (centered by
-   the flex root); on md+ it is pulled up so the block's center sits on the
-   upper golden-ratio line (38.2%) of the hero instead of vertical center. */
-.ds-hero-content {
-  position: relative;
-  z-index: 10;
-}
-
-@media (min-width: 768px) {
-  .ds-hero-content {
-    position: absolute;
-    left: 50%;
-    top: 38.2%;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.ds-hero-bottom {
-  position: relative;
-  z-index: 10;
-  pointer-events: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .ds-hero-bottom {
-    position: absolute;
-    bottom: 24px;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    max-width: 56rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    transform: none;
-  }
-}
-
-@media (min-width: 1280px) {
-  .ds-hero-bottom {
-    bottom: 32px;
-  }
-}
-
-.ds-hero-mask {
-  mask: linear-gradient(#000000fc 0%, #000000e8 8.98%, transparent 100%);
-  -webkit-mask: linear-gradient(#000000fc 0%, #000000e8 8.98%, transparent 100%);
-}
-
-@keyframes ds-hero-enter {
-  0% {
-    opacity: 0;
-    transform: translateY(var(--enter-y, 20px));
-    filter: blur(var(--enter-blur, 0));
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-.ds-hero-enter {
-  animation: ds-hero-enter 0.8s ease-out backwards;
-}
-
-.ds-container {
-  width: min(100% - 48px, 1140px);
-  margin-inline: auto;
-}
-@media (min-width: 768px) {
-  .ds-container {
-    width: min(100% - 144px, 1140px);
-  }
-}
-@media (min-width: 1560px) {
-  .ds-container {
-    width: min(100% - 160px, 1280px);
-  }
-}
-
-.ds-text-hero {
-  font-family: "Montserrat", var(--ds-font-sans);
-  font-size: 36px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.5;
-}
-@media (min-width: 768px) {
-  .ds-text-hero {
-    font-size: 46px;
-  }
-}
-
-.ds-text-body {
-  font-size: 16px;
-  line-height: 1.6;
-  text-wrap: pretty;
-  font-weight: 400;
-}
-
-.text-ds-brand {
-  color: var(--ds-color-brand);
-}
-.text-ds-primary {
-  color: var(--ds-color-text-primary);
-}
-.text-ds-description {
-  color: var(--ds-color-text-description);
-}
-
-.gap-ds-1 { gap: var(--ds-space-1); }
-.gap-ds-2 { gap: var(--ds-space-2); }
-.gap-ds-3 { gap: var(--ds-space-3); }
-.gap-ds-4 { gap: var(--ds-space-4); }
-.gap-ds-7 { gap: var(--ds-space-7); }
-.gap-ds-9 { gap: var(--ds-space-9); }
-
-.px-ds-1 { padding-left: var(--ds-space-1); padding-right: var(--ds-space-1); }
-.px-ds-4 { padding-left: var(--ds-space-4); padding-right: var(--ds-space-4); }
-.py-ds-2 { padding-top: var(--ds-space-2); padding-bottom: var(--ds-space-2); }
-.py-ds-3 { padding-top: var(--ds-space-3); padding-bottom: var(--ds-space-3); }
-.p-ds-5 { padding: var(--ds-space-5); }
-.pt-ds-11 { padding-top: var(--ds-space-11); }
-.pb-ds-11 { padding-bottom: var(--ds-space-11); }
-.mt-ds-2 { margin-top: var(--ds-space-2); }
-
-.rounded-ds-media {
-  border-radius: var(--ds-radius-media);
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.ds-terminal-container {
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.ds-btn-primary, .ds-btn-secondary {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ds-space-2);
-  border-radius: var(--ds-radius-pill);
-  font-family: var(--ds-font-sans);
-  font-weight: 500;
-  line-height: 120%;
-  text-decoration: none;
-  cursor: pointer;
-  overflow: hidden;
-  isolation: isolate;
-  transition: border-color 0.35s ease, background-color 0.2s ease;
-}
-
-.ds-btn-m {
-  font-size: 15px;
-  padding: var(--ds-space-3) 20px;
-}
-
-.ds-btn-primary {
-  background: var(--ds-btn-primary-bg);
-  color: var(--ds-btn-primary-text);
-  border: 1px solid transparent;
-}
-.ds-btn-secondary {
-  background: var(--ds-btn-secondary-bg);
-  color: var(--ds-btn-secondary-text);
-  border: 1px solid var(--ds-btn-secondary-border);
-  backdrop-filter: blur(var(--ds-blur-glass));
-  -webkit-backdrop-filter: blur(var(--ds-blur-glass));
-}
-.ds-btn-secondary:hover {
-  border-color: var(--ds-btn-secondary-hover-border);
-}
-
-.ds-btn-primary:after, .ds-btn-secondary:after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 150%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0;
-  z-index: -1;
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.36s ease-out, opacity 0.1s ease;
-}
-.ds-btn-primary:hover:after, .ds-btn-secondary:hover:after {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-.ds-btn-primary:after {
-  background: var(--ds-btn-primary-hover-bg);
-}
-.ds-btn-secondary:after {
-  background: var(--ds-btn-secondary-hover-bg);
-}
-
-.ds-tab-btn.is-active {
-  color: var(--ds-color-text-primary);
-  background-color: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-/* Social CTA Accordion */
-.ds-social-btn {
-  width: 40px;
-  height: 40px;
-  padding: 0 0 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  transition: width 0.35s ease, border-color 0.35s ease, background-color 0.2s ease;
-}
-.ds-social-btn svg {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  display: block;
-}
-.ds-social-btn .ds-social-label {
-  display: inline-flex;
-  align-items: center;
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  line-height: 1;
-  transition: max-width 0.35s ease, opacity 0.3s ease;
-}
-/* Collapsed buttons are 40px round icon buttons; the active one grows to a
-   fixed width so the group's total width stays constant (one expanded + three
-   round). Expansion is driven by the is-expanded class via JS (not :hover) so
-   the state is stable while the pointer sits in the gap between buttons. */
-.ds-social-btn.is-expanded {
-  width: 170px;
-}
-.ds-social-btn.is-expanded .ds-social-label {
-  max-width: 130px;
-  opacity: 1;
-}
-
-/* Whisper tab: one card per screen. */
-.ds-whisper {
-  position: relative;
-  overscroll-behavior: contain;
-}
-/* Hover pager arrows: plain chevrons float at the left/right edges of the tab
-   and step through the loaded statuses. Hidden by default; shown while
-   hovering. No background, no animation. */
-.ds-w-prev,
-.ds-w-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--ds-color-description);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-}
-.ds-w-prev svg,
-.ds-w-next svg {
-  width: 52px;
-  height: 52px;
-  opacity: 0.5;
-}
-.ds-w-prev {
-  left: -30px;
-}
-.ds-w-next {
-  right: -30px;
-}
-.ds-whisper:hover .ds-w-prev,
-.ds-whisper:hover .ds-w-next {
-  opacity: 1;
-  pointer-events: auto;
-}
-/* Whisper auto-advance progress bar: fills the header divider over one
-   carousel interval (6s) to preview the next slide. */
-.ds-w-progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  transform-origin: left center;
-  transform: scaleX(0);
-  background: linear-gradient(90deg, rgba(103, 153, 254, 0.2), rgba(103, 153, 254, 0.9));
-  pointer-events: none;
-  z-index: 5;
-}
-.ds-w-progress.is-running {
-  animation: ds-w-progress-run 6s linear forwards;
-}
-@keyframes ds-w-progress-run {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-/* The stage wraps the visible card. Its height follows the current card: text
-   is clamped to 2 lines, so short posts keep the tab compact while tall posts
-   never stretch it. During a switch the height is pinned by JS so the
-   carousel doesn't jump. */
-.ds-w-stage {
-  position: relative;
-  overflow: hidden;
-}
-/* Loading / error placeholders match the card's 5-line content height
-   (5 × 1.625em line-height) plus the article's py-1 (8px). */
-.ds-w-loading {
-  min-height: calc(5 * 1.625em + 8px);
-}
-/* The visible card lives in normal flow. */
-.ds-w-card {
-  position: relative;
-}
-
-/* Cards: the visible card lives in normal flow. During a switch the outgoing
-   card is pulled into an absolutely positioned overlay that slides left while
-   the incoming one slides in from the right, then the outgoing card is removed
-   from the DOM. */
-.ds-w-slide-in {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  opacity: 0;
-  transform: translateX(28px);
-  pointer-events: none;
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.ds-w-slide-in.is-active {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-.ds-w-leaving {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  opacity: 0;
-  transform: translateX(-28px);
-  pointer-events: none;
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Post body: strictly fixed to 5 lines height by default (insufficient text won't shrink) */
-.ds-w-content {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  line-clamp: 5;
-  overflow: hidden;
-  height: calc(5 * 1.625em);
-  min-height: calc(5 * 1.625em);
-  line-height: 1.625;
-  text-overflow: ellipsis;
-  transition: height 0.25s ease;
-}
-
-/* Post body: expanded state when clicked */
-.ds-w-card.is-expanded .ds-w-content {
-  display: block;
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
-  overflow: visible;
-  height: auto;
-  min-height: calc(5 * 1.625em);
-}
-
-/* Floating 显示更多 button: overlaid at the bottom-center of the 2nd line when collapsed, in flow when expanded */
-.ds-w-more {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 12px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(18, 24, 38, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 500;
-  color: #ffffff;
-  line-height: 1.4;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ds-w-card:not(.is-expanded) .ds-w-more {
-  position: absolute;
-  left: 50%;
-  bottom: 0px;
-  transform: translateX(-50%);
-  z-index: 10;
-}
-
-.ds-w-card.is-expanded .ds-w-more {
-  position: relative;
-  align-self: center;
-  margin-top: 8px;
-  left: auto;
-  bottom: auto;
-  transform: none;
-}
-
-.ds-w-more:hover {
-  background: rgba(28, 38, 60, 0.98);
-  border-color: rgba(255, 255, 255, 0.55);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 8px rgba(100, 215, 255, 0.35);
-  transform: translateY(-1px);
-}
-
-.ds-w-card:not(.is-expanded) .ds-w-more:hover {
-  transform: translateX(-50%) translateY(-1px);
-}
-
-.ds-w-more:active {
-  transform: translateY(0);
-}
-
-/* Whisper header metas: separated by a middot, only between visible metas
-   (a hidden first meta, e.g. no media, must not produce a leading middot). */
-.ds-meta:not(.hidden) + .ds-meta:not(.hidden)::before {
-  content: '·';
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
-  color: var(--ds-color-description);
-}
-
-/* Post body: tighten Mastodon's default paragraph spacing and style links */
-.ds-whisper .ds-w-content p {
-  margin: 0 0 0.5em;
-}
-.ds-whisper .ds-w-content p:last-child {
-  margin-bottom: 0;
-}
-.ds-whisper .ds-w-content a {
-  color: var(--ds-color-brand);
-  text-decoration: underline;
-  text-decoration-color: rgba(103, 153, 254, 0.4);
-  text-underline-offset: 2px;
-}
-.ds-whisper .ds-w-content a:hover {
-  text-decoration-color: var(--ds-color-brand);
-}
-/* Keyword lines: the leading "#" is rendered via ::before; hovering a
-   keyword paints a half-height highlight band under its text. */
-.ds-keywords-line::before {
-  content: '#';
-  margin-right: 0.3em;
-  color: var(--ds-color-brand);
-}
-.ds-keyword {
-  padding: 0 0.12em;
-  margin: 0 -0.12em; /* cancel the hover padding so wrapping is unchanged */
-  border-radius: 3px;
-  /* Solid band; background-size 50% is half the line-box height, so the
-     highlight covers exactly the lower half of the line. */
-  background-image: linear-gradient(rgba(103, 153, 254, 0.28), rgba(103, 153, 254, 0.28));
-  background-size: 100% 0;
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  transition: background-size 0.25s ease, color 0.25s ease;
-}
-.ds-keyword:hover {
-  background-size: 100% 50%;
-  color: var(--ds-color-text-primary);
-}
-/* Typewriter caret for the motto line: a small blinking bar after the text. */
-.ds-motto-caret {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  margin-left: 2px;
-  vertical-align: -0.15em;
-  background: currentColor;
-  animation: ds-caret-blink 0.9s steps(1) infinite;
-}
-@keyframes ds-caret-blink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-</style>
-
-<!-- DeepSeek Harness Dynamic Canvas & Interaction Scripts -->
+<!-- DeepSeek Harness Dynamic Canvas Background Engine -->
 <script>
 (function() {
   // ==========================================
@@ -1400,215 +86,112 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
       fragColor = prev;
     }`);
 
-    // Main Fluid Shader
-    const fluidProg = createProgram(`#version 300 es
-    precision mediump float;
+    // Main Rendering Shader
+    const renderProg = createProgram(`#version 300 es
+    precision highp float;
     in vec2 vUv;
+    uniform sampler2D u_flow;
     uniform float u_time;
     uniform vec2 u_resolution;
-    uniform vec3 u_c1, u_c2, u_c3, u_c4, u_c5;
-    uniform float u_scale;
-    uniform vec2 u_offset;
-    uniform float u_grain;
-    uniform sampler2D u_flowmap;
-    uniform float u_distortBoost;
-    uniform float u_swirlBoost;
-    uniform float u_glowIntensity;
-    uniform vec3 u_glowColor1, u_glowColor2, u_glowColor3;
-    uniform vec2 u_lightPos;
-    uniform float u_lightCore, u_lightHalo, u_vignette;
-    uniform float u_bloomThreshold, u_bloomRange, u_bloomStrength;
     out vec4 fragColor;
 
-    vec3 mod289v3(vec3 x){return x-floor(x*(1./289.))*289.;}
-    vec4 mod289v4(vec4 x){return x-floor(x*(1./289.))*289.;}
-    vec4 permute(vec4 x){return mod289v4(((x*34.)+1.)*x);}
-    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-.85373472095314*r;}
-
-    float snoise(vec3 v){
-      const vec2 C=vec2(1./6.,1./3.);
-      const vec4 D=vec4(0.,.5,1.,2.);
-      vec3 i=floor(v+dot(v,C.yyy));
-      vec3 x0=v-i+dot(i,C.xxx);
-      vec3 g=step(x0.yzx,x0.xyz);
-      vec3 l=1.-g;
-      vec3 i1=min(g.xyz,l.zxy);
-      vec3 i2=max(g.xyz,l.zxy);
-      vec3 x1=x0-i1+C.xxx;
-      vec3 x2=x0-i2+C.yyy;
-      vec3 x3=x0-D.yyy;
-      i=mod289v3(i);
-      vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
-      float n_=.142857142857;
-      vec3 ns=n_*D.wyz-D.xzx;
-      vec4 j=p-49.*floor(p*ns.z*ns.z);
-      vec4 x_=floor(j*ns.z);
-      vec4 y_=floor(j-7.*x_);
-      vec4 x=x_*ns.x+ns.yyyy;
-      vec4 y=y_*ns.x+ns.yyyy;
-      vec4 h=1.-abs(x)-abs(y);
-      vec4 b0=vec4(x.xy,y.xy);
-      vec4 b1=vec4(x.zw,y.zw);
-      vec4 s0=floor(b0)*2.+1.;
-      vec4 s1=floor(b1)*2.+1.;
-      vec4 sh=-step(h,vec4(0.));
-      vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;
-      vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
-      vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);
-      vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
-      vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
-      p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
-      vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);
-      m=m*m;
-      return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+    // Simplex 2D noise
+    vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+    float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+               -0.577350269189626, 0.024390243902439);
+      vec2 i  = floor(v + dot(v, C.yy) );
+      vec2 x0 = v -   i + dot(i, C.xx);
+      vec2 i1  = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz;
+      x12.xy -= i1;
+      i = mod(i, 289.0);
+      vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+      + i.x + vec3(0.0, i1.x, 1.0 ));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+        dot(x12.zw,x12.zw)), 0.0);
+      m = m*m ;
+      m = m*m ;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0;
+      vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5);
+      vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+      vec3 g;
+      g.x  = a0.x  * x0.x  + h.x  * x0.y;
+      g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
     }
 
-    float hash(vec2 p){
-      vec3 p3=fract(vec3(p.xyx)*.1031);
-      p3+=dot(p3,p3.yzx+33.33);
-      return fract((p3.x+p3.y)*p3.z);
-    }
+    void main() {
+      vec2 uv = vUv;
+      float aspect = u_resolution.x / u_resolution.y;
+      vec2 st = vec2(uv.x * aspect, uv.y);
 
-    float fbm(vec3 p){
-      float v=0.,amp=.6;vec3 shift=vec3(100.);
-      for(int i=0;i<1;i++){v+=amp*snoise(p);p=p*2.+shift;amp*=.4;}
-      return v;
-    }
+      vec4 flow = texture(u_flow, uv);
+      float trail = flow.r;
+      vec2 flowVel = (flow.gb - 0.5) * 2.0;
 
-    float fluidNoise(vec2 uv,float t){
-      float n1=fbm(vec3(uv*.6,t*.06));
-      float n2=fbm(vec3(uv*.6+5.2,t*.06+1.3));
-      vec2 w1=vec2(n1,n2)*.6;
-      float n3=fbm(vec3((uv+w1)*.7+1.7,t*.05+3.1));
-      float n4=fbm(vec3((uv+w1)*.7+9.2,t*.05+5.7));
-      vec2 w2=vec2(n3,n4)*.5;
-      return fbm(vec3((uv+w1+w2)*.5,t*.04));
-    }
+      // Organic fluid distortion
+      vec2 flowOffset = flowVel * trail * 0.12;
+      st -= flowOffset;
 
-    vec2 curlish(vec2 uv,float t){
-      float eps=.02;
-      float n=snoise(vec3(uv*.8,t));
-      float nx=snoise(vec3((uv+vec2(eps,0.))*.8,t));
-      float ny=snoise(vec3((uv+vec2(0.,eps))*.8,t));
-      return vec2(-(ny-n)/eps,(nx-n)/eps)*.003;
-    }
+      float t = u_time * 0.15;
+      
+      // Multi-layer procedural domain warping
+      float n1 = snoise(st * 1.2 + vec2(t * 0.3, t * 0.2));
+      float n2 = snoise(st * 2.4 - vec2(t * 0.2, n1 * 0.8));
+      float n3 = snoise(st * 4.0 + vec2(n2 * 0.6, t * 0.4));
+      
+      float pattern = n1 * 0.5 + n2 * 0.3 + n3 * 0.2;
+      pattern = pattern * 0.5 + 0.5;
 
-    void main(){
-      float aspect=u_resolution.x/u_resolution.y;
-      vec2 uv=gl_FragCoord.xy/u_resolution;
-      vec2 suv=vec2(uv.x*aspect, uv.y) * u_scale + u_offset;
-      float t=u_time;
+      // Authentic DeepSeek Palette: Pure deep obsidian -> electric cobalt -> brilliant cyan -> radiant white
+      vec3 c_bg = vec3(0.039, 0.039, 0.039);        // #0a0a0a
+      vec3 c_deep = vec3(0.04, 0.12, 0.35);        // Deep oceanic blue
+      vec3 c_blue = vec3(0.12, 0.38, 0.95);        // #1e60f2 primary brand blue
+      vec3 c_cyan = vec3(0.35, 0.75, 1.0);         // #59bfff vibrant highlight
+      vec3 c_bright = vec3(0.85, 0.95, 1.0);       // White-hot energy core
 
-      vec4 flow = texture(u_flowmap, uv);
-      float influence = flow.r;
-      vec2 flowDir = (flow.gb - 0.5) * 2.0;
+      vec3 col = c_bg;
+      
+      // Dynamic color banding & fluid waves
+      col = mix(col, c_deep, smoothstep(0.15, 0.45, pattern));
+      col = mix(col, c_blue, smoothstep(0.38, 0.65, pattern));
+      col = mix(col, c_cyan, smoothstep(0.58, 0.82, pattern));
+      col = mix(col, c_bright, smoothstep(0.78, 0.96, pattern));
 
-      suv += flowDir * influence * u_distortBoost * 0.8;
-      float swirlAngle = influence * u_swirlBoost * 2.5;
-      float cs = cos(swirlAngle), sn = sin(swirlAngle);
-      vec2 delta = suv - vec2(uv.x * aspect, uv.y) * u_scale;
-      suv += (mat2(cs, sn, -sn, cs) * delta - delta) * influence;
+      // Interactive mouse trail glow reaction
+      col += c_cyan * trail * 0.75;
+      col += c_bright * pow(trail, 2.0) * 0.85;
 
-      vec2 curl=curlish(suv,t*.04);
-      vec2 uvD=suv+curl*12.;
-      float f=fluidNoise(uvD,t);
-      float swirl=snoise(vec3(uvD*.8+f*1.5,t*.035))*.5+.5;
-      float n=f*.5+.5;
-      vec3 col=mix(u_c1,u_c2,smoothstep(.2,.5,n));
-      col=mix(col,u_c3,smoothstep(.35,.65,n+swirl*.25));
-      col=mix(col,u_c4,smoothstep(.6,.85,swirl)*.55);
-      col=mix(col,u_c5,smoothstep(.5,.8,n*swirl)*.35);
+      // Smooth vignette
+      float vig = smoothstep(1.5, 0.2, length(uv - 0.5));
+      col *= vig;
 
-      float glow = smoothstep(0.0, 0.8, influence);
-      float glowNoise = snoise(vec3(uvD * 1.5, t * 0.08)) * 0.5 + 0.5;
-      float glowDist = smoothstep(0.0, 1.0, influence);
-      vec3 glowMix = mix(u_glowColor3, u_glowColor2, glowDist);
-      glowMix = mix(glowMix, u_glowColor1, glowDist * glowNoise);
-      col = mix(col, glowMix, glow * u_glowIntensity);
-
-      if(u_grain > 0.0){
-        vec2 flowOffset = (uvD - suv) * u_resolution.y;
-        vec2 gp = floor((gl_FragCoord.xy + flowOffset) / 5.0);
-        float gr=hash(gp)*2.-1.;
-        col+=gr*u_grain;
-      }
-
-      float luma=dot(col,vec3(.299,.587,.114));
-      float bloom=smoothstep(u_bloomThreshold-u_bloomRange,u_bloomThreshold+u_bloomRange,luma);
-      col+=(col*.85+vec3(.15,.145,.13))*bloom*u_bloomStrength;
-
-      float ld=length((uv-u_lightPos)*vec2(aspect,1.));
-      float core=exp(-ld*ld*4.5);
-      float halo=exp(-ld*1.8);
-      col+=vec3(1.,.97,.9)*core*u_lightCore+vec3(.72,.8,1.)*halo*u_lightHalo;
-
-      float vig=1.-smoothstep(.35,.75,length(uv-.5));
-      col=mix(col*(1.-u_vignette),col,vig);
-      fragColor=vec4(col,1.);
+      fragColor = vec4(col, 1.0);
     }`);
 
-    if (!flowProg || !fluidProg) return;
+    if (!flowProg || !renderProg) return;
 
-    const hexToRgb = (h) => {
-      const c = h.replace('#', '');
-      return [parseInt(c.slice(0, 2), 16) / 255, parseInt(c.slice(2, 4), 16) / 255, parseInt(c.slice(4, 6), 16) / 255];
-    };
+    // Quad Geometry
+    const quadVAO = gl.createVertexArray();
+    const quadVBO = gl.createBuffer();
+    gl.bindVertexArray(quadVAO);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadVBO);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1, -1,  1, -1, -1,  1,
+      -1,  1,  1, -1,  1,  1,
+    ]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-    const flowUniforms = {
-      prev: gl.getUniformLocation(flowProg, 'u_prev'),
-      mouse: gl.getUniformLocation(flowProg, 'u_mouse'),
-      velocity: gl.getUniformLocation(flowProg, 'u_velocity'),
-      brushRadius: gl.getUniformLocation(flowProg, 'u_brushRadius'),
-      brushStrength: gl.getUniformLocation(flowProg, 'u_brushStrength'),
-      decay: gl.getUniformLocation(flowProg, 'u_decay')
-    };
-
-    const fluidUniforms = {
-      time: gl.getUniformLocation(fluidProg, 'u_time'),
-      resolution: gl.getUniformLocation(fluidProg, 'u_resolution'),
-      scale: gl.getUniformLocation(fluidProg, 'u_scale'),
-      offset: gl.getUniformLocation(fluidProg, 'u_offset'),
-      grain: gl.getUniformLocation(fluidProg, 'u_grain'),
-      flowmap: gl.getUniformLocation(fluidProg, 'u_flowmap'),
-      distortBoost: gl.getUniformLocation(fluidProg, 'u_distortBoost'),
-      swirlBoost: gl.getUniformLocation(fluidProg, 'u_swirlBoost'),
-      glowIntensity: gl.getUniformLocation(fluidProg, 'u_glowIntensity'),
-      glowColor1: gl.getUniformLocation(fluidProg, 'u_glowColor1'),
-      glowColor2: gl.getUniformLocation(fluidProg, 'u_glowColor2'),
-      glowColor3: gl.getUniformLocation(fluidProg, 'u_glowColor3'),
-      c1: gl.getUniformLocation(fluidProg, 'u_c1'),
-      c2: gl.getUniformLocation(fluidProg, 'u_c2'),
-      c3: gl.getUniformLocation(fluidProg, 'u_c3'),
-      c4: gl.getUniformLocation(fluidProg, 'u_c4'),
-      c5: gl.getUniformLocation(fluidProg, 'u_c5'),
-      lightPos: gl.getUniformLocation(fluidProg, 'u_lightPos'),
-      lightCore: gl.getUniformLocation(fluidProg, 'u_lightCore'),
-      lightHalo: gl.getUniformLocation(fluidProg, 'u_lightHalo'),
-      vignette: gl.getUniformLocation(fluidProg, 'u_vignette'),
-      bloomThreshold: gl.getUniformLocation(fluidProg, 'u_bloomThreshold'),
-      bloomRange: gl.getUniformLocation(fluidProg, 'u_bloomRange'),
-      bloomStrength: gl.getUniformLocation(fluidProg, 'u_bloomStrength')
-    };
-
-    const quadBuf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-
-    const bindAttrib = (prog) => {
-      const loc = gl.getAttribLocation(prog, 'a_position');
-      gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    };
-
-    const createFBO = (w, h, data) => {
+    // Double-buffered FBO for Flowmap
+    const simRes = 256;
+    const createFBO = () => {
       const tex = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, tex);
-      if (data) {
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-      } else {
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-      }
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, simRes, simRes, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -1617,148 +200,108 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
       const fbo = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       return { fbo, tex };
     };
 
-    let dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-    let width = Math.round(canvas.clientWidth * dpr);
-    let height = Math.round(canvas.clientHeight * dpr);
-    canvas.width = width;
-    canvas.height = height;
+    let fboA = createFBO();
+    let fboB = createFBO();
 
-    const fboW = Math.max(128, Math.round(width / 4));
-    const fboH = Math.max(128, Math.round(height / 4));
-    const initialData = new Uint8Array(fboW * fboH * 4);
-    for (let i = 0; i < fboW * fboH; i++) {
-      initialData[4 * i] = 0;
-      initialData[4 * i + 1] = 128;
-      initialData[4 * i + 2] = 128;
-      initialData[4 * i + 3] = 255;
-    }
+    // Interaction State
+    const mouse = { x: 0.5, y: 0.5, vx: 0, vy: 0, prevX: 0.5, prevY: 0.5, speed: 0, moved: false };
+    let dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    let ping = createFBO(fboW, fboH, initialData);
-    let pong = createFBO(fboW, fboH, initialData);
-    let toggle = false;
-
-    const mouse = { x: 0.5, y: 0.5, smoothX: 0.5, smoothY: 0.5, vx: 0, vy: 0, svx: 0, svy: 0 };
-    const isCoarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
-
-    const onMouseMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = (e.clientX - rect.left) / rect.width;
-      mouse.y = 1 - (e.clientY - rect.top) / rect.height;
+    const resize = () => {
+      const w = canvas.parentElement.clientWidth;
+      const h = canvas.parentElement.clientHeight;
+      if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+      }
     };
-    if (!isCoarse) window.addEventListener('mousemove', onMouseMove, { passive: true });
+    resize();
+    window.addEventListener('resize', resize);
 
-    // Pre-upload static uniforms to avoid redundant GPU state changes per frame
-    gl.useProgram(fluidProg);
-    gl.uniform1f(fluidUniforms.scale, 1.77);
-    gl.uniform2f(fluidUniforms.offset, -1.24, -0.48);
-    gl.uniform1f(fluidUniforms.grain, 0.005);
-    gl.uniform1f(fluidUniforms.distortBoost, 2.2);
-    gl.uniform1f(fluidUniforms.swirlBoost, 0.8);
-    gl.uniform1f(fluidUniforms.glowIntensity, 0.13);
+    const onPointerMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = 1.0 - (e.clientY - rect.top) / rect.height;
+      const dx = x - mouse.prevX;
+      const dy = y - mouse.prevY;
+      mouse.vx = dx * 10.0;
+      mouse.vy = dy * 10.0;
+      mouse.speed = Math.sqrt(dx * dx + dy * dy);
+      mouse.x = x;
+      mouse.y = y;
+      mouse.prevX = x;
+      mouse.prevY = y;
+      mouse.moved = true;
+    };
+    window.addEventListener('mousemove', onPointerMove, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) onPointerMove(e.touches[0]);
+    }, { passive: true });
 
-    const g1 = hexToRgb('#fff7d1'), g2 = hexToRgb('#538dca'), g3 = hexToRgb('#2d448b');
-    gl.uniform3f(fluidUniforms.glowColor1, g1[0], g1[1], g1[2]);
-    gl.uniform3f(fluidUniforms.glowColor2, g2[0], g2[1], g2[2]);
-    gl.uniform3f(fluidUniforms.glowColor3, g3[0], g3[1], g3[2]);
-
-    const cList = ['#000000', '#1A3870', '#204a7e', '#eed8aa', '#000000'].map(hexToRgb);
-    gl.uniform3f(fluidUniforms.c1, cList[0][0], cList[0][1], cList[0][2]);
-    gl.uniform3f(fluidUniforms.c2, cList[1][0], cList[1][1], cList[1][2]);
-    gl.uniform3f(fluidUniforms.c3, cList[2][0], cList[2][1], cList[2][2]);
-    gl.uniform3f(fluidUniforms.c4, cList[3][0], cList[3][1], cList[3][2]);
-    gl.uniform3f(fluidUniforms.c5, cList[4][0], cList[4][1], cList[4][2]);
-
-    gl.uniform1f(fluidUniforms.vignette, 0.38);
-    gl.uniform1f(fluidUniforms.bloomThreshold, 0.61);
-    gl.uniform1f(fluidUniforms.bloomRange, 0.18);
-    gl.uniform1f(fluidUniforms.bloomStrength, 0.4);
-
-    gl.useProgram(flowProg);
-    gl.uniform1f(flowUniforms.brushRadius, 0.09);
-    gl.uniform1f(flowUniforms.brushStrength, isCoarse ? 0 : 1.8);
-    gl.uniform1f(flowUniforms.decay, 0.925);
-
-    const startTime = performance.now();
-    let lastFrame = 0;
-    const fpsInterval = 1000 / 36; // 36 FPS smooth fluid cap
+    // Animation Loop
+    let startTime = performance.now();
     let isVisible = true;
     let isRunning = false;
 
-    const render = (now) => {
-      const currentDpr = Math.min(window.devicePixelRatio || 1, 1.25);
-      const nw = Math.round(canvas.clientWidth * currentDpr);
-      const nh = Math.round(canvas.clientHeight * currentDpr);
-      if (nw !== width || nh !== height) {
-        width = nw;
-        height = nh;
-        canvas.width = nw;
-        canvas.height = nh;
-      }
-
-      // Mouse interpolation
-      mouse.smoothX += (mouse.x - mouse.smoothX) * 0.1;
-      mouse.smoothY += (mouse.y - mouse.smoothY) * 0.1;
-      mouse.svx += ((mouse.x - mouse.smoothX) * 0.5 - mouse.svx) * 0.2;
-      mouse.svy += ((mouse.y - mouse.smoothY) * 0.5 - mouse.svy) * 0.2;
-
-      // Flowmap Pass
-      const readFBO = toggle ? ping : pong;
-      const writeFBO = toggle ? pong : ping;
-      toggle = !toggle;
-
-      gl.bindFramebuffer(gl.FRAMEBUFFER, writeFBO.fbo);
-      gl.viewport(0, 0, fboW, fboH);
-      gl.useProgram(flowProg);
-      bindAttrib(flowProg);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, readFBO.tex);
-      gl.uniform1i(flowUniforms.prev, 0);
-      gl.uniform2f(flowUniforms.mouse, mouse.smoothX, mouse.smoothY);
-      gl.uniform2f(flowUniforms.velocity, mouse.svx, mouse.svy);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-      // Main Fluid Pass
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      gl.viewport(0, 0, width, height);
-      gl.useProgram(fluidProg);
-      bindAttrib(fluidProg);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, writeFBO.tex);
-      gl.uniform1i(fluidUniforms.flowmap, 0);
-
-      const elapsed = (performance.now() - startTime) * 0.001 * 0.28;
-      gl.uniform1f(fluidUniforms.time, elapsed);
-      gl.uniform2f(fluidUniforms.resolution, width, height);
-      gl.uniform2f(fluidUniforms.lightPos, 0.89 + (mouse.smoothX - 0.89) * 0.63, 0.46);
-      gl.uniform1f(fluidUniforms.lightCore, isCoarse ? 0 : 0.14);
-      gl.uniform1f(fluidUniforms.lightHalo, isCoarse ? 0 : 0.2);
-
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    };
-
-    const loop = (now) => {
+    const render = () => {
       if (!isVisible || document.hidden) {
         isRunning = false;
         return;
       }
-      requestAnimationFrame(loop);
-      if (now - lastFrame < fpsInterval) return;
-      lastFrame = now - ((now - lastFrame) % fpsInterval);
-      render(now);
+
+      const time = (performance.now() - startTime) * 0.001;
+
+      // 1. Update Flow Simulation FBO
+      gl.useProgram(flowProg);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fboB.fbo);
+      gl.viewport(0, 0, simRes, simRes);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, fboA.tex);
+      gl.uniform1i(gl.getUniformLocation(flowProg, 'u_prev'), 0);
+      gl.uniform2f(gl.getUniformLocation(flowProg, 'u_mouse'), mouse.x, mouse.y);
+      gl.uniform2f(gl.getUniformLocation(flowProg, 'u_velocity'), mouse.vx, mouse.vy);
+      gl.uniform1f(gl.getUniformLocation(flowProg, 'u_brushRadius'), 0.09);
+      gl.uniform1f(gl.getUniformLocation(flowProg, 'u_brushStrength'), 0.85);
+      gl.uniform1f(gl.getUniformLocation(flowProg, 'u_decay'), 0.965);
+
+      gl.bindVertexArray(quadVAO);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      // Swap FBOs
+      let tmp = fboA; fboA = fboB; fboB = tmp;
+
+      // Natural velocity damping
+      mouse.vx *= 0.88;
+      mouse.vy *= 0.88;
+
+      // 2. Render Main Canvas with Flow Distortion
+      gl.useProgram(renderProg);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, fboA.tex);
+      gl.uniform1i(gl.getUniformLocation(renderProg, 'u_flow'), 0);
+      gl.uniform1f(gl.getUniformLocation(renderProg, 'u_time'), time);
+      gl.uniform2f(gl.getUniformLocation(renderProg, 'u_resolution'), canvas.width, canvas.height);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      requestAnimationFrame(render);
     };
 
     const startLoop = () => {
       if (!isRunning && isVisible && !document.hidden) {
         isRunning = true;
-        lastFrame = performance.now();
-        requestAnimationFrame(loop);
+        requestAnimationFrame(render);
       }
     };
 
+    // IntersectionObserver power saver
     const observer = new IntersectionObserver((entries) => {
       isVisible = entries[0].isIntersecting;
       if (isVisible) startLoop();
@@ -1953,370 +496,7 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
   }
 
   // ==========================================
-  // 3. Tab Switching
-  // ==========================================
-  function initHeroInteractions() {
-    const tabWeb = document.getElementById('ds-tab-web');
-    const tabStart = document.getElementById('ds-tab-start');
-    const codeWeb = document.getElementById('ds-code-web');
-    const codeStart = document.getElementById('ds-code-start');
-
-    let currentTab = 'web';
-    let whisperLoaded = false;
-
-    const activateTab = (tab, other, show, hide) => {
-      currentTab = tab === tabWeb ? 'web' : 'start';
-      tab.classList.add('is-active', 'text-ds-primary', 'bg-black/20', 'backdrop-blur-xl', 'border-white/[0.08]');
-      tab.classList.remove('text-ds-description', 'bg-transparent', 'border-transparent');
-      other.classList.remove('is-active', 'text-ds-primary', 'bg-black/20', 'backdrop-blur-xl', 'border-white/[0.08]');
-      other.classList.add('text-ds-description', 'bg-transparent', 'border-transparent');
-      show.classList.remove('invisible', 'hidden');
-      hide.classList.add('hidden');
-    };
-
-    if (tabWeb && tabStart && codeWeb && codeStart) {
-      const detailWeb = document.getElementById('ds-detail-link');
-      const detailStart = document.getElementById('ds-w-detail-link');
-      const timeEl = document.getElementById('ds-w-time');
-      const mediaEl = document.getElementById('ds-w-media');
-      const progressEl = document.getElementById('ds-w-progress');
-
-      tabWeb.addEventListener('click', () => {
-        activateTab(tabWeb, tabStart, codeWeb, codeStart);
-        // Each tab owns its own detail link: the Stats one is permanently
-        // pinned to /stats/ and is never touched by the Whisper feed.
-        if (detailWeb) detailWeb.classList.remove('hidden');
-        if (detailStart) detailStart.classList.add('hidden');
-        if (timeEl) timeEl.classList.add('hidden');
-        if (mediaEl) mediaEl.classList.add('hidden');
-        if (progressEl) progressEl.classList.add('hidden');
-      });
-      tabStart.addEventListener('click', () => {
-        activateTab(tabStart, tabWeb, codeStart, codeWeb);
-        // Its detail link is dynamic (points to the current status URL) and is
-        // updated by loadWhisperFeed, so the two never interfere.
-        if (detailStart) detailStart.classList.remove('hidden');
-        if (detailWeb) detailWeb.classList.add('hidden');
-        if (timeEl) timeEl.classList.remove('hidden');
-        if (progressEl) progressEl.classList.remove('hidden');
-        // Lazy load: no request is made until the Whisper tab is opened.
-        if (!whisperLoaded) {
-          whisperLoaded = true;
-          loadWhisperFeed(codeStart);
-        }
-      });
-    }
-  }
-
-  // ==========================================
-  // 3.5 Whisper Feed (Mastodon, lazy-loaded)
-  // ==========================================
-  function loadWhisperFeed(container) {
-    const api = 'https://e5n.cc/api/v1/accounts/111136231674527355/statuses?exclude_replies=true&exclude_reblogs=true&limit=10';
-    const rtf = new Intl.RelativeTimeFormat('zh-CN', { numeric: 'auto', style: 'short' });
-
-    const relativeTime = (iso) => {
-      const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-      const units = [
-        ['year', 31536000], ['month', 2592000], ['week', 604800],
-        ['day', 86400], ['hour', 3600], ['minute', 60], ['second', 1]
-      ];
-      for (const [unit, secs] of units) {
-        if (Math.abs(diff) >= secs) return rtf.format(-Math.round(diff / secs), unit);
-      }
-      return '刚刚';
-    };
-
-    // Tidy up Mastodon content HTML for the dark terminal card.
-    const cleanContent = (html) => {
-      // 替换评分 emoji（与 mastodon.html 保持一致）
-      html = html
-        .replace(/:star_solid:/g, '🌕')
-        .replace(/:star_half:/g, '<span style="transform: scaleX(-1); display: inline-block;">🌓</span>')
-        .replace(/:star_empty:/g, '🌑');
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      div.querySelectorAll('span.invisible').forEach((el) => el.remove());
-      // Drop empty paragraphs / blank lines and collapse stray line breaks.
-      div.querySelectorAll('p').forEach((p) => {
-        if (!p.textContent.trim()) {
-          p.remove();
-          return;
-        }
-        // Collapse newlines/tabs and duplicate spaces inside paragraph text.
-        [...p.childNodes].forEach((node) => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            node.textContent = node.textContent.replace(/[\r\n\t]+/g, ' ').replace(/ {2,}/g, ' ');
-          }
-        });
-        // Remove trailing <br> runs that create blank lines.
-        while (p.lastChild && p.lastChild.nodeName === 'BR') p.removeChild(p.lastChild);
-      });
-      // Merge multiple paragraphs into one, separating them with <br>.
-      const ps = div.querySelectorAll('p');
-      if (ps.length > 1) {
-        const first = ps[0];
-        for (let i = 1; i < ps.length; i++) {
-          first.appendChild(document.createElement('br'));
-          while (ps[i].firstChild) first.appendChild(ps[i].firstChild);
-          ps[i].remove();
-        }
-      }
-      div.querySelectorAll('a').forEach((a) => {
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-      });
-      div.querySelectorAll('img').forEach((img) => {
-        // Custom emoji: keep them small and inline.
-        img.style.cssText = 'width:1.1em;height:1.1em;display:inline-block;vertical-align:-0.2em;margin:0 1px';
-      });
-      return div.innerHTML;
-    };
-
-
-    const card = (post) => {
-      return `
-        <article class="relative px-4 py-0 flex flex-col justify-center">
-          <div class="ds-w-content text-[13px] leading-relaxed break-words min-w-0">${cleanContent(post.content || '')}</div>
-          <button type="button" class="ds-w-more" hidden>显示更多</button>
-        </article>`;
-    };
-
-    container.innerHTML = '<div class="ds-w-loading text-ds-description text-[13px] flex items-center gap-2"><span class="inline-block size-3 border-2 border-white/20 border-t-white/50 rounded-full animate-spin"></span>加载中…</div>';
-
-    fetch(api)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((statuses) => {
-        if (!Array.isArray(statuses) || !statuses.length) {
-          container.innerHTML = '<div class="text-ds-description text-[13px]">暂无说说</div>';
-          return;
-        }
-        const posts = statuses.slice(0, 10);
-
-        // Deck carousel: only one card is ever in the layout flow (the visible
-        // one, so the stage height stays correct). During a switch the outgoing
-        // card becomes an absolute overlay that slides out to the left while the
-        // incoming card slides in from the right; afterwards the old card is
-        // removed and the stage height reflows to the new card.
-        container.innerHTML = '<div class="ds-w-stage"></div>';
-
-        const stage = container.querySelector('.ds-w-stage');
-        const timeEl = document.getElementById('ds-w-time');
-        const mediaEl = document.getElementById('ds-w-media');
-        const total = posts.length;
-        let index = 0;
-        let timer = null;
-        let hovering = false;
-        let swapping = false;
-        let autoPlay = true;
-        const progressEl = document.getElementById('ds-w-progress');
-        const restartProgress = () => {
-          if (!progressEl) return;
-          progressEl.style.animationPlayState = '';
-          progressEl.classList.remove('is-running');
-          void progressEl.offsetWidth;
-          progressEl.classList.add('is-running');
-        };
-        const pauseProgress = () => {
-          if (progressEl) progressEl.style.animationPlayState = 'paused';
-        };
-
-        const makeCard = (i) => {
-          const el = document.createElement('div');
-          el.className = 'ds-w-card';
-          el.innerHTML = card(posts[i]);
-          return el;
-        };
-
-        const setupCard = (el) => {
-          const contentEl = el.querySelector('.ds-w-content');
-          const moreBtn = el.querySelector('.ds-w-more');
-          if (contentEl && moreBtn) {
-            if (contentEl.scrollHeight > contentEl.clientHeight + 2) {
-              moreBtn.hidden = false;
-              moreBtn.textContent = '显示更多';
-
-              const collapse = () => {
-                if (el.classList.contains('is-expanded')) {
-                  el.classList.remove('is-expanded');
-                  moreBtn.textContent = '显示更多';
-                  if (stage) stage.style.height = '';
-                  start();
-                }
-              };
-
-              const expand = () => {
-                el.classList.add('is-expanded');
-                moreBtn.textContent = '收起';
-                if (stage) stage.style.height = '';
-                stop();
-              };
-
-              moreBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (el.classList.contains('is-expanded')) {
-                  collapse();
-                } else {
-                  expand();
-                }
-              });
-
-              window.addEventListener('scroll', collapse, { passive: true });
-            } else {
-              moreBtn.hidden = true;
-            }
-          }
-          return el;
-        };
-
-        // The top-right 发布时间 / 媒体图标 follow the visible status.
-        // 详情 always points to the internal /mastodon/ page.
-        const updateHeader = (i) => {
-          const post = posts[i];
-          if (timeEl) timeEl.textContent = relativeTime(post.created_at);
-          const mediaItems = (post.media_attachments || []).filter((m) => ['image', 'gifv', 'video'].includes(m.type));
-          if (mediaEl) {
-            if (mediaItems.length) {
-              mediaEl.href = mediaItems[0].url || mediaItems[0].preview_url || '#';
-              mediaEl.classList.remove('hidden');
-            } else {
-              mediaEl.classList.add('hidden');
-            }
-          }
-        };
-        updateHeader(0);
-
-        let cur = makeCard(0);
-        stage.appendChild(cur);
-        setupCard(cur);
-
-        const swap = (next) => {
-          if (next === index || swapping) return;
-          swapping = true;
-
-          // Pin the stage height for the duration of the animation so a card
-          // of a different height doesn't make the tab jump mid-switch.
-          stage.style.height = `${stage.offsetHeight}px`;
-
-          const nxt = makeCard(next);
-          nxt.classList.add('ds-w-slide-in');
-          stage.appendChild(nxt);
-          setupCard(nxt);
-
-          // Force a reflow so the entrance transition starts from its base state.
-          void nxt.offsetWidth;
-
-          cur.classList.add('ds-w-leaving');
-          nxt.classList.add('is-active');
-          updateHeader(next);
-
-          window.setTimeout(() => {
-            cur.remove();
-            nxt.classList.remove('ds-w-slide-in', 'is-active');
-            cur = nxt;
-            index = next;
-            swapping = false;
-            // Unpin: the stage reflows to the new card's natural height.
-            stage.style.height = '';
-            // After any step (manual arrow or auto-advance) restart the
-            // countdown so the progress bar and the next slide stay in sync.
-            if (!hovering && autoPlay) { stop(); start(); }
-          }, 500);
-        };
-        const nextSlide = () => swap((index + 1) % total);
-        const stop = () => { if (timer) { window.clearInterval(timer); timer = null; } };
-        const start = () => {
-          stop();
-          if (autoPlay) { timer = window.setInterval(nextSlide, 6000); restartProgress(); }
-        };
-
-        container.addEventListener('mouseenter', () => { hovering = true; stop(); pauseProgress(); });
-        container.addEventListener('mouseleave', () => { hovering = false; start(); });
-        start();
-
-        // Hover pager: chevrons float at the left/right edges and step to the
-        // previous / next loaded status. Wraps around at both ends.
-        const mkArrow = (dir) => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = dir === 'prev' ? 'ds-w-prev' : 'ds-w-next';
-          btn.setAttribute('aria-label', dir === 'prev' ? '上一条说说' : '下一条说说');
-          btn.title = dir === 'prev' ? '上一条' : '下一条';
-          btn.innerHTML = dir === 'prev'
-            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M14.41 18.16L8.75 12.5l5.66-5.66l.7.71l-4.95 4.95l4.95 4.95z"/></svg>'
-            : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.59 18.16l5.66-5.66l-5.66-5.66l-.7.71l4.95 4.95l-4.95 4.95z"/></svg>';
-          btn.addEventListener('click', () => {
-            const next = dir === 'prev' ? (index - 1 + total) % total : (index + 1) % total;
-            swap(next);
-          });
-          container.appendChild(btn);
-          return btn;
-        };
-        mkArrow('prev');
-        mkArrow('next');
-      })
-      .catch(() => {
-        container.innerHTML = '<button type="button" class="ds-w-retry ds-w-loading flex items-center text-ds-description text-[13px] hover:text-ds-primary transition-colors cursor-pointer">加载失败，点击重试</button>';
-        container.querySelector('.ds-w-retry')?.addEventListener('click', () => loadWhisperFeed(container));
-      });
-  }
-
-  // ==========================================
-  // 3.5 Social Accordion (stable hover state)
-  // ==========================================
-  function initSocialAccordion() {
-    const groups = document.querySelectorAll('.ds-social-group');
-    groups.forEach((group) => {
-      const btns = Array.from(group.querySelectorAll('.ds-social-btn'));
-      if (!btns.length) return;
-      // The first button is expanded by default. While the pointer stays
-      // inside the group, keep the last hovered button expanded, so moving
-      // through the gap between buttons doesn't cause flicker. Only when
-      // the pointer leaves the whole group do we revert to the default.
-      let active = btns[0];
-      const setActive = (btn) => {
-        if (btn === active) return;
-        active = btn;
-        btns.forEach((b) => b.classList.toggle('is-expanded', b === btn));
-      };
-      btns.forEach((btn) => {
-        btn.addEventListener('mouseenter', () => setActive(btn));
-      });
-      group.addEventListener('mouseleave', () => setActive(btns[0]));
-    });
-  }
-
-  // ==========================================
-  // 4. Header Overlay & Scroll Integration
-  // ==========================================
-  function initHeaderIntegration() {
-    document.body.classList.add('ds-has-hero');
-    const header = document.getElementById('page-header');
-    if (!header) return;
-
-    const updateHeaderHeight = () => {
-      const h = header.offsetHeight || 89;
-      document.documentElement.style.setProperty('--ds-header-h', `${h}px`);
-    };
-    updateHeaderHeight();
-    window.addEventListener('resize', updateHeaderHeight);
-
-    const onScroll = () => {
-      if (window.scrollY > 80) {
-        header.classList.add('is-scrolled');
-      } else {
-        header.classList.remove('is-scrolled');
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  // ==========================================
-  // 5. 3D Digitile Snail Matrix Engine
+  // 3. 3D Digitile Snail Matrix Engine
   // ==========================================
   function initSnailDigitile() {
     const canvas = document.getElementById('ds-snail-canvas');
@@ -2674,68 +854,7 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
     startSnail();
   }
 
-  // ==========================================
-  // 9. Motto typewriter: cycles translations of
-  //    "Chance favors the prepared mind."
-  // ==========================================
-  function initMottoTypewriter() {
-    const el = document.getElementById('ds-motto-type');
-    if (!el) return;
-
-    // English is omitted: it is already shown statically on the line above.
-    // CJK first (Chinese, Japanese, Korean), then the rest in original order.
-    const phrases = [
-      '机会总是垂青于有准备的人！', // Chinese
-      'チャンスは準備のできた心にのみ微笑む', // Japanese
-      '기회는 준비된 자에게만 온다.', // Korean
-      'Le hasard ne favorise que les esprits préparés.', // French (Pasteur's original)
-      'Der Zufall begünstigt nur den vorbereiteten Geist.', // German
-      'La suerte favorece a las mentes preparadas.', // Spanish
-      'La fortuna aiuta solo le menti preparate.', // Italian
-      'Случай благоприятствует подготовленному уму.', // Russian
-      'O acaso favorece as mentes preparadas.' // Portuguese
-    ];
-
-    // Respect reduced-motion: show the first phrase statically.
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.textContent = phrases[0];
-      return;
-    }
-
-    let index = 0;
-    let char = 0;
-    let deleting = false;
-    const typeSpeed = 75; // ms per char while typing
-    const deleteSpeed = 35; // ms per char while deleting
-    const holdTime = 5000; // ms to hold a completed phrase
-
-    const tick = () => {
-      const phrase = phrases[index];
-      if (!deleting) {
-        char++;
-        el.textContent = phrase.slice(0, char);
-        if (char === phrase.length) {
-          deleting = true;
-          setTimeout(tick, holdTime);
-          return;
-        }
-        setTimeout(tick, typeSpeed);
-      } else {
-        char--;
-        el.textContent = phrase.slice(0, char);
-        if (char === 0) {
-          deleting = false;
-          index = (index + 1) % phrases.length;
-        }
-        setTimeout(tick, deleteSpeed);
-      }
-    };
-    tick();
-  }
-
-  // Initialize on DOM ready
-  const startAll = () => {
-    initHeaderIntegration();
+  function initDshCanvases() {
     if (document.getElementById('ds-fluid-canvas')) {
       initFluidShader();
     }
@@ -2745,15 +864,12 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
     if (document.getElementById('ds-grid-canvas')) {
       initGridCanvas();
     }
-    initHeroInteractions();
-    initSocialAccordion();
-    initMottoTypewriter();
-  };
+  }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startAll);
+    document.addEventListener('DOMContentLoaded', initDshCanvases);
   } else {
-    startAll();
+    initDshCanvases();
   }
 })();
 </script>
