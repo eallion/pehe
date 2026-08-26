@@ -38,7 +38,7 @@
     {{- end -}}
 
     <!-- Content Grid Container (left + right columns as one block) -->
-    <div class="ds-hero-content ds-container grid grid-cols-1 gap-6 md:gap-ds-9 items-center pt-20 sm:pt-24 md:pt-36 md:grid-cols-[60fr_40fr] pb-6 md:pb-ds-11 w-full mx-auto">
+    <div class="ds-hero-content ds-container grid grid-cols-1 gap-8 md:gap-ds-9 items-center pt-20 sm:pt-24 md:pt-36 md:grid-cols-[60fr_40fr] pb-6 md:pb-ds-11 w-full mx-auto my-auto md:my-0">
       
       <!-- Left Column: Title & CTA -->
       <div class="flex flex-col gap-ds-7 order-1">
@@ -64,10 +64,10 @@
           </p>
         </div>
 
-        <!-- Desktop CTA Buttons (md+ only: accordion) -->
+        <!-- CTA Buttons (Unified for PC & Mobile, tightly follows .ds-keywords) -->
         {{- $followPlatforms := slice "mastodon" "twitter" "x" "threads" "bluesky" "weibo" "instagram" "facebook" "youtube" "tiktok" "bilibili" "fediverse" "pixelfed" "line" "telegram" "douban" -}}
         {{ with .Site.Params.social }}
-        <div class="ds-hero-enter hidden md:flex flex-wrap items-center gap-ds-4 mt-ds-2 ds-social-group" style="--enter-y:16px;animation-duration:0.7s;animation-delay:0.3s">
+        <div class="ds-hero-enter flex flex-wrap items-center gap-2.5 sm:gap-3 md:gap-ds-4 mt-2.5 sm:mt-3 md:mt-ds-2 ds-social-group" style="--enter-y:16px;animation-duration:0.7s;animation-delay:0.3s">
           {{ range $index, $item := . }}
             {{ $isFirst := eq $index 0 }}
             {{ $rel := "noopener noreferrer" }}
@@ -160,35 +160,10 @@
         </div>
       </div>
 
-      <!-- Mobile CTA Buttons (Mobile only: <md compact flex-wrap) -->
-      {{ with .Site.Params.social }}
-      <div class="flex md:hidden flex-wrap items-center gap-2 order-3 mt-2">
-        {{ range . }}
-          {{ $rel := "noopener noreferrer" }}
-          {{ $cleanIcon := replaceRE "(-full)?-color$" "" (lower (or .icon "")) }}
-          {{ $action := .action }}
-          {{ if not $action }}
-            {{ $action = "查看" }}
-            {{ if or (in $followPlatforms $cleanIcon) (in $followPlatforms (lower .name)) }}
-              {{ $action = "关注" }}
-            {{ end }}
-          {{ end }}
-          {{ if or (eq (lower .name) "mastodon") (eq $cleanIcon "mastodon") }}
-            {{ $rel = "me noopener noreferrer" }}
-          {{ end }}
-          {{ $label := printf "%s %s" $action .name }}
-          <a class="ds-mobile-social-pill" href="{{ .url }}" target="_blank" rel="{{ $rel }}" aria-label="{{ $label }}">
-            {{ partial "icon.html" (dict "name" .icon "class" "h-4 w-4 fill-current shrink-0") }}
-            <span class="inline-flex items-center leading-none">{{ $label }}</span>
-          </a>
-        {{ end }}
-      </div>
-      {{ end }}
-
     </div>
 
     <!-- Hero Bottom Section (Modern Interactive Glass Announcement Card) -->
-    <div class="ds-hero-bottom ds-hero-enter z-10 flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-auto w-full max-w-4xl mx-auto pb-8 md:pb-0 md:absolute md:bottom-8 md:left-0 md:right-0" style="--enter-y:24px;--enter-blur:8px;animation-duration:0.9s;animation-delay:0.5s">
+    <div class="ds-hero-bottom ds-hero-enter z-10 flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-auto w-full max-w-4xl mx-auto mt-auto pb-6 sm:pb-8 md:mt-0 md:pb-0 md:absolute md:bottom-8 md:left-0 md:right-0" style="--enter-y:24px;--enter-blur:8px;animation-duration:0.9s;animation-delay:0.5s">
       {{- $latestPosts := first 1 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
       {{- if eq (len $latestPosts) 0 -}}
         {{- $latestPosts = first 1 (where .Site.RegularPages "Kind" "page") -}}
@@ -579,15 +554,16 @@
     border-color: rgba(255, 255, 255, 0.08);
   }
 
-  /* Social CTA Accordion */
+  /* Social CTA (Unified Circular Icon on Mobile, Accordion on Desktop) */
   .ds-social-btn {
     width: 40px;
     height: 40px;
-    padding: 0 0 0 10px;
+    padding: 0;
     display: inline-flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     flex-shrink: 0;
+    border-radius: 9999px;
     transition: width 0.35s ease, border-color 0.35s ease, background-color 0.2s ease;
   }
   .ds-social-btn svg {
@@ -597,7 +573,7 @@
     display: block;
   }
   .ds-social-btn .ds-social-label {
-    display: inline-flex;
+    display: none;
     align-items: center;
     max-width: 0;
     opacity: 0;
@@ -606,35 +582,22 @@
     line-height: 1;
     transition: max-width 0.35s ease, opacity 0.3s ease;
   }
-  .ds-social-btn.is-expanded {
-    width: 170px;
-  }
-  .ds-social-btn.is-expanded .ds-social-label {
-    max-width: 130px;
-    opacity: 1;
-  }
 
-  /* Mobile Social Pill Button */
-  .ds-mobile-social-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 9999px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.2s ease;
-    text-decoration: none;
-  }
-  .ds-mobile-social-pill:hover {
-    background-color: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.3);
-    color: #ffffff;
+  @media (min-width: 768px) {
+    .ds-social-btn {
+      padding: 0 0 0 10px;
+      justify-content: flex-start;
+    }
+    .ds-social-btn .ds-social-label {
+      display: inline-flex;
+    }
+    .ds-social-btn.is-expanded {
+      width: 170px;
+    }
+    .ds-social-btn.is-expanded .ds-social-label {
+      max-width: 130px;
+      opacity: 1;
+    }
   }
 
   /* Whisper tab */

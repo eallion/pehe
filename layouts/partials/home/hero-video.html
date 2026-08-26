@@ -5,18 +5,51 @@
 {{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
 {{- $dogePlayToken := site.Params.heroStyleDogecloudPlayToken | default site.Params.heroStyleDogecloudPlaytoken | default site.Params.hero_style_dogecloud_play_token | default site.Params.dogecloudPlayToken | default "" -}}
 {{- $dogeVtype := site.Params.heroStyleDogecloudVtype | default site.Params.heroStyleDogecloudVType | default site.Params.hero_style_dogecloud_vtype | default site.Params.dogecloudVtype | default "" -}}
-<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none ds-video-bg-container">
   {{- if eq $heroStyleFmt "dogecloud" -}}
     <div id="ds-doge-player" class="absolute inset-0 w-full h-full ds-doge-container"></div>
     {{ with $dogeVcode }}
+      <script>
+        (function() {
+          var patterns = ['DogePlayer:', 'networkError', 'details aborted', 'isMacSafari', 'errorFatal false'];
+          ['error', 'warn', 'log', 'info', 'debug'].forEach(function(m) {
+            var orig = console[m];
+            if (typeof orig !== 'function') return;
+            console[m] = function() {
+              var text = '';
+              for (var i = 0; i < arguments.length; i++) {
+                var a = arguments[i];
+                if (typeof a === 'string') {
+                  text += ' ' + a;
+                } else if (a && typeof a === 'object') {
+                  try {
+                    text += ' ' + (a.message || a.details || a.errorType || JSON.stringify(a));
+                  } catch(e) {}
+                }
+              }
+              for (var j = 0; j < patterns.length; j++) {
+                if (text.indexOf(patterns[j]) !== -1) {
+                  return;
+                }
+              }
+              return orig.apply(console, arguments);
+            };
+          });
+        })();
+      </script>
       <script type="text/javascript" src="https://player.dogecloud.com/js/loader"></script>
       <script>
         (function() {
+          var player = null;
           function initDogePlayer() {
             var container = document.getElementById('ds-doge-player');
-            if (!container || typeof DogePlayer === 'undefined') return;
+            if (!container) return;
+            if (typeof DogePlayer === 'undefined') {
+              setTimeout(initDogePlayer, 100);
+              return;
+            }
             try {
-              var player = new DogePlayer({
+              player = new DogePlayer({
                 container: container,
                 userId: {{ $dogeUserId }},
                 vcode: '{{ . }}',
@@ -27,6 +60,17 @@
                 volume: 0,
                 loop: true,
                 hasCover: false,
+                preventClickToggle: true,
+                videoProps: {
+                  playsinline: 'true',
+                  'webkit-playsinline': 'true',
+                  'x5-playsinline': 'true',
+                  'x5-video-player-type': 'h5',
+                  'x5-video-player-fullscreen': 'false',
+                  muted: 'true',
+                  loop: 'true',
+                  autoplay: 'true'
+                },
                 switcher: {
                   controller: false,
                   controllerAutoHide: false,
@@ -53,14 +97,17 @@
                     var v = container.querySelector('video');
                     if (v) {
                       v.muted = true;
+                      v.defaultMuted = true;
                       v.volume = 0;
-                      v.loop = true;
                       v.setAttribute('muted', '');
                       v.setAttribute('playsinline', '');
+                      v.setAttribute('webkit-playsinline', '');
+                      v.setAttribute('x5-playsinline', '');
                       v.setAttribute('loop', '');
-                      v.style.objectFit = 'cover';
-                      v.style.width = '100%';
-                      v.style.height = '100%';
+                      v.setAttribute('autoplay', '');
+                      if (v.paused) {
+                        v.play().catch(function() {});
+                      }
                     }
                   },
                   ended: function() {
@@ -79,14 +126,25 @@
                 } catch(e) {}
                 var v = container.querySelector('video');
                 if (v && v.paused) {
+                  v.muted = true;
                   v.play().catch(function() {});
                 }
               };
+
               document.addEventListener('visibilitychange', function() {
                 if (!document.hidden) resumeDoge();
               });
               window.addEventListener('focus', resumeDoge);
               window.addEventListener('pageshow', resumeDoge);
+
+              // 针对移动端低电量模式或首次手势限制的自动激活
+              ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(function(evt) {
+                var gestureHandler = function() {
+                  resumeDoge();
+                  window.removeEventListener(evt, gestureHandler);
+                };
+                window.addEventListener(evt, gestureHandler, { passive: true, once: true });
+              });
             } catch(e) {
               console.error('DogePlayer Error:', e);
             }
@@ -103,15 +161,16 @@
     {{ end }}
   {{- else -}}
     {{ with $videoUrl }}
-      <video id="ds-hero-video" class="absolute inset-0 w-full h-full object-cover object-center" autoplay loop muted playsinline preload="auto">
+      <video id="ds-hero-video" class="absolute inset-0 w-full h-full object-cover object-center" autoplay loop muted playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="false" preload="auto">
         <source src="{{ . }}" type="video/mp4">
       </video>
       <script>
         (function() {
+          var v = document.getElementById('ds-hero-video');
           var resumeNative = function() {
             if (document.hidden) return;
-            var v = document.getElementById('ds-hero-video');
             if (v && v.paused) {
+              v.muted = true;
               v.play().catch(function() {});
             }
           };
@@ -120,6 +179,14 @@
           });
           window.addEventListener('focus', resumeNative);
           window.addEventListener('pageshow', resumeNative);
+
+          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(function(evt) {
+            var gestureHandler = function() {
+              resumeNative();
+              window.removeEventListener(evt, gestureHandler);
+            };
+            window.addEventListener(evt, gestureHandler, { passive: true, once: true });
+          });
         })();
       </script>
     {{ else }}
@@ -127,6 +194,57 @@
     {{ end }}
   {{- end -}}
   <!-- Contrast & Readability Overlay -->
-  <div class="absolute inset-0 bg-black/45 backdrop-brightness-[0.8]"></div>
-  <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.65)_100%]"></div>
+  <div class="absolute inset-0 bg-black/25 backdrop-brightness-[0.9]"></div>
+  <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%]"></div>
 </div>
+
+<style>
+.ds-video-bg-container,
+.ds-video-bg-container #ds-doge-player,
+.ds-video-bg-container .dplayer,
+.ds-video-bg-container .dplayer-video-wrap {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.ds-video-bg-container video,
+.ds-video-bg-container #ds-hero-video,
+.ds-video-bg-container .dplayer-video-wrap video,
+.ds-video-bg-container .dplayer-video,
+.ds-video-bg-container .dplayer-video-current {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* 隐藏播放器自带的多余控件、移动端悬浮播放图标与遮罩层，保持纯净背景 */
+.ds-video-bg-container .dplayer-controller,
+.ds-video-bg-container .dplayer-controller-mask,
+.ds-video-bg-container .dplayer-mask,
+.ds-video-bg-container .dplayer-bezel,
+.ds-video-bg-container .dplayer-bezel-icon,
+.ds-video-bg-container .dplayer-danmaku,
+.ds-video-bg-container .dplayer-notice,
+.ds-video-bg-container .dplayer-mobile-play,
+.ds-video-bg-container .dplayer-mobile-icon {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+</style>
