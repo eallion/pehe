@@ -306,11 +306,17 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
    Header Brand BLOG Badge (Light / Dark / Hero Responsive Gradient)
    ============================================================ */
 .ds-header-badge {
-  display: inline-flex;
+  display: none;
   align-items: center;
   border-radius: 8px;
   padding: 1px;
   transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+@media (min-width: 768px) {
+  .ds-header-badge {
+    display: inline-flex;
+  }
 }
 
 .ds-header-badge-inner {

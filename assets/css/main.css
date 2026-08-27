@@ -18,7 +18,6 @@
     --color-emerald-400: oklch(76.5% 0.177 163.223);
     --color-emerald-600: oklch(59.6% 0.145 163.225);
     --color-cyan-300: oklch(86.5% 0.127 207.078);
-    --color-cyan-400: oklch(78.9% 0.154 211.53);
     --color-blue-100: oklch(93.2% 0.032 255.585);
     --color-blue-300: oklch(80.9% 0.105 251.813);
     --color-blue-400: oklch(70.7% 0.165 254.624);
@@ -411,9 +410,6 @@
   }
   .order-2 {
     order: 2;
-  }
-  .order-3 {
-    order: 3;
   }
   .col-start-1 {
     grid-column-start: 1;
@@ -2201,9 +2197,6 @@
   .pb-6 {
     padding-bottom: calc(var(--spacing) * 6);
   }
-  .pb-8 {
-    padding-bottom: calc(var(--spacing) * 8);
-  }
   .pb-12 {
     padding-bottom: calc(var(--spacing) * 12);
   }
@@ -2991,9 +2984,6 @@
     .sm\:inline-block {
       display: inline-block;
     }
-    .sm\:inline-flex {
-      display: inline-flex;
-    }
     .sm\:size-5 {
       width: calc(var(--spacing) * 5);
       height: calc(var(--spacing) * 5);
@@ -3121,6 +3111,9 @@
     }
     .md\:inline-block {
       display: inline-block;
+    }
+    .md\:inline-flex {
+      display: inline-flex;
     }
     .md\:w-1\/4 {
       width: calc(1 / 4 * 100%);
@@ -4709,11 +4702,16 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
   }
 }
 .ds-header-badge {
-  display: inline-flex;
+  display: none;
   align-items: center;
   border-radius: 8px;
   padding: 1px;
   transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+@media (min-width: 768px) {
+  .ds-header-badge {
+    display: inline-flex;
+  }
 }
 .ds-header-badge-inner {
   display: inline-block;
