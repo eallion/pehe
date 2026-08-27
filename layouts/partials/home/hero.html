@@ -38,10 +38,10 @@
     {{- end -}}
 
     <!-- Content Grid Container (left + right columns as one block) -->
-    <div class="ds-hero-content ds-container grid grid-cols-1 gap-8 md:gap-ds-9 items-center pt-20 sm:pt-24 md:pt-36 md:grid-cols-[60fr_40fr] pb-6 md:pb-ds-11 w-full mx-auto my-auto md:my-0">
+    <div class="ds-hero-content ds-container flex flex-col justify-between min-h-[100svh] pt-20 sm:pt-24 pb-6 sm:pb-8 md:min-h-0 md:grid md:grid-cols-[60fr_40fr] md:gap-ds-9 md:items-center md:pt-36 md:pb-ds-11 w-full mx-auto">
       
       <!-- Left Column: Title & CTA -->
-      <div class="flex flex-col gap-ds-7 order-1">
+      <div class="flex flex-col gap-ds-7 order-1 my-auto md:my-0">
         <div class="ds-hero-enter flex flex-col gap-ds-4 items-start" style="--enter-y:24px;--enter-blur:10px;animation-duration:0.9s">
           <p data-hero-preview-label="true" class="whitespace-nowrap font-ds-sans text-base font-medium leading-none tracking-[-0.01em] text-white sm:text-[17px] md:text-lg pl-0.75">
             大大的小蜗牛 的 博客
@@ -92,8 +92,8 @@
         {{ end }}
       </div>
 
-      <!-- Right Column: Interactive Terminal Card -->
-      <div class="ds-hero-enter flex flex-col gap-ds-3 order-2" style="--enter-y:20px;animation-duration:0.9s;animation-delay:0.4s">
+      <!-- Right Column: Interactive Terminal Card (Mobile: bottom pinned; Desktop: right col) -->
+      <div class="ds-hero-enter flex flex-col gap-ds-3 order-2 mt-auto md:mt-0 w-full mb-1.5 sm:mb-3 md:mb-0" style="--enter-y:20px;animation-duration:0.9s;animation-delay:0.4s">
         <!-- Tabs -->
         <div class="flex gap-ds-1 px-ds-1 ml-1.5">
           <button id="ds-tab-web" type="button" class="ds-tab-btn is-active px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-primary bg-black/20 backdrop-blur-xl border-white/8">
@@ -162,8 +162,8 @@
 
     </div>
 
-    <!-- Hero Bottom Section (Modern Interactive Glass Announcement Card) -->
-    <div class="ds-hero-bottom ds-hero-enter z-10 flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-auto w-full max-w-4xl mx-auto mt-auto pb-6 sm:pb-8 md:mt-0 md:pb-0 md:absolute md:bottom-8 md:left-0 md:right-0" style="--enter-y:24px;--enter-blur:8px;animation-duration:0.9s;animation-delay:0.5s">
+    <!-- Hero Bottom Section (Modern Interactive Glass Announcement Card - Desktop only: md+) -->
+    <div class="ds-hero-bottom ds-hero-enter z-10 hidden md:flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-auto w-full max-w-4xl mx-auto md:absolute md:bottom-8 md:left-0 md:right-0" style="--enter-y:24px;--enter-blur:8px;animation-duration:0.9s;animation-delay:0.5s">
       {{- $latestPosts := first 1 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
       {{- if eq (len $latestPosts) 0 -}}
         {{- $latestPosts = first 1 (where .Site.RegularPages "Kind" "page") -}}
@@ -381,6 +381,7 @@
   .ds-hero-content {
     position: relative;
     z-index: 10;
+    padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.25rem));
   }
 
   @media (min-width: 768px) {
@@ -389,6 +390,7 @@
       left: 50%;
       top: 38.2%;
       transform: translate(-50%, -50%);
+      padding-bottom: 0;
     }
   }
 
@@ -396,7 +398,7 @@
     position: relative;
     z-index: 10;
     pointer-events: auto;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -404,6 +406,7 @@
 
   @media (min-width: 768px) {
     .ds-hero-bottom {
+      display: flex;
       position: absolute;
       bottom: 24px;
       left: 0;
