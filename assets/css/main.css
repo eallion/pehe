@@ -2227,6 +2227,9 @@
   .-indent-4 {
     text-indent: calc(var(--spacing) * -4);
   }
+  .align-\[-6px\] {
+    vertical-align: -6px;
+  }
   .align-bottom {
     vertical-align: bottom;
   }
@@ -3175,9 +3178,6 @@
     }
     .md\:flex-row {
       flex-direction: row;
-    }
-    .md\:items-center {
-      align-items: center;
     }
     .md\:items-end {
       align-items: flex-end;
