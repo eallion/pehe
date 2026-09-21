@@ -1,5 +1,5 @@
 home = ["HTML", "RSS"]
-page = ["HTML"]
+page = ["HTML", "MARKDOWN"]
 section = ["HTML"]
 taxonomy = ["HTML"]
 term = ["HTML"]

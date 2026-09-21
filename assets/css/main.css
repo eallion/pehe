@@ -1209,6 +1209,9 @@
   .h-200 {
     height: calc(var(--spacing) * 200);
   }
+  .h-\[1\.1em\] {
+    height: 1.1em;
+  }
   .h-\[28px\] {
     height: 28px;
   }
@@ -1304,6 +1307,9 @@
   }
   .w-240 {
     width: calc(var(--spacing) * 240);
+  }
+  .w-\[1\.1em\] {
+    width: 1.1em;
   }
   .w-\[2ch\] {
     width: 2ch;
@@ -2533,6 +2539,9 @@
   }
   .opacity-60 {
     opacity: 60%;
+  }
+  .opacity-70 {
+    opacity: 70%;
   }
   .opacity-75 {
     opacity: 75%;
