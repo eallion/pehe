@@ -38,26 +38,32 @@
       </div>
     </div>
   {{- else if $isBing -}}
-    <!-- Bing Daily Wallpaper with Tooltip and Official Link -->
+    <!-- Bing Daily Wallpaper with Tooltip and Direct Official Link -->
     <a id="ds-bing-link" href="https://www.bing.com" target="_blank" rel="noopener noreferrer"
       class="group relative flex flex-col items-end no-underline cursor-pointer select-none"
-      aria-label="Bing 每日一图">
-      <!-- Tooltip (Shows copyright on hover) -->
+      aria-label="必应每日壁纸">
+      <!-- Tooltip (Shows title, date and copyright on hover) -->
       <div id="ds-bing-tooltip"
-        class="absolute bottom-full right-0 mb-2.5 px-3 py-2 rounded-lg bg-black/85 backdrop-blur-md border border-white/15 text-white/90 text-xs shadow-2xl transition-all duration-200 pointer-events-none opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 w-max max-w-[280px] sm:max-w-sm md:max-w-md text-left leading-relaxed">
-        <span id="ds-bing-copyright" class="block font-normal text-white/90 text-[11px] sm:text-xs"></span>
+        class="absolute bottom-full right-0 mb-2.5 p-3 sm:p-3.5 rounded-xl bg-neutral-950/90 backdrop-blur-xl border border-white/15 text-white/90 text-xs shadow-[0_12px_40px_rgba(0,0,0,0.7)] transition-all duration-200 pointer-events-none opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 w-max max-w-[280px] sm:max-w-sm md:max-w-md text-left leading-relaxed">
+        <div class="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-white/10">
+          <span id="ds-bing-card-title" class="font-semibold text-xs text-white tracking-wide truncate max-w-[190px] sm:max-w-[240px]">
+            {{- if $heroStyleInfo -}}{{ $heroStyleInfo | safeHTML }}{{- else -}}必应每日壁纸{{- end -}}
+          </span>
+          <span id="ds-bing-card-date" class="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-white/70"></span>
+        </div>
+        <span id="ds-bing-copyright" class="block font-normal text-white/80 text-[11px] sm:text-xs leading-relaxed"></span>
         <!-- Arrow pointing down -->
-        <span class="absolute -bottom-1 right-6 w-2 h-2 bg-black/85 border-r border-b border-white/15 rotate-45"></span>
+        <span class="absolute -bottom-1 right-6 w-2 h-2 bg-neutral-950/90 border-r border-b border-white/15 rotate-45"></span>
       </div>
 
       <!-- Capsule Badge -->
-      <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/75 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
+      <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/80 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
         <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
         <span id="ds-bing-title" class="font-medium truncate max-w-[160px] sm:max-w-[220px] md:max-w-[320px] text-white/95 group-hover:text-cyan-300 transition-colors">
-          {{- if $heroStyleInfo -}}{{ $heroStyleInfo | safeHTML }}{{- end -}}
+          {{- if $heroStyleInfo -}}{{ $heroStyleInfo | safeHTML }}{{- else -}}Bing 每日一图{{- end -}}
         </span>
       </div>
     </a>
@@ -87,7 +93,124 @@
 {{- if $isBing -}}
 <script>
 (function() {
+  var CACHE_KEY = 'pehe_bing_wallpaper_v3';
   var api = 'https://api.eallion.com/bing?type=json';
+  var caption = document.getElementById('ds-bing-caption');
+  var titleEl = document.getElementById('ds-bing-title');
+  var cardTitleEl = document.getElementById('ds-bing-card-title');
+  var cardDateEl = document.getElementById('ds-bing-card-date');
+  var copyrightEl = document.getElementById('ds-bing-copyright');
+  var linkEl = document.getElementById('ds-bing-link');
+  var imgEl = document.getElementById('ds-bing-bg-img');
+  var hasCustomInfo = {{ if $heroStyleInfo }}true{{ else }}false{{ end }};
+
+  // 严格净化 Bing 目标链接，兼顾 cn.bing 与 www.bing 的地区跳转逻辑
+  function getCleanBingUrl(data) {
+    var isZh = false;
+    try {
+      var lang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      var tz = (window.Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : '';
+      if (lang.indexOf('zh') === 0 || tz === 'Asia/Shanghai' || tz === 'Asia/Chongqing' || tz === 'Asia/Urumqi' || tz === 'Asia/Harbin') {
+        isZh = true;
+      }
+    } catch (e) {}
+
+    var host = isZh ? 'cn.bing.com' : 'www.bing.com';
+    var query = '';
+
+    if (data && data.copyrightlink) {
+      try {
+        var urlObj = new URL(data.copyrightlink, 'https://' + host);
+        query = urlObj.searchParams.get('q') || '';
+
+        // 彻底移除引发循环重定向的内部参数
+        urlObj.searchParams.delete('mgzv3configlist');
+
+        if (isZh) {
+          // 国内环境下直接使用 cn.bing.com，并剥离跨区 filters，避免 cn.bing 因缺少海外壁纸 ID 而反复向 www.bing 反弹导致死循环
+          urlObj.hostname = 'cn.bing.com';
+          urlObj.searchParams.delete('filters');
+          return urlObj.href;
+        } else {
+          // 国际环境下保留 www.bing.com 并净化 filters
+          urlObj.hostname = 'www.bing.com';
+          var filters = urlObj.searchParams.get('filters') || '';
+          if (filters.indexOf('mgzv3configlist') !== -1) {
+            filters = filters.replace(/\+?mgzv3configlist:[^&+]*/g, '').trim();
+            if (filters) {
+              urlObj.searchParams.set('filters', filters);
+            } else {
+              urlObj.searchParams.delete('filters');
+            }
+          }
+          return urlObj.href;
+        }
+      } catch (e) {}
+    }
+
+    if (!query) {
+      query = (data && (data.title || data.headline)) || 'Bing 每日一图';
+    }
+    return 'https://' + host + '/search?q=' + encodeURIComponent(query) + '&form=hpcapt';
+  }
+
+  // 渲染壁纸数据至 DOM
+  function applyData(data) {
+    if (!data) return;
+    var title = data.title || data.headline || '';
+    if (!hasCustomInfo && title) {
+      if (titleEl) titleEl.textContent = title;
+      if (cardTitleEl) cardTitleEl.textContent = title;
+    }
+    // 日期格式化为 Jan 2, 2005 格式（如 Sep 21, 2026）
+    if (cardDateEl && (data.startdate || data.fullstartdate)) {
+      var raw = String(data.startdate || data.fullstartdate).replace(/[-_]/g, '');
+      if (raw.length >= 8) {
+        var y = parseInt(raw.substring(0, 4), 10);
+        var m = parseInt(raw.substring(4, 6), 10) - 1;
+        var d = parseInt(raw.substring(6, 8), 10);
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        if (!isNaN(y) && m >= 0 && m < 12 && !isNaN(d)) {
+          cardDateEl.textContent = months[m] + ' ' + d + ', ' + y;
+        }
+      }
+    }
+    if (copyrightEl && data.copyright) {
+      copyrightEl.textContent = data.copyright;
+    }
+
+    var cleanUrl = getCleanBingUrl(data);
+    if (linkEl) linkEl.href = cleanUrl;
+
+    if (imgEl && data.url && !imgEl.dataset.bingLoaded) {
+      imgEl.src = data.url;
+      if (title) imgEl.alt = title;
+      imgEl.dataset.bingLoaded = 'true';
+    }
+
+    if (caption) {
+      caption.classList.remove('opacity-0', 'pointer-events-none');
+      caption.classList.add('is-loaded');
+      var curOpacity = parseFloat(caption.style.getPropertyValue('--ds-scroll-opacity') || '1');
+      if (curOpacity > 0.05) {
+        caption.style.pointerEvents = 'auto';
+        caption.style.visibility = 'visible';
+      }
+    }
+  }
+
+  // 1. 同步读取 LocalStorage 缓存，优先实现零等待秒显
+  try {
+    var cachedRaw = localStorage.getItem(CACHE_KEY);
+    if (cachedRaw) {
+      var cachedObj = JSON.parse(cachedRaw);
+      if (cachedObj && cachedObj.data && (Date.now() - (cachedObj.time || 0) < 43200000)) {
+        applyData(cachedObj.data);
+      }
+    }
+  } catch (e) {}
+
+  // 2. 异步拉取最新数据校验并静默更新
   fetch(api)
     .then(function(res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -95,64 +218,13 @@
     })
     .then(function(data) {
       if (!data) return;
-      var caption = document.getElementById('ds-bing-caption');
-      var titleEl = document.getElementById('ds-bing-title');
-      var copyrightEl = document.getElementById('ds-bing-copyright');
-      var linkEl = document.getElementById('ds-bing-link');
-      var imgEl = document.getElementById('ds-bing-bg-img');
-
-      var hasCustomInfo = {{ if $heroStyleInfo }}true{{ else }}false{{ end }};
-      // 若用户未配置 heroStyleInfo，则由 Bing API 动态填入 title
-      if (!hasCustomInfo && titleEl && (data.title || data.headline)) {
-        titleEl.textContent = data.title || data.headline;
-      }
-      if (copyrightEl && data.copyright) {
-        copyrightEl.textContent = data.copyright;
-      }
-      if (linkEl) {
-        var query = '';
-        if (data.copyrightlink) {
-          try {
-            var urlObj = new URL(data.copyrightlink, 'https://www.bing.com');
-            query = urlObj.searchParams.get('q') || '';
-          } catch (e) {
-            var m = data.copyrightlink.match(/[?&]q=([^&]+)/);
-            if (m) query = decodeURIComponent(m[1]);
-          }
-        }
-        if (!query) {
-          query = data.title || data.headline || 'Bing 每日一图';
-        }
-
-        var rawDate = (data.fullstartdate || data.startdate || '').replace(/[-_]/g, '');
-        var dateCode = '';
-        if (rawDate.length >= 12) {
-          dateCode = rawDate.substring(0, 8) + '_' + rawDate.substring(8, 12);
-        } else if (rawDate.length >= 8) {
-          dateCode = rawDate.substring(0, 8) + '_1600';
-        } else {
-          var now = new Date();
-          var y = now.getFullYear();
-          var m = String(now.getMonth() + 1).padStart(2, '0');
-          var d = String(now.getDate()).padStart(2, '0');
-          dateCode = y + m + d + '_1600';
-        }
-
-        linkEl.href = 'https://www.bing.com/search?q=' + encodeURIComponent(query) + '&form=hpcapt&filters=HpDate:%22' + dateCode + '%22+mgzv3configlist:%22BingQA_Encyclopedia_Layout%22';
-      }
-      if (imgEl && data.url) {
-        imgEl.src = data.url;
-        if (data.title) imgEl.alt = data.title;
-      }
-      if (caption) {
-        caption.classList.remove('opacity-0', 'pointer-events-none');
-        caption.classList.add('is-loaded');
-        var curOpacity = parseFloat(caption.style.getPropertyValue('--ds-scroll-opacity') || '1');
-        if (curOpacity > 0.05) {
-          caption.style.pointerEvents = 'auto';
-          caption.style.visibility = 'visible';
-        }
-      }
+      applyData(data);
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          time: Date.now(),
+          data: data
+        }));
+      } catch (e) {}
     })
     .catch(function(err) {
       console.debug('Bing wallpaper info fetch failed:', err);
