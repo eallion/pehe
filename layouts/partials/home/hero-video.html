@@ -1,5 +1,5 @@
 <!-- Dynamic Video Background (0% GPU WebGL Canvas Overhead, 100% Strictly Muted) -->
-{{- $videoUrl := site.Params.videoURL | default site.Params.videoUrl | default site.Params.heroVideo | default site.Params.heroVideoUrl | default site.Params.hero_video_url | default site.Params.hero_video -}}
+{{- $videoUrl := site.Params.heroStyleUrl | default site.Params.heroStyleURL | default site.Params.hero_style_url | default site.Params.videoURL | default site.Params.videoUrl | default site.Params.heroVideo | default site.Params.heroVideoUrl | default site.Params.hero_video_url | default site.Params.hero_video -}}
 {{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "mp4") -}}
 {{- $dogeVcode := site.Params.heroStyleDogecloudVcode | default site.Params.heroStyleDogecloudVCode | default site.Params.hero_style_dogecloud_vcode | default site.Params.dogecloudVcode | default "" -}}
 {{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
