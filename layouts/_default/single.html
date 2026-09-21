@@ -20,30 +20,31 @@
       <div id="writer" class="flex items-center">
 
         <ul
-          class="flex items-center space-x-2 md:space-x-4 flex-nowrap whitespace-nowrap overflow-x-auto text-sm md:text-lg">
+          class="flex items-center space-x-2 md:space-x-4 flex-nowrap whitespace-nowrap overflow-x-auto text-sm md:text-lg text-zinc-500 dark:text-text-dimmed-secondary">
 
           <!-- <li class="font-semibold my-2">{{ .Site.Params.Author.name }}</li> -->
 
-          <li class="before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2">
+          <li class="my-2 flex items-center">
+            {{ with .Params.categories }}
+            {{ if gt (len .) 0 }}
+            {{ $firstCategory := index . 0 }}
+            <span class="first-category flex items-center">
+              <a href='{{ "categories/" | relLangURL }}{{ $firstCategory | urlize }}' class="inline-flex items-center gap-1.5 hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors">
+                {{ partial "icon.html" (dict "name" "folder" "class" "w-4 h-4 md:w-5 md:h-5 fill-current -translate-y-px shrink-0") }}
+                <span class="leading-none">{{ $firstCategory }}</span>
+              </a>
+            </span>
+            {{ end }}
+            {{ end }}
+          </li>
+
+          <li class="before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2 hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors cursor-default">
             {{- $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" -}}
             {{- $dateHuman := .Date | time.Format "Jan 2, 2006" -}}
             <time datetime="{{ $dateMachine }}" data-pagefind-meta="date">{{ $dateHuman }}</time>
           </li>
 
-          <!-- <li class="before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2">
-            {{ with .Params.categories }}
-            {{ if gt (len .) 0 }}
-            {{ $firstCategory := index . 0 }}
-            <span class="first-category">
-              <a href='{{ "categories/" | relLangURL }}{{ $firstCategory | urlize }}'>
-                {{ $firstCategory }}
-              </a>
-            </span>
-            {{ end }}
-            {{ end }}
-          </li> -->
-
-          <li class="before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2">
+          <li class="before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2 hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors cursor-default">
             {{ .ReadingTime }} 分钟阅读
           </li>
 
@@ -55,7 +56,7 @@
           {{- $ccText = "CC0 1.0" -}}
           {{- end -}}
           <li class="inline-flex items-center before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2">
-            <a href="{{ $ccUrl }}" target="_blank" rel="noopener noreferrer">
+            <a href="{{ $ccUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors">
               {{ $ccText }}
             </a>
           </li>
@@ -70,12 +71,12 @@
           {{- if $showMarkdown -}}
           {{- with .OutputFormats.Get "markdown" -}}
           <li class="inline-flex items-center before:content-['•'] before:mr-1 md:before:mr-2 before:opacity-50 my-2">
-            <svg class="inline-block w-[1.1em] h-[1.1em] mr-1 shrink-0 opacity-70" xmlns="http://www.w3.org/2000/svg"
-              width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor"
-                d="M22.27 19.385H1.73A1.73 1.73 0 0 1 0 17.655V6.345a1.73 1.73 0 0 1 1.73-1.73h20.54A1.73 1.73 0 0 1 24 6.345v11.31a1.73 1.73 0 0 1-1.73 1.73M5.769 15.923v-4.5l2.308 2.885l2.308-2.885v4.5h2.307V8.077h-2.307l-2.308 2.885l-2.308-2.885H3.462v7.846zm14.769-3.923h-2.307V8.077h-2.308v3.923H13.615l3.462 3.923z" />
-            </svg>
-            <a href="{{ .Permalink }}" target="_blank" rel="noopener noreferrer" title="Markdown">
+            <a href="{{ .Permalink }}" target="_blank" rel="noopener noreferrer" title="Markdown" class="group inline-flex items-center hover:text-zinc-900 dark:hover:text-text-dimmed-primary transition-colors">
+              <svg class="inline-block w-[1.1em] h-[1.1em] mr-1 shrink-0 fill-current opacity-70 group-hover:opacity-100 transition-opacity" xmlns="http://www.w3.org/2000/svg"
+                width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor"
+                  d="M22.27 19.385H1.73A1.73 1.73 0 0 1 0 17.655V6.345a1.73 1.73 0 0 1 1.73-1.73h20.54A1.73 1.73 0 0 1 24 6.345v11.31a1.73 1.73 0 0 1-1.73 1.73M5.769 15.923v-4.5l2.308 2.885l2.308-2.885v4.5h2.307V8.077h-2.307l-2.308 2.885l-2.308-2.885H3.462v7.846zm14.769-3.923h-2.307V8.077h-2.308v3.923H13.615l3.462 3.923z" />
+              </svg>
               Markdown
             </a>
           </li>

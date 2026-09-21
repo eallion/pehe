@@ -107,7 +107,6 @@
     --animate-spin: spin 1s linear infinite;
     --blur-sm: 8px;
     --blur-md: 12px;
-    --blur-xl: 24px;
     --aspect-video: 16 / 9;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -1374,9 +1373,6 @@
   .max-w-\[120px\] {
     max-width: 120px;
   }
-  .max-w-\[130px\] {
-    max-width: 130px;
-  }
   .max-w-\[160px\] {
     max-width: 160px;
   }
@@ -1455,6 +1451,10 @@
     --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
+  .-translate-y-px {
+    --tw-translate-y: -1px;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
   .translate-y-1 {
     --tw-translate-y: var(--spacing);
     translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -1479,6 +1479,9 @@
   }
   .animate-spin {
     animation: var(--animate-spin);
+  }
+  .cursor-default {
+    cursor: default;
   }
   .cursor-not-allowed {
     cursor: not-allowed;
@@ -2547,9 +2550,6 @@
   .opacity-20 {
     opacity: 20%;
   }
-  .opacity-35 {
-    opacity: 35%;
-  }
   .opacity-40 {
     opacity: 40%;
   }
@@ -2558,9 +2558,6 @@
   }
   .opacity-60 {
     opacity: 60%;
-  }
-  .opacity-65 {
-    opacity: 65%;
   }
   .opacity-70 {
     opacity: 70%;
@@ -2882,27 +2879,11 @@
     .hover\:border-gray-300:hover {
       border-color: var(--color-gray-300);
     }
-    .hover\:border-white\/25:hover {
-      border-color: color-mix(in srgb, #fff 25%, transparent);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:border-white\/25:hover {
-        border-color: color-mix(in oklab, var(--color-white) 25%, transparent);
-      }
-    }
     .hover\:border-zinc-200:hover {
       border-color: var(--color-zinc-200);
     }
     .hover\:border-zinc-300:hover {
       border-color: var(--color-zinc-300);
-    }
-    .hover\:bg-black\/75:hover {
-      background-color: color-mix(in srgb, #000 75%, transparent);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-black\/75:hover {
-        background-color: color-mix(in oklab, var(--color-black) 75%, transparent);
-      }
     }
     .hover\:bg-blue-100:hover {
       background-color: var(--color-blue-100);
@@ -2933,9 +2914,6 @@
     }
     .hover\:text-gray-900:hover {
       color: var(--color-gray-900);
-    }
-    .hover\:text-white:hover {
-      color: var(--color-white);
     }
     .hover\:text-zinc-50:hover {
       color: var(--color-zinc-50);
@@ -3061,14 +3039,11 @@
     .sm\:w-5 {
       width: calc(var(--spacing) * 5);
     }
-    .sm\:max-w-\[170px\] {
-      max-width: 170px;
-    }
     .sm\:max-w-\[220px\] {
       max-width: 220px;
     }
-    .sm\:max-w-md {
-      max-width: var(--container-md);
+    .sm\:max-w-\[260px\] {
+      max-width: 260px;
     }
     .sm\:max-w-sm {
       max-width: var(--container-sm);
@@ -3097,17 +3072,11 @@
     .sm\:gap-y-2 {
       row-gap: calc(var(--spacing) * 2);
     }
-    .sm\:px-3 {
-      padding-inline: calc(var(--spacing) * 3);
-    }
     .sm\:px-6 {
       padding-inline: calc(var(--spacing) * 6);
     }
     .sm\:px-8 {
       padding-inline: calc(var(--spacing) * 8);
-    }
-    .sm\:py-1\.5 {
-      padding-block: calc(var(--spacing) * 1.5);
     }
     .sm\:py-4 {
       padding-block: calc(var(--spacing) * 4);
@@ -3216,6 +3185,9 @@
     .md\:inline-flex {
       display: inline-flex;
     }
+    .md\:h-5 {
+      height: calc(var(--spacing) * 5);
+    }
     .md\:min-h-0 {
       min-height: 0px;
     }
@@ -3234,26 +3206,23 @@
     .md\:w-3\/5 {
       width: calc(3 / 5 * 100%);
     }
+    .md\:w-5 {
+      width: calc(var(--spacing) * 5);
+    }
     .md\:w-8 {
       width: calc(var(--spacing) * 8);
     }
     .md\:w-full {
       width: 100%;
     }
-    .md\:max-w-\[200px\] {
-      max-width: 200px;
-    }
-    .md\:max-w-\[240px\] {
-      max-width: 240px;
-    }
     .md\:max-w-\[320px\] {
       max-width: 320px;
     }
+    .md\:max-w-\[380px\] {
+      max-width: 380px;
+    }
     .md\:max-w-full {
       max-width: 100%;
-    }
-    .md\:max-w-lg {
-      max-width: var(--container-lg);
     }
     .md\:max-w-md {
       max-width: var(--container-md);
@@ -3953,6 +3922,28 @@
   @media print {
     .print\:hidden {
       display: none;
+    }
+  }
+  .\[\&_a\]\:text-white\/95 a {
+    color: color-mix(in srgb, #fff 95%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-white) 95%, transparent);
+    }
+  }
+  .\[\&_a\]\:underline a {
+    text-decoration-line: underline;
+  }
+  .\[\&_a\]\:underline-offset-2 a {
+    text-underline-offset: 2px;
+  }
+  .\[\&_a\]\:transition-colors a {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  @media (hover: hover) {
+    .hover\:\[\&_a\]\:text-cyan-300:hover a {
+      color: var(--color-cyan-300);
     }
   }
   .\[\&\:\:-webkit-scrollbar\]\:hidden::-webkit-scrollbar {

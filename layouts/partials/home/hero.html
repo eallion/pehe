@@ -34,6 +34,13 @@
   {{- partial "home/hero-dsh.html" . -}}
   {{- end -}}
 
+  <!-- Hero Caption / Info Badge (Bing Daily or Custom heroStyleInfo, supports HTML) -->
+  {{- $heroStyleInfo := site.Params.heroStyleInfo | default site.Params.hero_style_info -}}
+  {{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "") -}}
+  {{- if or (eq $heroStyle "bing") (eq $heroStyleFmt "bing") $heroStyleInfo -}}
+    {{- partial "home/hero-bing-caption.html" . -}}
+  {{- end -}}
+
   <!-- Content Grid Container (left + right columns as one block) -->
   <div
     class="ds-hero-content ds-container flex flex-col justify-between min-h-[100svh] pt-20 sm:pt-24 pb-6 sm:pb-8 md:min-h-0 md:grid md:grid-cols-[60fr_40fr] md:gap-ds-9 md:items-start md:pt-36 md:pb-ds-11 w-full mx-auto">
@@ -493,6 +500,25 @@
     border-color: rgba(255, 255, 255, 0.2);
     background-color: rgba(0, 0, 0, 0.3);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Bing Daily Caption: Scroll-Linked Progressive Blur, Scale Down & Fade Dissolve */
+  .ds-bing-caption {
+    --ds-scroll-opacity: 1;
+    --ds-scroll-scale: 1;
+    --ds-scroll-blur: 0px;
+    --ds-scroll-y: 0px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, var(--ds-scroll-y), 0) scale(var(--ds-scroll-scale));
+    filter: blur(var(--ds-scroll-blur));
+    transform-origin: right bottom;
+    will-change: opacity, transform, filter;
+    transition: opacity 0.08s ease-out, transform 0.08s ease-out, filter 0.08s ease-out;
+  }
+
+  .ds-bing-caption.is-loaded {
+    opacity: var(--ds-scroll-opacity);
   }
 
   .ds-latest-meta,
@@ -1576,6 +1602,7 @@
       {{- end -}}
       const header = document.getElementById('page-header');
       const latestCard = document.querySelector('.ds-hero-latest-card');
+      const bingCaption = document.getElementById('ds-bing-caption');
 
       const updateHeaderHeight = () => {
         if (!header) return;
@@ -1598,8 +1625,8 @@
           }
         }
 
-        // Hero bottom card scroll-linked dissolve (progressive blur, scale down & fade out)
-        if (latestCard) {
+        // Hero bottom card & Bing daily caption scroll-linked dissolve (progressive blur, scale down & fade out)
+        if (latestCard || bingCaption) {
           const startScroll = 30; // 滚动超过 30px 后开始产生渐变
           const fadeDistance = Math.max(480, (window.innerHeight || 800) * 0.55); // 动态延续约半屏的平滑过渡距离（~500px）
           const rawProgress = Math.min(1, Math.max(0, (scrollY - startScroll) / fadeDistance));
@@ -1612,17 +1639,34 @@
           const blur = (smooth * 10).toFixed(2);
           const translateY = (smooth * 20).toFixed(1);
 
-          latestCard.style.setProperty('--ds-scroll-opacity', opacity);
-          latestCard.style.setProperty('--ds-scroll-scale', scale);
-          latestCard.style.setProperty('--ds-scroll-blur', `${blur}px`);
-          latestCard.style.setProperty('--ds-scroll-y', `${translateY}px`);
+          if (latestCard) {
+            latestCard.style.setProperty('--ds-scroll-opacity', opacity);
+            latestCard.style.setProperty('--ds-scroll-scale', scale);
+            latestCard.style.setProperty('--ds-scroll-blur', `${blur}px`);
+            latestCard.style.setProperty('--ds-scroll-y', `${translateY}px`);
 
-          if (rawProgress >= 0.99) {
-            latestCard.style.pointerEvents = 'none';
-            latestCard.style.visibility = 'hidden';
-          } else {
-            latestCard.style.pointerEvents = 'auto';
-            latestCard.style.visibility = 'visible';
+            if (rawProgress >= 0.99) {
+              latestCard.style.pointerEvents = 'none';
+              latestCard.style.visibility = 'hidden';
+            } else {
+              latestCard.style.pointerEvents = 'auto';
+              latestCard.style.visibility = 'visible';
+            }
+          }
+
+          if (bingCaption) {
+            bingCaption.style.setProperty('--ds-scroll-opacity', opacity);
+            bingCaption.style.setProperty('--ds-scroll-scale', scale);
+            bingCaption.style.setProperty('--ds-scroll-blur', `${blur}px`);
+            bingCaption.style.setProperty('--ds-scroll-y', `${translateY}px`);
+
+            if (rawProgress >= 0.99) {
+              bingCaption.style.pointerEvents = 'none';
+              bingCaption.style.visibility = 'hidden';
+            } else if (bingCaption.classList.contains('is-loaded')) {
+              bingCaption.style.pointerEvents = 'auto';
+              bingCaption.style.visibility = 'visible';
+            }
           }
         }
 

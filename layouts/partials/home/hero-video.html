@@ -3,6 +3,13 @@
 {{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "mp4") -}}
 {{- $dogeVcode := site.Params.heroStyleDogecloudVcode | default site.Params.heroStyleDogecloudVCode | default site.Params.hero_style_dogecloud_vcode | default site.Params.dogecloudVcode | default "" -}}
 {{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
+{{- $aliyunVid := site.Params.heroStyleAliyunVid | default site.Params.heroStyleAliyunVideoId | default site.Params.hero_style_aliyun_vid | default site.Params.aliyunVid | default "" -}}
+{{- $aliyunPlayAuth := site.Params.heroStyleAliyunPlayAuth | default site.Params.hero_style_aliyun_play_auth | default site.Params.aliyunPlayAuth | default "" -}}
+{{- $aliyunLicenseKey := site.Params.heroStyleAliyunLicenseKey | default site.Params.hero_style_aliyun_license_key | default site.Params.aliyunLicenseKey | default "" -}}
+{{- $tencentAppId := site.Params.heroStyleTencentAppId | default site.Params.heroStyleTencentAppid | default site.Params.hero_style_tencent_app_id | default site.Params.tencentAppId | default "" -}}
+{{- $tencentFileId := site.Params.heroStyleTencentFileId | default site.Params.heroStyleTencentFileid | default site.Params.hero_style_tencent_file_id | default site.Params.tencentFileId | default "" -}}
+{{- $tencentPsign := site.Params.heroStyleTencentPsign | default site.Params.hero_style_tencent_psign | default site.Params.tencentPsign | default "" -}}
+{{- $tencentLicenseUrl := site.Params.heroStyleTencentLicenseUrl | default site.Params.hero_style_tencent_license_url | default site.Params.tencentLicenseUrl | default "" -}}
 <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none ds-video-bg-container">
   {{- if eq $heroStyleFmt "dogecloud" -}}
     <div id="ds-doge-player" class="absolute inset-0 w-full h-full ds-doge-container"></div>
@@ -155,6 +162,221 @@
     {{ else }}
       <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
     {{ end }}
+  {{- else if in (slice "aliyun" "aliplayer" "vod_aliyun") $heroStyleFmt -}}
+    <link rel="stylesheet" href="https://g.alicdn.com/apsara-media-box/imp-web-player/2.28.3/skins/default/aliplayer-min.css" />
+    <div id="ds-aliyun-player" class="absolute inset-0 w-full h-full ds-aliyun-container"></div>
+    <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-web-player/2.28.3/aliplayer-min.js"></script>
+    <script>
+      (function() {
+        var player = null;
+        function initAliPlayer() {
+          var container = document.getElementById('ds-aliyun-player');
+          if (!container) return;
+          if (typeof Aliplayer === 'undefined') {
+            setTimeout(initAliPlayer, 100);
+            return;
+          }
+          try {
+            var playerConfig = {
+              id: 'ds-aliyun-player',
+              width: '100%',
+              height: '100%',
+              autoplay: true,
+              isLive: false,
+              rePlay: true,
+              preload: true,
+              playsinline: true,
+              useH5Prism: true,
+              useFlashPrism: false,
+              controlBarVisibility: 'never',
+              showBarTime: 0,
+              volume: 0,
+              muted: true,
+              extraInfo: {
+                crossOrigin: 'anonymous'
+              }
+            };
+            {{ if $aliyunVid }}
+            playerConfig.vid = '{{ $aliyunVid }}';
+            {{ if $aliyunPlayAuth }}playerConfig.playauth = '{{ $aliyunPlayAuth }}';{{ end }}
+            {{ else if $videoUrl }}
+            playerConfig.source = '{{ $videoUrl }}';
+            {{ end }}
+            {{ if $aliyunLicenseKey }}
+            playerConfig.licenseKey = '{{ $aliyunLicenseKey }}';
+            {{ end }}
+
+            player = new Aliplayer(playerConfig, function(p) {
+              try {
+                if (p && typeof p.mute === 'function') p.mute();
+                if (p && typeof p.setVolume === 'function') p.setVolume(0);
+                if (p && typeof p.play === 'function') p.play();
+              } catch(e) {}
+              var v = container.querySelector('video');
+              if (v) {
+                v.muted = true;
+                v.defaultMuted = true;
+                v.volume = 0;
+                v.setAttribute('muted', '');
+                v.setAttribute('playsinline', '');
+                v.setAttribute('webkit-playsinline', '');
+                v.setAttribute('x5-playsinline', '');
+                v.setAttribute('loop', '');
+                v.setAttribute('autoplay', '');
+                if (v.paused) v.play().catch(function() {});
+              }
+            });
+
+            if (player && typeof player.on === 'function') {
+              player.on('ended', function() {
+                try {
+                  if (player.replay) player.replay();
+                  else if (player.play) player.play();
+                } catch(e) {}
+              });
+            }
+
+            var resumeAli = function() {
+              if (document.hidden) return;
+              try {
+                if (player && typeof player.play === 'function') player.play();
+              } catch(e) {}
+              var v = container.querySelector('video');
+              if (v && v.paused) {
+                v.muted = true;
+                v.play().catch(function() {});
+              }
+            };
+
+            document.addEventListener('visibilitychange', function() {
+              if (!document.hidden) resumeAli();
+            });
+            window.addEventListener('focus', resumeAli);
+            window.addEventListener('pageshow', resumeAli);
+
+            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(function(evt) {
+              var gestureHandler = function() {
+                resumeAli();
+                window.removeEventListener(evt, gestureHandler);
+              };
+              window.addEventListener(evt, gestureHandler, { passive: true, once: true });
+            });
+          } catch(e) {
+            console.error('Aliplayer Error:', e);
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initAliPlayer);
+        } else {
+          initAliPlayer();
+        }
+      })();
+    </script>
+  {{- else if in (slice "tencent" "qcloud" "tcplayer" "vod_tencent") $heroStyleFmt -}}
+    <link href="https://web.sdk.qcloud.com/player/tcplayer/release/v5.1.0/tcplayer.min.css" rel="stylesheet" />
+    <div id="ds-tencent-player-wrap" class="absolute inset-0 w-full h-full ds-tencent-container">
+      <video id="ds-tencent-player" class="w-full h-full" preload="auto" playsinline webkit-playsinline x5-playsinline></video>
+    </div>
+    <script src="https://web.sdk.qcloud.com/player/tcplayer/release/v5.1.0/libs/hls.min.0.13.2m.js"></script>
+    <script src="https://web.sdk.qcloud.com/player/tcplayer/release/v5.1.0/tcplayer.v5.1.0.min.js"></script>
+    <script>
+      (function() {
+        var player = null;
+        function initTCPlayer() {
+          var container = document.getElementById('ds-tencent-player-wrap');
+          if (!container) return;
+          if (typeof TCPlayer === 'undefined') {
+            setTimeout(initTCPlayer, 100);
+            return;
+          }
+          try {
+            var playerConfig = {
+              autoplay: true,
+              muted: true,
+              loop: true,
+              controls: false,
+              bigPlayButton: false,
+              controlBar: false
+            };
+            {{ if $tencentAppId }}playerConfig.appID = '{{ $tencentAppId }}';{{ end }}
+            {{ if $tencentFileId }}playerConfig.fileID = '{{ $tencentFileId }}';{{ end }}
+            {{ if $tencentPsign }}playerConfig.psign = '{{ $tencentPsign }}';{{ end }}
+            {{ if $tencentLicenseUrl }}playerConfig.licenseUrl = '{{ $tencentLicenseUrl }}';{{ end }}
+            {{ if and (not $tencentFileId) $videoUrl }}
+            playerConfig.sources = [{ src: '{{ $videoUrl }}' }];
+            {{ end }}
+
+            player = TCPlayer('ds-tencent-player', playerConfig);
+
+            if (player && typeof player.ready === 'function') {
+              player.ready(function() {
+                try {
+                  if (player.muted) player.muted(true);
+                  if (player.volume) player.volume(0);
+                  if (player.play) player.play();
+                } catch(e) {}
+                var v = document.getElementById('ds-tencent-player');
+                var realVideo = v && v.tagName && v.tagName.toLowerCase() === 'video' ? v : (container ? container.querySelector('video') : null);
+                if (realVideo) {
+                  realVideo.muted = true;
+                  realVideo.defaultMuted = true;
+                  realVideo.volume = 0;
+                  realVideo.setAttribute('muted', '');
+                  realVideo.setAttribute('playsinline', '');
+                  realVideo.setAttribute('webkit-playsinline', '');
+                  realVideo.setAttribute('x5-playsinline', '');
+                  realVideo.setAttribute('loop', '');
+                  realVideo.setAttribute('autoplay', '');
+                  if (realVideo.paused) realVideo.play().catch(function() {});
+                }
+              });
+            }
+
+            if (player && typeof player.on === 'function') {
+              player.on('ended', function() {
+                try {
+                  if (player.currentTime) player.currentTime(0);
+                  if (player.play) player.play();
+                } catch(e) {}
+              });
+            }
+
+            var resumeTC = function() {
+              if (document.hidden) return;
+              try {
+                if (player && typeof player.play === 'function') player.play();
+              } catch(e) {}
+              var v = container ? container.querySelector('video') : null;
+              if (v && v.paused) {
+                v.muted = true;
+                v.play().catch(function() {});
+              }
+            };
+
+            document.addEventListener('visibilitychange', function() {
+              if (!document.hidden) resumeTC();
+            });
+            window.addEventListener('focus', resumeTC);
+            window.addEventListener('pageshow', resumeTC);
+
+            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(function(evt) {
+              var gestureHandler = function() {
+                resumeTC();
+                window.removeEventListener(evt, gestureHandler);
+              };
+              window.addEventListener(evt, gestureHandler, { passive: true, once: true });
+            });
+          } catch(e) {
+            console.error('TCPlayer Error:', e);
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initTCPlayer);
+        } else {
+          initTCPlayer();
+        }
+      })();
+    </script>
   {{- else -}}
     {{ with $videoUrl }}
       <video id="ds-hero-video" class="absolute inset-0 w-full h-full object-cover object-center" autoplay loop muted playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="false" preload="auto">
@@ -198,7 +420,12 @@
 .ds-video-bg-container,
 .ds-video-bg-container #ds-doge-player,
 .ds-video-bg-container .dplayer,
-.ds-video-bg-container .dplayer-video-wrap {
+.ds-video-bg-container .dplayer-video-wrap,
+.ds-video-bg-container #ds-aliyun-player,
+.ds-video-bg-container .prism-player,
+.ds-video-bg-container #ds-tencent-player-wrap,
+.ds-video-bg-container .tcplayer,
+.ds-video-bg-container .video-js {
   position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
@@ -207,13 +434,18 @@
   max-height: 100% !important;
   overflow: hidden !important;
   background: transparent !important;
+  padding: 0 !important;
 }
 
 .ds-video-bg-container video,
 .ds-video-bg-container #ds-hero-video,
 .ds-video-bg-container .dplayer-video-wrap video,
 .ds-video-bg-container .dplayer-video,
-.ds-video-bg-container .dplayer-video-current {
+.ds-video-bg-container .dplayer-video-current,
+.ds-video-bg-container .prism-player video,
+.ds-video-bg-container .prism-player .prism-element,
+.ds-video-bg-container .video-js video,
+.ds-video-bg-container .vjs-tech {
   position: absolute !important;
   top: 50% !important;
   left: 50% !important;
@@ -237,10 +469,26 @@
 .ds-video-bg-container .dplayer-danmaku,
 .ds-video-bg-container .dplayer-notice,
 .ds-video-bg-container .dplayer-mobile-play,
-.ds-video-bg-container .dplayer-mobile-icon {
+.ds-video-bg-container .dplayer-mobile-icon,
+.ds-video-bg-container .prism-controlbar,
+.ds-video-bg-container .prism-big-play-btn,
+.ds-video-bg-container .prism-loading,
+.ds-video-bg-container .prism-info-display,
+.ds-video-bg-container .prism-auto-play-dialog,
+.ds-video-bg-container .prism-thumbnail-popup,
+.ds-video-bg-container .prism-liveshift-progress,
+.ds-video-bg-container .prism-ErrorMessage,
+.ds-video-bg-container .vjs-control-bar,
+.ds-video-bg-container .vjs-big-play-button,
+.ds-video-bg-container .vjs-loading-spinner,
+.ds-video-bg-container .vjs-modal-dialog,
+.ds-video-bg-container .vjs-error-display,
+.ds-video-bg-container .tcp-skin .vjs-control-bar,
+.ds-video-bg-container .tcp-skin .vjs-big-play-button {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;
   visibility: hidden !important;
 }
 </style>
+

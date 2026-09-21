@@ -1,27 +1,90 @@
-<!-- Bing Daily Wallpaper Caption Component -->
-<div id="ds-bing-caption" class="ds-bing-caption absolute bottom-3 right-3 sm:bottom-4 sm:right-6 md:bottom-5 md:right-8 z-20 pointer-events-auto opacity-0 transition-opacity duration-500 max-w-[calc(100vw-24px)]">
-  <a id="ds-bing-link" href="https://www.bing.com" target="_blank" rel="noopener noreferrer"
-    class="group relative flex flex-col items-end no-underline cursor-pointer select-none"
-    aria-label="Bing 每日一图">
-    <!-- Tooltip (Shows copyright on hover) -->
-    <div id="ds-bing-tooltip"
-      class="absolute bottom-full right-0 mb-2.5 px-3 py-2 rounded-lg bg-black/85 backdrop-blur-md border border-white/15 text-white/90 text-xs shadow-2xl transition-all duration-200 pointer-events-none opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 w-max max-w-[280px] sm:max-w-sm md:max-w-md text-left leading-relaxed">
-      <span id="ds-bing-copyright" class="block font-normal text-white/90 text-[11px] sm:text-xs"></span>
-      <!-- Arrow pointing down -->
-      <span class="absolute -bottom-1 right-6 w-2 h-2 bg-black/85 border-r border-b border-white/15 rotate-45"></span>
-    </div>
+<!-- Hero Caption & Info Badge Component (Bing Daily Wallpaper or Custom heroStyleInfo, supports HTML) -->
+{{- $heroStyle := lower (site.Params.heroStyle | default site.Params.hero_style | default "dsh") -}}
+{{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "") -}}
+{{- $heroStyleInfo := site.Params.heroStyleInfo | default site.Params.hero_style_info -}}
+{{- $isBing := or (eq $heroStyle "bing") (eq $heroStyleFmt "bing") -}}
+{{- $isVideo := or (eq $heroStyle "video") (eq $heroStyleFmt "mp4") (eq $heroStyleFmt "dogecloud") (eq $heroStyleFmt "aliyun") (eq $heroStyleFmt "tencent") -}}
+{{- $hasLink := false -}}
+{{- if $heroStyleInfo -}}
+  {{- if or (strings.Contains $heroStyleInfo "<a") (strings.Contains $heroStyleInfo "<A") -}}
+    {{- $hasLink = true -}}
+  {{- end -}}
+{{- end -}}
 
-    <!-- Capsule Badge (Only title visible) -->
-    <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/75 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
-      <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-      <span id="ds-bing-title" class="font-medium truncate max-w-[160px] sm:max-w-[220px] md:max-w-[320px] text-white/95 group-hover:text-cyan-300 transition-colors"></span>
+<div id="ds-bing-caption" class="ds-bing-caption absolute bottom-3 right-3 sm:bottom-4 sm:right-6 md:bottom-5 md:right-8 z-20 {{ if $heroStyleInfo }}is-loaded pointer-events-auto{{ else }}pointer-events-none opacity-0{{ end }} max-w-[calc(100vw-24px)]">
+  {{- if $hasLink -}}
+    <!-- Container when custom HTML already provides <a> tags to prevent invalid nested anchors -->
+    <div class="group relative flex flex-col items-end select-none">
+      <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/75 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
+        {{- if $isVideo -}}
+          <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+          </svg>
+        {{- else if $isBing -}}
+          <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        {{- else -}}
+          <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        {{- end -}}
+        <span id="ds-bing-title" class="font-medium truncate max-w-[180px] sm:max-w-[260px] md:max-w-[380px] text-white/95 group-hover:text-cyan-300 transition-colors [&_a]:text-white/95 hover:[&_a]:text-cyan-300 [&_a]:transition-colors [&_a]:underline [&_a]:underline-offset-2">
+          {{ $heroStyleInfo | safeHTML }}
+        </span>
+      </div>
     </div>
-  </a>
+  {{- else if $isBing -}}
+    <!-- Bing Daily Wallpaper with Tooltip and Official Link -->
+    <a id="ds-bing-link" href="https://www.bing.com" target="_blank" rel="noopener noreferrer"
+      class="group relative flex flex-col items-end no-underline cursor-pointer select-none"
+      aria-label="Bing 每日一图">
+      <!-- Tooltip (Shows copyright on hover) -->
+      <div id="ds-bing-tooltip"
+        class="absolute bottom-full right-0 mb-2.5 px-3 py-2 rounded-lg bg-black/85 backdrop-blur-md border border-white/15 text-white/90 text-xs shadow-2xl transition-all duration-200 pointer-events-none opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 w-max max-w-[280px] sm:max-w-sm md:max-w-md text-left leading-relaxed">
+        <span id="ds-bing-copyright" class="block font-normal text-white/90 text-[11px] sm:text-xs"></span>
+        <!-- Arrow pointing down -->
+        <span class="absolute -bottom-1 right-6 w-2 h-2 bg-black/85 border-r border-b border-white/15 rotate-45"></span>
+      </div>
+
+      <!-- Capsule Badge -->
+      <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/75 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
+        <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span id="ds-bing-title" class="font-medium truncate max-w-[160px] sm:max-w-[220px] md:max-w-[320px] text-white/95 group-hover:text-cyan-300 transition-colors">
+          {{- if $heroStyleInfo -}}{{ $heroStyleInfo | safeHTML }}{{- end -}}
+        </span>
+      </div>
+    </a>
+  {{- else -}}
+    <!-- Generic Hero Info Badge (for video, image, dsh, pehe, etc.) -->
+    <div class="group relative flex flex-col items-end select-none">
+      <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/75 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
+        {{- if $isVideo -}}
+          <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+          </svg>
+        {{- else -}}
+          <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        {{- end -}}
+        <span id="ds-bing-title" class="font-medium truncate max-w-[180px] sm:max-w-[260px] md:max-w-[380px] text-white/95 group-hover:text-cyan-300 transition-colors">
+          {{ $heroStyleInfo | safeHTML }}
+        </span>
+      </div>
+    </div>
+  {{- end -}}
 </div>
 
+{{- if $isBing -}}
 <script>
 (function() {
   var api = 'https://api.eallion.com/bing?type=json';
@@ -38,26 +101,57 @@
       var linkEl = document.getElementById('ds-bing-link');
       var imgEl = document.getElementById('ds-bing-bg-img');
 
-      if (titleEl && (data.title || data.headline)) {
+      var hasCustomInfo = {{ if $heroStyleInfo }}true{{ else }}false{{ end }};
+      // 若用户未配置 heroStyleInfo，则由 Bing API 动态填入 title
+      if (!hasCustomInfo && titleEl && (data.title || data.headline)) {
         titleEl.textContent = data.title || data.headline;
       }
       if (copyrightEl && data.copyright) {
         copyrightEl.textContent = data.copyright;
       }
       if (linkEl) {
+        var query = '';
         if (data.copyrightlink) {
-          linkEl.href = data.copyrightlink;
-        } else {
-          linkEl.href = 'https://www.bing.com';
+          try {
+            var urlObj = new URL(data.copyrightlink, 'https://www.bing.com');
+            query = urlObj.searchParams.get('q') || '';
+          } catch (e) {
+            var m = data.copyrightlink.match(/[?&]q=([^&]+)/);
+            if (m) query = decodeURIComponent(m[1]);
+          }
         }
+        if (!query) {
+          query = data.title || data.headline || 'Bing 每日一图';
+        }
+
+        var rawDate = (data.fullstartdate || data.startdate || '').replace(/[-_]/g, '');
+        var dateCode = '';
+        if (rawDate.length >= 12) {
+          dateCode = rawDate.substring(0, 8) + '_' + rawDate.substring(8, 12);
+        } else if (rawDate.length >= 8) {
+          dateCode = rawDate.substring(0, 8) + '_1600';
+        } else {
+          var now = new Date();
+          var y = now.getFullYear();
+          var m = String(now.getMonth() + 1).padStart(2, '0');
+          var d = String(now.getDate()).padStart(2, '0');
+          dateCode = y + m + d + '_1600';
+        }
+
+        linkEl.href = 'https://www.bing.com/search?q=' + encodeURIComponent(query) + '&form=hpcapt&filters=HpDate:%22' + dateCode + '%22+mgzv3configlist:%22BingQA_Encyclopedia_Layout%22';
       }
       if (imgEl && data.url) {
         imgEl.src = data.url;
         if (data.title) imgEl.alt = data.title;
       }
       if (caption) {
-        caption.classList.remove('opacity-0');
-        caption.classList.add('opacity-100');
+        caption.classList.remove('opacity-0', 'pointer-events-none');
+        caption.classList.add('is-loaded');
+        var curOpacity = parseFloat(caption.style.getPropertyValue('--ds-scroll-opacity') || '1');
+        if (curOpacity > 0.05) {
+          caption.style.pointerEvents = 'auto';
+          caption.style.visibility = 'visible';
+        }
       }
     })
     .catch(function(err) {
@@ -65,3 +159,4 @@
     });
 })();
 </script>
+{{- end -}}
