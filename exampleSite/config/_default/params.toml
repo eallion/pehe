@@ -1,11 +1,9 @@
 hero = true
-heroStyle = "pehe" # hero 风格："pehe" (简约白色排版风格) | "dsh" (DeepSeek Harness 动态流体风格) | "image" (静态图片背景) | "video" (动态视频背景)
-# heroStyleUrl = "/images/hero-bg.webp" # heroStyle = "image" 或 heroStyle = "video" (mp4格式) 时的背景媒体资源地址
-# heroStyleFmt = "mp4" # heroStyle = "video" 时的视频格式："mp4" | "dogecloud"
+heroStyle = "bing" # hero 风格："pehe" (简约白色排版风格) | "dsh" (DeepSeek Harness 动态流体风格) | "image" (静态图片背景) | "video" (动态视频背景) | "bing" (Bing 每日一图)
+# heroStyleUrl = "https://api.eallion.com/bing?type=image" # heroStyle = "image" / "bing" 或 heroStyle = "video" (mp4格式) 时的背景媒体资源地址
+# heroStyleFmt = "bing" # heroStyle = "video" 时的视频格式："mp4" | "dogecloud"；heroStyle = "bing" 或 "image" 且值为 "bing" 时显示 Bing 每日一图说明
 # heroStyleDogecloudUserId = 1 # 多吉云用户 ID (可根据个人信息控制台填入，默认 1)
 # heroStyleDogecloudVcode = "" # 当 heroStyleFmt = "dogecloud" 时的多吉云视频 vcode (视频 ID)
-# heroStyleDogecloudPlayToken = "" # 开启防盗链时的播放 Token（可选）
-# heroStyleDogecloudVtype = 5 # 指定多吉云默认清晰度 ID（可选）
 selection_category = "精选"
 isoCode = "zh-cn"
 rtl = false

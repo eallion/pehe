@@ -1,0 +1,12 @@
+<!-- Bing Daily Wallpaper Background (0% GPU WebGL Canvas Overhead) -->
+{{- $imageUrl := site.Params.heroStyleUrl | default site.Params.heroStyleURL | default site.Params.hero_style_url | default site.Params.imageUrl | default site.Params.imageURL | default "https://api.eallion.com/bing?type=image" -}}
+{{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "bing") -}}
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+  <img id="ds-bing-bg-img" src="{{ $imageUrl }}" alt="Bing Daily Wallpaper" class="absolute inset-0 w-full h-full object-cover object-center" fetchpriority="high" decoding="async" />
+  <!-- Contrast & Readability Overlay -->
+  <div class="absolute inset-0 bg-black/40 backdrop-brightness-[0.85]"></div>
+  <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%]"></div>
+</div>
+{{- if eq $heroStyleFmt "bing" -}}
+  {{- partial "home/hero-bing-caption.html" . -}}
+{{- end -}}

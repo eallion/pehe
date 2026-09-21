@@ -1,0 +1,67 @@
+<!-- Bing Daily Wallpaper Caption Component -->
+<div id="ds-bing-caption" class="ds-bing-caption absolute bottom-3 right-3 sm:bottom-4 sm:right-6 md:bottom-5 md:right-8 z-20 pointer-events-auto opacity-0 transition-opacity duration-500 max-w-[calc(100vw-24px)]">
+  <a id="ds-bing-link" href="https://www.bing.com" target="_blank" rel="noopener noreferrer"
+    class="group relative flex flex-col items-end no-underline cursor-pointer select-none"
+    aria-label="Bing 每日一图">
+    <!-- Tooltip (Shows copyright on hover) -->
+    <div id="ds-bing-tooltip"
+      class="absolute bottom-full right-0 mb-2.5 px-3 py-2 rounded-lg bg-black/85 backdrop-blur-md border border-white/15 text-white/90 text-xs shadow-2xl transition-all duration-200 pointer-events-none opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 w-max max-w-[280px] sm:max-w-sm md:max-w-md text-left leading-relaxed">
+      <span id="ds-bing-copyright" class="block font-normal text-white/90 text-[11px] sm:text-xs"></span>
+      <!-- Arrow pointing down -->
+      <span class="absolute -bottom-1 right-6 w-2 h-2 bg-black/85 border-r border-b border-white/15 rotate-45"></span>
+    </div>
+
+    <!-- Capsule Badge (Only title visible) -->
+    <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/45 group-hover:bg-black/75 backdrop-blur-md border border-white/12 group-hover:border-white/25 text-white/80 group-hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.35)] text-xs">
+      <svg class="w-3.5 h-3.5 shrink-0 text-white/70 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <span id="ds-bing-title" class="font-medium truncate max-w-[160px] sm:max-w-[220px] md:max-w-[320px] text-white/95 group-hover:text-cyan-300 transition-colors"></span>
+    </div>
+  </a>
+</div>
+
+<script>
+(function() {
+  var api = 'https://api.eallion.com/bing?type=json';
+  fetch(api)
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      if (!data) return;
+      var caption = document.getElementById('ds-bing-caption');
+      var titleEl = document.getElementById('ds-bing-title');
+      var copyrightEl = document.getElementById('ds-bing-copyright');
+      var linkEl = document.getElementById('ds-bing-link');
+      var imgEl = document.getElementById('ds-bing-bg-img');
+
+      if (titleEl && (data.title || data.headline)) {
+        titleEl.textContent = data.title || data.headline;
+      }
+      if (copyrightEl && data.copyright) {
+        copyrightEl.textContent = data.copyright;
+      }
+      if (linkEl) {
+        if (data.copyrightlink) {
+          linkEl.href = data.copyrightlink;
+        } else {
+          linkEl.href = 'https://www.bing.com';
+        }
+      }
+      if (imgEl && data.url) {
+        imgEl.src = data.url;
+        if (data.title) imgEl.alt = data.title;
+      }
+      if (caption) {
+        caption.classList.remove('opacity-0');
+        caption.classList.add('opacity-100');
+      }
+    })
+    .catch(function(err) {
+      console.debug('Bing wallpaper info fetch failed:', err);
+    });
+})();
+</script>

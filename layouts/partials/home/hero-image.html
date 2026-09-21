@@ -1,8 +1,9 @@
 <!-- Static Image Background (0% GPU/WebGL Canvas Overhead) -->
 {{- $imageUrl := site.Params.heroStyleUrl | default site.Params.heroStyleURL | default site.Params.hero_style_url | default site.Params.imageUrl | default site.Params.imageURL | default site.Params.heroImage | default site.Params.heroImageUrl | default site.Params.hero_image_url | default site.Params.hero_image -}}
+{{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "") -}}
 <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
   {{ with $imageUrl }}
-    <img src="{{ . }}" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover object-center" fetchpriority="high" decoding="async" />
+    <img id="ds-bing-bg-img" src="{{ . }}" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover object-center" fetchpriority="high" decoding="async" />
   {{ else }}
     <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-[#0a0d14] to-black"></div>
   {{ end }}
@@ -10,3 +11,7 @@
   <div class="absolute inset-0 bg-black/40 backdrop-brightness-[0.85]"></div>
   <div class="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%]"></div>
 </div>
+{{- if eq $heroStyleFmt "bing" -}}
+  {{- partial "home/hero-bing-caption.html" . -}}
+{{- end -}}
+

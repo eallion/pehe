@@ -3,8 +3,6 @@
 {{- $heroStyleFmt := lower (site.Params.heroStyleFmt | default site.Params.hero_style_fmt | default "mp4") -}}
 {{- $dogeVcode := site.Params.heroStyleDogecloudVcode | default site.Params.heroStyleDogecloudVCode | default site.Params.hero_style_dogecloud_vcode | default site.Params.dogecloudVcode | default "" -}}
 {{- $dogeUserId := site.Params.heroStyleDogecloudUserId | default site.Params.heroStyleDogecloudUserid | default site.Params.hero_style_dogecloud_user_id | default site.Params.dogecloudUserId | default 1 -}}
-{{- $dogePlayToken := site.Params.heroStyleDogecloudPlayToken | default site.Params.heroStyleDogecloudPlaytoken | default site.Params.hero_style_dogecloud_play_token | default site.Params.dogecloudPlayToken | default "" -}}
-{{- $dogeVtype := site.Params.heroStyleDogecloudVtype | default site.Params.heroStyleDogecloudVType | default site.Params.hero_style_dogecloud_vtype | default site.Params.dogecloudVtype | default "" -}}
 <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none ds-video-bg-container">
   {{- if eq $heroStyleFmt "dogecloud" -}}
     <div id="ds-doge-player" class="absolute inset-0 w-full h-full ds-doge-container"></div>
@@ -53,8 +51,6 @@
                 container: container,
                 userId: {{ $dogeUserId }},
                 vcode: '{{ . }}',
-                {{ if $dogePlayToken }}playToken: '{{ $dogePlayToken }}',{{ end }}
-                {{ if $dogeVtype }}vtype: {{ $dogeVtype }},{{ end }}
                 autoPlay: true,
                 muted: true,
                 volume: 0,
