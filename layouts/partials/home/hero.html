@@ -1,8 +1,5 @@
-{{- /* Hero Parent Template: 统一管理前台布局与组件，动态挂载平级的背景主题 (dsh, image, video 等) */ -}}
+{{- /* Hero Parent Template: 统一管理前台布局与组件，动态挂载平级的背景主题 (dsh, pehe, image, video 等) */ -}}
 {{- $heroStyle := site.Params.heroStyle | default site.Params.hero_style | default "dsh" -}}
-{{- if eq $heroStyle "pehe" -}}
-{{- partial "home/hero-pehe.html" . -}}
-{{- else -}}
 {{- /* 站点统计数据计算（与 content/stats-partial.html 逻辑一致） */ -}}
 {{- $articleCount := 0 -}}
 {{- range .Site.RegularPages -}}
@@ -28,8 +25,8 @@
 {{- end -}}
 {{- $totalWords := $scratch.Get "total" -}}
 
-<section class="ds-hero-root relative flex flex-col justify-center items-center -mt-20 md:-mt-24">
-  <!-- Dynamic Peer Background (dsh, image, video, or any future style) -->
+<section class="ds-hero-root relative flex flex-col justify-center items-center -mt-20 md:-mt-24{{ if eq $heroStyle "pehe" }} ds-hero-pehe{{ end }}">
+  <!-- Dynamic Peer Background (dsh, pehe, image, video, or any future style) -->
   {{- $bgPartial := printf "home/hero-%s.html" $heroStyle -}}
   {{- if templates.Exists (printf "partials/%s" $bgPartial) -}}
   {{- partial $bgPartial . -}}
@@ -46,7 +43,7 @@
       <div class="ds-hero-enter flex flex-col gap-ds-4 items-start"
         style="--enter-y:24px;--enter-blur:10px;animation-duration:0.9s">
         <p data-hero-preview-label="true"
-          class="whitespace-nowrap font-ds-sans text-base font-medium leading-none tracking-[-0.01em] text-white sm:text-[17px] md:text-lg pl-0.75">
+          class="whitespace-nowrap font-ds-sans text-base font-medium leading-none tracking-[-0.01em] text-ds-primary sm:text-[17px] md:text-lg pl-0.75">
           大大的小蜗牛 的 博客
         </p>
         <h1 class="ds-text-hero text-ds-primary max-w-full" style="letter-spacing:0.2px">
@@ -117,19 +114,19 @@
       <!-- Tabs -->
       <div class="flex gap-ds-1 px-ds-1 ml-1.5">
         <button id="ds-tab-web" type="button"
-          class="ds-tab-btn is-active px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-primary bg-black/20 backdrop-blur-xl border-white/8">
+          class="ds-tab-btn is-active px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-primary">
           统计 / Stats
         </button>
         <button id="ds-tab-start" type="button"
-          class="ds-tab-btn px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-description hover:text-ds-primary bg-transparent border-transparent">
+          class="ds-tab-btn px-ds-4 py-ds-2 text-[13px] font-medium transition-all cursor-pointer rounded-t-lg border border-b-0 text-ds-description hover:text-ds-primary">
           说说 / Whisper
         </button>
       </div>
 
       <!-- Terminal Box -->
       <div
-        class="rounded-ds-media border border-white/8 bg-black/20 backdrop-blur-xl -mt-3.25 shadow-[0_8px_32px_rgba(0,0,0,0.37)]">
-        <div class="relative flex items-center justify-between px-ds-4 py-ds-3 border-b border-white/6">
+        class="ds-terminal-box rounded-ds-media border -mt-3.25">
+        <div class="ds-terminal-header relative flex items-center justify-between px-ds-4 py-ds-3 border-b">
           <div class="flex items-center gap-1.75">
             <span class="w-2.75 h-2.75 rounded-full bg-[#ff5f57] inline-block"></span>
             <span class="w-2.75 h-2.75 rounded-full bg-[#febc2e] inline-block"></span>
@@ -207,36 +204,34 @@
     {{- end -}}
     {{- range $latestPosts -}}
     <a href="{{ .RelPermalink }}"
-      class="ds-hero-latest-card group relative flex flex-col items-center gap-2 px-5 py-3.5 sm:px-6 sm:py-4 rounded-ds-media border border-white/8 hover:border-white/20 bg-black/20 hover:bg-black/30 backdrop-blur-xl transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:scale-[1.01] max-w-2xl w-full mx-auto cursor-pointer no-underline">
+      class="ds-hero-latest-card group relative flex flex-col items-center gap-2 px-5 py-3.5 sm:px-6 sm:py-4 rounded-ds-media border transition-all duration-300 max-w-2xl w-full mx-auto cursor-pointer no-underline">
 
       <!-- Row 1: Badges & Meta Info -->
-      <div class="flex flex-wrap items-center justify-center gap-2 text-xs text-white/60">
-        <span class="inline-flex items-center rounded-[6px] p-[1px]"
-          style="background:linear-gradient(135deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.04) 65%, rgba(255,255,255,0.28) 100%);box-shadow:0 0 12px rgba(255,255,255,0.08)">
-          <span
-            class="px-2 py-0.5 rounded-[5px] bg-black/30 font-mono text-[11px] font-semibold text-white/95 uppercase tracking-wider">New</span>
+      <div class="ds-latest-meta flex flex-wrap items-center justify-center gap-2 text-xs">
+        <span class="ds-badge-wrapper inline-flex items-center rounded-[6px] p-[1px]">
+          <span class="ds-badge-inner px-2 py-0.5 rounded-[5px] font-mono text-[11px] font-semibold uppercase tracking-wider">New</span>
         </span>
 
         {{ with .Params.categories }}
         {{ range first 1 . }}
-        <span class="w-1 h-1 rounded-full bg-white/30"></span>
-        <span class="text-cyan-300/90 font-medium">{{ . }}</span>
+        <span class="ds-meta-dot w-1 h-1 rounded-full"></span>
+        <span class="ds-meta-cat font-medium">{{ . }}</span>
         {{ end }}
         {{ end }}
 
-        <span class="w-1 h-1 rounded-full bg-white/30"></span>
+        <span class="ds-meta-dot w-1 h-1 rounded-full"></span>
         <time datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ .Date.Format "Jan 02, 2006" }}</time>
 
-        <span class="w-1 h-1 rounded-full bg-white/30 hidden sm:inline-block"></span>
+        <span class="ds-meta-dot w-1 h-1 rounded-full hidden sm:inline-block"></span>
         <span class="hidden sm:inline-block">{{ .ReadingTime }} 分钟阅读</span>
       </div>
 
       <!-- Row 2: Title with Hover Arrow Indicator -->
       <div
-        class="flex items-center justify-center gap-2 text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-cyan-300 transition-colors text-center leading-snug">
+        class="ds-latest-title flex items-center justify-center gap-2 text-lg sm:text-xl md:text-2xl font-bold tracking-tight transition-colors text-center leading-snug">
         <span class="line-clamp-1">{{ .Title }}</span>
         <svg
-          class="size-4.5 w-4.5 h-4.5 sm:size-5 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1 text-white/50 group-hover:text-cyan-300 shrink-0"
+          class="ds-latest-arrow size-4.5 w-4.5 h-4.5 sm:size-5 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1 shrink-0"
           xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14"></path>
@@ -254,7 +249,7 @@
       {{ $summaryText = .Summary | plainify }}
       {{ end }}
       {{ with $summaryText }}
-      <p class="text-xs sm:text-[13px] text-white/60 line-clamp-1 max-w-xl text-center font-normal leading-relaxed m-0">
+      <p class="ds-latest-summary text-xs sm:text-[13px] line-clamp-1 max-w-xl text-center font-normal leading-relaxed m-0">
         {{ . | truncate 80 }}
       </p>
       {{ end }}
@@ -487,6 +482,269 @@
     transform-origin: center bottom;
     will-change: opacity, transform, filter;
     transition: opacity 0.08s ease-out, transform 0.08s ease-out, filter 0.08s ease-out;
+    border-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  }
+
+  .ds-hero-latest-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .ds-latest-meta,
+  .ds-latest-summary {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .ds-badge-wrapper {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0.04) 65%, rgba(255, 255, 255, 0.28) 100%);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+  }
+
+  .ds-badge-inner {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .ds-meta-dot {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .ds-meta-cat {
+    color: rgba(103, 232, 249, 0.9);
+  }
+
+  .ds-latest-title {
+    color: #ffffff;
+  }
+
+  .ds-latest-arrow {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .ds-hero-latest-card:hover .ds-latest-title,
+  .ds-hero-latest-card:hover .ds-latest-arrow {
+    color: #67e8f9;
+  }
+
+  .ds-terminal-box {
+    border-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  }
+
+  .ds-terminal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Pehe Style Clean White Background & Typography */
+  .ds-hero-root.ds-hero-pehe {
+    --ds-color-bg-page: #ffffff;
+    --ds-color-text-primary: #1e232c;
+    --ds-color-text-description: #57606a;
+    --ds-color-border-default: rgba(0, 0, 0, 0.08);
+    --ds-btn-primary-bg: #1e232c;
+    --ds-btn-primary-text: #ffffff;
+    --ds-btn-secondary-bg: rgba(0, 0, 0, 0.04);
+    --ds-btn-secondary-text: #1e232c;
+    --ds-btn-secondary-border: rgba(0, 0, 0, 0.12);
+    --ds-btn-secondary-hover-border: rgba(0, 0, 0, 0.35);
+    --ds-btn-secondary-hover-bg: rgba(0, 0, 0, 0.08);
+    background-color: var(--ds-color-bg-page);
+    color: var(--ds-color-text-primary);
+  }
+
+  .dark .ds-hero-root.ds-hero-pehe,
+  html.dark .ds-hero-root.ds-hero-pehe {
+    --ds-color-bg-page: #22272e;
+    --ds-color-text-primary: #adbac7;
+    --ds-color-text-description: #768390;
+    --ds-color-border-default: rgba(255, 255, 255, 0.1);
+    --ds-btn-primary-bg: #adbac7;
+    --ds-btn-primary-text: #22272e;
+    --ds-btn-secondary-bg: rgba(255, 255, 255, 0.06);
+    --ds-btn-secondary-text: #adbac7;
+    --ds-btn-secondary-border: rgba(255, 255, 255, 0.15);
+    --ds-btn-secondary-hover-border: rgba(255, 255, 255, 0.4);
+    --ds-btn-secondary-hover-bg: rgba(255, 255, 255, 0.12);
+    background-color: var(--ds-color-bg-page);
+    color: var(--ds-color-text-primary);
+  }
+
+  .ds-hero-pehe [data-hero-preview-label] {
+    color: var(--ds-color-text-primary);
+  }
+
+  .ds-hero-pehe .ds-terminal-box {
+    border-color: rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .ds-hero-pehe .ds-terminal-box {
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(28, 33, 40, 0.85);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  }
+
+  .ds-hero-pehe .ds-terminal-header {
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .dark .ds-hero-pehe .ds-terminal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .ds-tab-btn {
+    color: var(--ds-color-text-description);
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .ds-tab-btn:hover {
+    color: var(--ds-color-text-primary);
+  }
+
+  .ds-hero-pehe .ds-tab-btn.is-active {
+    background-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--ds-color-text-primary);
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .ds-hero-pehe .ds-tab-btn.is-active {
+    background-color: rgba(28, 33, 40, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--ds-color-text-primary);
+  }
+
+  .ds-hero-pehe .ds-tab-btn:not(.is-active) {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--ds-color-text-description);
+  }
+
+  .ds-hero-pehe .ds-tab-btn:not(.is-active):hover {
+    color: var(--ds-color-text-primary);
+  }
+
+  .ds-hero-pehe .ds-hero-latest-card {
+    border-color: rgba(0, 0, 0, 0.08);
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  }
+
+  .ds-hero-pehe .ds-hero-latest-card:hover {
+    border-color: rgba(0, 0, 0, 0.16);
+    background-color: #ffffff;
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .ds-hero-pehe .ds-hero-latest-card {
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(28, 33, 40, 0.85);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  }
+
+  .dark .ds-hero-pehe .ds-hero-latest-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(28, 33, 40, 0.95);
+  }
+
+  .ds-hero-pehe .ds-latest-meta,
+  .ds-hero-pehe .ds-latest-summary {
+    color: var(--ds-color-text-description);
+  }
+
+  .ds-hero-pehe .ds-badge-wrapper {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.04) 100%);
+    box-shadow: none;
+  }
+
+  .dark .ds-hero-pehe .ds-badge-wrapper {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.06) 100%);
+  }
+
+  .ds-hero-pehe .ds-badge-inner {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--ds-color-text-primary);
+  }
+
+  .dark .ds-hero-pehe .ds-badge-inner {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .ds-hero-pehe .ds-meta-dot {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .ds-hero-pehe .ds-meta-dot {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .ds-hero-pehe .ds-meta-cat {
+    color: #0284c7;
+  }
+
+  .dark .ds-hero-pehe .ds-meta-cat {
+    color: #67e8f9;
+  }
+
+  .ds-hero-pehe .ds-latest-title {
+    color: var(--ds-color-text-primary);
+  }
+
+  .ds-hero-pehe .ds-latest-arrow {
+    color: var(--ds-color-text-description);
+  }
+
+  .ds-hero-pehe .ds-hero-latest-card:hover .ds-latest-title,
+  .ds-hero-pehe .ds-hero-latest-card:hover .ds-latest-arrow {
+    color: var(--ds-color-brand);
+  }
+
+  .dark .ds-hero-pehe .ds-hero-latest-card:hover .ds-latest-title,
+  .dark .ds-hero-pehe .ds-hero-latest-card:hover .ds-latest-arrow {
+    color: #67e8f9;
+  }
+
+  .ds-hero-pehe .ds-w-more {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #1e232c;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .ds-hero-pehe .ds-w-more:hover {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.3);
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .dark .ds-hero-pehe .ds-w-more,
+  html.dark .ds-hero-pehe .ds-w-more {
+    background: rgba(18, 24, 38, 0.94);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .ds-hero-pehe .ds-w-loading span {
+    border-color: rgba(0, 0, 0, 0.15);
+    border-top-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .dark .ds-hero-pehe .ds-w-loading span {
+    border-color: rgba(255, 255, 255, 0.2);
+    border-top-color: rgba(255, 255, 255, 0.5);
   }
 
   .ds-hero-mask {
@@ -1021,10 +1279,10 @@
 
       const activateTab = (tab, other, show, hide) => {
         currentTab = tab === tabWeb ? 'web' : 'start';
-        tab.classList.add('is-active', 'text-ds-primary', 'bg-black/20', 'backdrop-blur-xl', 'border-white/[0.08]');
-        tab.classList.remove('text-ds-description', 'bg-transparent', 'border-transparent');
-        other.classList.remove('is-active', 'text-ds-primary', 'bg-black/20', 'backdrop-blur-xl', 'border-white/[0.08]');
-        other.classList.add('text-ds-description', 'bg-transparent', 'border-transparent');
+        tab.classList.add('is-active', 'text-ds-primary');
+        tab.classList.remove('text-ds-description');
+        other.classList.remove('is-active', 'text-ds-primary');
+        other.classList.add('text-ds-description');
         show.classList.remove('invisible', 'hidden');
         hide.classList.add('hidden');
       };
@@ -1313,6 +1571,9 @@
     // 4. Header Overlay & Scroll Integration (Header Frosted Blur + Latest Card Dissolve)
     function initHeaderIntegration() {
       document.body.classList.add('ds-has-hero');
+      {{- if eq $heroStyle "pehe" -}}
+      document.body.classList.add('ds-hero-pehe');
+      {{- end -}}
       const header = document.getElementById('page-header');
       const latestCard = document.querySelector('.ds-hero-latest-card');
 
@@ -1446,4 +1707,3 @@
     }
   })();
 </script>
-{{- end -}}

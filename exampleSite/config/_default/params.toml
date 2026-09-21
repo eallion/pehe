@@ -1,5 +1,5 @@
 hero = true
-heroStyle = "pehe" # hero 风格："pehe" (原版简约头像风格) | "dsh" (DeepSeek Harness 动态流体风格) | "image" (静态图片背景) | "video" (动态视频背景)
+heroStyle = "pehe" # hero 风格："pehe" (简约白色排版风格) | "dsh" (DeepSeek Harness 动态流体风格) | "image" (静态图片背景) | "video" (动态视频背景)
 # imageUrl = "/images/hero-bg.webp" # heroStyle = "image" 时的背景图片地址
 # heroStyleFmt = "mp4" # heroStyle = "video" 时的视频格式："mp4" | "dogecloud"
 # videoURL = "/videos/hero-bg.mp4" # 当 heroStyleFmt = "mp4" 时的视频文件地址

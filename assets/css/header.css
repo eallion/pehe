@@ -76,47 +76,52 @@
 
 /* Dark Mode / Hero Dark Header Styles */
 .dark .ds-header-bar,
-body.ds-has-hero .ds-header-bar {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar {
   color: #ffffff;
 }
 
 .dark .ds-header-bar a,
 .dark .ds-header-bar button,
-body.ds-has-hero .ds-header-bar a,
-body.ds-has-hero .ds-header-bar button {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar a,
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar button {
   color: #ffffff;
 }
 
 .dark .ds-header-bar .ds-nav-btn,
-body.ds-has-hero .ds-header-bar .ds-nav-btn {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar .ds-nav-btn {
   background-color: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.14);
   color: #ffffff;
 }
 
 .dark .ds-header-bar .ds-nav-btn:hover,
-body.ds-has-hero .ds-header-bar .ds-nav-btn:hover {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar .ds-nav-btn:hover {
   background-color: rgba(255, 255, 255, 0.16);
   border-color: rgba(255, 255, 255, 0.24);
 }
 
-/* Light Mode (non-hero) Header Styles */
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar {
+/* Light Mode (non-hero or pehe white hero) Header Styles */
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar {
   color: #1e232c;
 }
 
 html:not(.dark) body:not(.ds-has-hero) .ds-header-bar a,
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar button {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar button,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar a,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar button {
   color: #1e232c;
 }
 
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar .ds-nav-btn {
   background-color: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.08);
   color: #1e232c;
 }
 
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn:hover {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar .ds-nav-btn:hover,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar .ds-nav-btn:hover {
   background-color: rgba(0, 0, 0, 0.1);
   border-color: rgba(0, 0, 0, 0.15);
 }
@@ -240,7 +245,7 @@ html:not(.dark) body.ds-has-hero .ds-header-bar.is-scrolled #menu-bar a[aria-cur
 /* Dark Mode / Hero Dark Header Menu Links */
 .dark .ds-header-bar #menu-bar a,
 html.dark .ds-header-bar #menu-bar a,
-body.ds-has-hero .ds-header-bar #menu-bar a {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar #menu-bar a {
   color: rgba(255, 255, 255, 0.85) !important;
   background: transparent !important;
   background-color: transparent !important;
@@ -249,7 +254,7 @@ body.ds-has-hero .ds-header-bar #menu-bar a {
 
 .dark .ds-header-bar #menu-bar a:hover,
 html.dark .ds-header-bar #menu-bar a:hover,
-body.ds-has-hero .ds-header-bar #menu-bar a:hover {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar #menu-bar a:hover {
   color: #ffffff !important;
   background-color: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
@@ -257,27 +262,30 @@ body.ds-has-hero .ds-header-bar #menu-bar a:hover {
 
 .dark .ds-header-bar #menu-bar a[aria-current="page"],
 html.dark .ds-header-bar #menu-bar a[aria-current="page"],
-body.ds-has-hero .ds-header-bar #menu-bar a[aria-current="page"] {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-bar #menu-bar a[aria-current="page"] {
   color: #ffffff !important;
   background-color: rgba(255, 255, 255, 0.16) !important;
   border-color: rgba(255, 255, 255, 0.16) !important;
 }
 
 /* Light Mode Menu Links */
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar #menu-bar a {
   color: rgba(30, 35, 44, 0.85) !important;
   background: transparent !important;
   background-color: transparent !important;
   border-color: transparent !important;
 }
 
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a:hover {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a:hover,
+html:not(.dark) body.ds-hero-pehe .ds-header-bar #menu-bar a:hover {
   color: #1e232c !important;
   background-color: rgba(0, 0, 0, 0.06) !important;
   border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="page"] {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="page"],
+html:not(.dark) body.ds-hero-pehe .ds-header-bar #menu-bar a[aria-current="page"] {
   color: #1e232c !important;
   background-color: rgba(0, 0, 0, 0.08) !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
@@ -333,24 +341,26 @@ html:not(.dark) body:not(.ds-has-hero) .ds-header-bar #menu-bar a[aria-current="
 
 /* 1. Dark Mode & Hero Transparent State (sitting on dark fluid canvas) */
 .dark .ds-header-badge,
-body.ds-has-hero .ds-header-badge {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-badge {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0.04) 65%, rgba(255, 255, 255, 0.4) 100%);
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
 }
 
 .dark .ds-header-badge-inner,
-body.ds-has-hero .ds-header-badge-inner {
+body.ds-has-hero:not(.ds-hero-pehe) .ds-header-badge-inner {
   background-color: rgba(0, 0, 0, 0.3);
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* 2. Light Mode: Non-Hero pages (articles, archives, search, etc.) */
-html:not(.dark) body:not(.ds-has-hero) .ds-header-badge {
+/* 2. Light Mode: Non-Hero pages (articles, archives, search, etc.) & pehe white hero */
+html:not(.dark) body:not(.ds-has-hero) .ds-header-badge,
+html:not(.dark) body.ds-hero-pehe .ds-header-badge {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.08) 35%, rgba(0, 0, 0, 0.04) 65%, rgba(0, 0, 0, 0.24) 100%);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-html:not(.dark) body:not(.ds-has-hero) .ds-header-badge-inner {
+html:not(.dark) body:not(.ds-has-hero) .ds-header-badge-inner,
+html:not(.dark) body.ds-hero-pehe .ds-header-badge-inner {
   background-color: rgba(0, 0, 0, 0.06);
   color: rgba(30, 35, 44, 0.88);
 }
