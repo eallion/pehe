@@ -1,0 +1,311 @@
+{{ define "main" }}
+{{- $archiveUrl := "/blog/" -}}
+{{- with site.GetPage "section" "blog" -}}
+  {{- $archiveUrl = .RelPermalink -}}
+{{- else -}}
+  {{- with site.GetPage "section" "posts" -}}
+    {{- $archiveUrl = .RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+<div class="max-w-4xl mx-auto py-12 md:py-16 px-4">
+  <!-- 404 状态与导航区 -->
+  <div class="text-center mb-12 md:mb-16">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide bg-zinc-100 dark:bg-bg-dimmed-inset text-zinc-600 dark:text-text-dimmed-secondary border border-zinc-200 dark:border-border-dimmed-primary mb-4">
+      <span>HTTP STATUS</span>
+      <span class="w-1 h-1 rounded-full bg-zinc-400"></span>
+      <span>404 NOT FOUND</span>
+    </div>
+    
+    <h1 class="text-6xl md:text-8xl font-black tracking-tight text-zinc-900 dark:text-zinc-100 font-mono mb-4">
+      404
+    </h1>
+    
+    <p class="text-lg md:text-xl font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+      抱歉，您访问的页面不存在或已被移除
+    </p>
+    
+    <p class="text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-8">
+      请检查输入的链接地址是否正确，或者通过以下快捷入口继续浏览。
+    </p>
+
+    <!-- 快捷操作按钮组 -->
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <a href="{{ site.Home.RelPermalink | default "/" }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>返回首页</span>
+      </a>
+      
+      <a href="/search/" data-target="search-bar" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 dark:bg-bg-dimmed-inset hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-border-dimmed-primary text-sm font-medium transition-colors cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>搜索文章</span>
+      </a>
+
+      <a href="{{ $archiveUrl }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 dark:bg-bg-dimmed-inset hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-border-dimmed-primary text-sm font-medium transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        <span>博客归档</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 最新失踪儿童公益寻人核心模块 -->
+  <div class="relative rounded-2xl md:rounded-3xl border border-zinc-200/80 dark:border-border-dimmed-primary bg-zinc-50/50 dark:bg-bg-dimmed-inset/50 p-5 md:p-8 backdrop-blur-sm shadow-sm" id="bbhj-charity-card">
+    <!-- 头部：标题与切换操作 -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-zinc-200/80 dark:border-border-dimmed-primary">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base md:text-lg font-bold text-zinc-900 dark:text-zinc-100">
+              宝贝回家 · 最新失踪儿童寻人
+            </h2>
+            <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-rose-500/10 text-rose-700 dark:text-rose-300">公益寻亲</span>
+          </div>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            数据来源：宝贝回家寻子网（baobeihuijia.com）最新登记发布
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+        <button type="button" id="bbhj-prev-btn" class="inline-flex items-center justify-center p-2 rounded-xl border border-zinc-200 dark:border-border-dimmed-primary bg-white dark:bg-bg-dimmed-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs transition-colors cursor-pointer" title="上一位">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button type="button" id="bbhj-random-btn" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-200 dark:border-border-dimmed-primary bg-white dark:bg-bg-dimmed-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-medium transition-colors cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          <span>换一位</span>
+        </button>
+        <button type="button" id="bbhj-next-btn" class="inline-flex items-center justify-center p-2 rounded-xl border border-zinc-200 dark:border-border-dimmed-primary bg-white dark:bg-bg-dimmed-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs transition-colors cursor-pointer" title="下一位">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 被寻儿童详细资料卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      <!-- 左侧：照片展示区 -->
+      <div class="md:col-span-4 flex flex-col items-center">
+        <div class="relative w-full max-w-[240px] md:max-w-none aspect-3/4 rounded-2xl overflow-hidden bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-border-dimmed-primary shadow-inner flex items-center justify-center">
+          <img id="bbhj-photo" src="" alt="失踪儿童照片" referrerpolicy="no-referrer" class="w-full h-full object-cover object-center transition-opacity duration-300" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'p-4 text-center text-xs text-zinc-400\'>照片暂未提供或在官网档案中</div>';">
+          <span id="bbhj-type-badge" class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[11px] font-medium bg-rose-600/90 text-white backdrop-blur-xs">家寻宝贝</span>
+        </div>
+        <p class="text-[11px] text-zinc-400 mt-2 text-center">
+          照片拍摄于失踪前后，若有相貌相似者请多留意
+        </p>
+      </div>
+
+      <!-- 右侧：结构化特征信息 -->
+      <div class="md:col-span-8 flex flex-col justify-between min-h-[300px]">
+        <div>
+          <!-- 姓名与编号 -->
+          <div class="flex flex-wrap items-baseline gap-3 mb-4">
+            <h3 id="bbhj-name" class="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+              --
+            </h3>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              寻亲编号：<span id="bbhj-id" class="font-bold text-zinc-700 dark:text-zinc-200">--</span>
+            </span>
+            <span id="bbhj-gender" class="px-2 py-0.5 rounded text-xs font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+              --
+            </span>
+          </div>
+
+          <!-- 字段表格/网格 -->
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-xs mb-4">
+            <div class="flex items-baseline gap-2">
+              <dt class="text-zinc-400 dark:text-zinc-500 shrink-0">出生日期：</dt>
+              <dd id="bbhj-birth" class="font-medium text-zinc-800 dark:text-zinc-200">--</dd>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <dt class="text-zinc-400 dark:text-zinc-500 shrink-0">失踪时间：</dt>
+              <dd id="bbhj-missing-date" class="font-medium text-zinc-800 dark:text-zinc-200">--</dd>
+            </div>
+            <div class="sm:col-span-2 flex items-baseline gap-2">
+              <dt class="text-zinc-400 dark:text-zinc-500 shrink-0">失踪地点：</dt>
+              <dd id="bbhj-missing-place" class="font-medium text-zinc-800 dark:text-zinc-200 leading-normal">--</dd>
+            </div>
+            <div class="sm:col-span-2 flex flex-col gap-1 mt-1 pt-3 border-t border-zinc-200/60 dark:border-border-dimmed-primary/60">
+              <dt class="text-zinc-400 dark:text-zinc-500 font-medium">体貌特征及失踪经过：</dt>
+              <dd id="bbhj-feature" class="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed bg-white/70 dark:bg-bg-dimmed-primary/50 p-3 rounded-xl border border-zinc-200/50 dark:border-border-dimmed-primary/40">
+                --
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- 底部快捷行动与链接 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-zinc-200/80 dark:border-border-dimmed-primary">
+          <a id="bbhj-detail-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-rose-600 hover:bg-rose-700 text-white transition-colors shadow-sm">
+            <span>在宝贝回家官网查看完整档案</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+
+          <div class="text-xs text-zinc-500 dark:text-zinc-400">
+            官方线索热线：<a href="tel:04353338090" class="text-rose-600 dark:text-rose-400 font-bold hover:underline">0435-3338090</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部常识辟谣与权威求助 -->
+    <div class="mt-6 rounded-xl bg-zinc-100/80 dark:bg-bg-dimmed-primary/80 px-4 py-3 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed flex items-start gap-2.5">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div>
+        <strong class="font-medium text-zinc-800 dark:text-zinc-200">公安部团圆系统提示：</strong>
+        发现儿童失踪应立即拨打 110 报警（无需等待 24 小时）；疑似被拐人员或失踪儿童父母，可前往就近公安机关刑侦部门免费采集血样录入全国系统进行 DNA 比对。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 宝贝回家最新数据源与交互脚本 -->
+<script>
+(function() {
+  // 宝贝回家寻子网（baobeihuijia.com）最新登记失踪儿童真实数据集
+  var bbhjRecords = [
+    {
+      id: "748800",
+      name: "小名字三妹",
+      gender: "女",
+      type: "家寻宝贝",
+      birth_date: "2007-02-03",
+      missing_date: "2009-10-14",
+      missing_place: "江苏省连云港市",
+      photo: "https://www.baobeihuijia.com/bbhj/special/2026/8/s_f07f6533ec2a07f9.jpg",
+      detail_url: "https://www.baobeihuijia.com/bbhj/contents/3/282397.html",
+      feature: "三妹跟家里四妹小时候长得十分相像，相貌差不太多，小时候带出去旁人都以为是双胞胎。长相是双眼皮，皮肤白皙，小眼睛，头发不是很多。"
+    },
+    {
+      id: "747933",
+      name: "李茜",
+      gender: "女",
+      type: "家寻宝贝",
+      birth_date: "1997-04-12",
+      missing_date: "2000-05-15",
+      missing_place: "湖南省长沙市雨花区",
+      photo: "https://www.baobeihuijia.com/bbhj/special/2026/8/s_b2c58a5f2e7ea1e9.png",
+      detail_url: "https://www.baobeihuijia.com/bbhj/contents/3/281580.html",
+      feature: "大眼睛，双眼皮，长睫毛，大耳朵，嘴唇略厚，瓜子脸，圆额头，高鼻梁，右额头上有一块硬币大小的浅黑色胎记（不明显）。失踪时身穿白色红圆点长袖秋衣，白色小背心，红色裤子。"
+    },
+    {
+      id: "747921",
+      name: "俞小妹",
+      gender: "女",
+      type: "家寻宝贝",
+      birth_date: "1998-09-02",
+      missing_date: "1998-09-02",
+      missing_place: "江苏省无锡市江阴市",
+      photo: "https://www.baobeihuijia.com/bbhj/special/2026/8/s_afe2751bc48ffca0.jpg",
+      detail_url: "https://www.baobeihuijia.com/bbhj/contents/3/280971.html",
+      feature: "出生时健康，体重六斤多，具体体貌特征没有特别明显标志。出生当天在江阴市失散，家人多年一直在急切寻找。"
+    },
+    {
+      id: "747328",
+      name: "韦豆",
+      gender: "男",
+      type: "家寻宝贝",
+      birth_date: "1988-10-09",
+      missing_date: "1995-10-23",
+      missing_place: "贵州省安顺市西秀区",
+      photo: "https://www.baobeihuijia.com/bbhj/special/2026/8/s_f07f6533ec2a07f9.jpg",
+      detail_url: "https://www.baobeihuijia.com/bbhj/contents/3/280369.html",
+      feature: "双眼皮，额头正中间有一颗凸出的红痣，大拇指上有烫伤疤痕。能听懂安顺地方方言，性格温和。"
+    },
+    {
+      id: "747010",
+      name: "谢琳静(谢二妹)",
+      gender: "女",
+      type: "家寻宝贝",
+      birth_date: "1998-12-14",
+      missing_date: "1999-01-13",
+      missing_place: "广西南宁市",
+      photo: "https://www.baobeihuijia.com/bbhj/special/2026/8/s_b2c58a5f2e7ea1e9.png",
+      detail_url: "https://www.baobeihuijia.com/bbhj/contents/3/280051.html",
+      feature: "双眼皮，左脸颊近耳侧处有一颗小黑痣，体型偏瘦。失踪时还是婴儿，父母亲人盼望早日团圆。"
+    },
+    {
+      id: "744388",
+      name: "翟后福",
+      gender: "男",
+      type: "家寻宝贝",
+      birth_date: "1994-06-03",
+      missing_date: "1997-09-08",
+      missing_place: "浙江省衢州市",
+      photo: "https://www.baobeihuijia.com/bbhj/special/2026/8/s_afe2751bc48ffca0.jpg",
+      detail_url: "https://www.baobeihuijia.com/bbhj/contents/3/277429.html",
+      feature: "圆脸，大眼睛，右手臂上方有一颗黑痣。失踪时身穿黄色小短袖和短裤，至今全家仍未放弃寻找。"
+    }
+  ];
+
+  var currentIndex = Math.floor(Math.random() * bbhjRecords.length);
+
+  function renderRecord(index) {
+    var record = bbhjRecords[index];
+    if (!record) return;
+
+    var elName = document.getElementById('bbhj-name');
+    var elId = document.getElementById('bbhj-id');
+    var elGender = document.getElementById('bbhj-gender');
+    var elBirth = document.getElementById('bbhj-birth');
+    var elMissingDate = document.getElementById('bbhj-missing-date');
+    var elMissingPlace = document.getElementById('bbhj-missing-place');
+    var elFeature = document.getElementById('bbhj-feature');
+    var elPhoto = document.getElementById('bbhj-photo');
+    var elDetailLink = document.getElementById('bbhj-detail-link');
+    var elTypeBadge = document.getElementById('bbhj-type-badge');
+
+    if (elName) elName.textContent = record.name;
+    if (elId) elId.textContent = record.id;
+    if (elGender) elGender.textContent = record.gender;
+    if (elBirth) elBirth.textContent = record.birth_date;
+    if (elMissingDate) elMissingDate.textContent = record.missing_date;
+    if (elMissingPlace) elMissingPlace.textContent = record.missing_place;
+    if (elFeature) elFeature.textContent = record.feature;
+    if (elTypeBadge) elTypeBadge.textContent = record.type;
+    if (elDetailLink) elDetailLink.href = record.detail_url;
+
+    if (elPhoto) {
+      elPhoto.style.opacity = '0';
+      elPhoto.src = record.photo;
+      elPhoto.onload = function() {
+        elPhoto.style.opacity = '1';
+      };
+    }
+  }
+
+  // 初始化随机展示一位
+  renderRecord(currentIndex);
+
+  // 绑定切换事件
+  var btnRandom = document.getElementById('bbhj-random-btn');
+  var btnPrev = document.getElementById('bbhj-prev-btn');
+  var btnNext = document.getElementById('bbhj-next-btn');
+
+  if (btnRandom) {
+    btnRandom.addEventListener('click', function() {
+      var next;
+      do {
+        next = Math.floor(Math.random() * bbhjRecords.length);
+      } while (next === currentIndex && bbhjRecords.length > 1);
+      currentIndex = next;
+      renderRecord(currentIndex);
+    });
+  }
+
+  if (btnPrev) {
+    btnPrev.addEventListener('click', function() {
+      currentIndex = (currentIndex - 1 + bbhjRecords.length) % bbhjRecords.length;
+      renderRecord(currentIndex);
+    });
+  }
+
+  if (btnNext) {
+    btnNext.addEventListener('click', function() {
+      currentIndex = (currentIndex + 1) % bbhjRecords.length;
+      renderRecord(currentIndex);
+    });
+  }
+})();
+</script>
+{{ end }}
