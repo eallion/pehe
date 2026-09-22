@@ -1,9 +1,9 @@
 <div id="search-modal"
-	class="hidden fixed inset-0 z-50 flex items-start justify-center mt-24 p-4 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-out"
+	class="hidden fixed inset-0 z-50 flex items-start justify-center mt-24 p-4 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-out pointer-events-auto"
 	aria-modal="true" role="dialog">
 
 	<div id="modal-content"
-		class="relative w-[90%] max-w-3xl max-h-[85vh] bg-white dark:bg-bg-dimmed-primary rounded-3xl overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.3),0_4px_8px_3px_rgba(0,0,0,0.15)] opacity-0 scale-95 transition-all duration-300 ease-out">
+		class="relative w-[90%] max-w-3xl max-h-[85vh] bg-white dark:bg-bg-dimmed-primary rounded-3xl overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.3),0_4px_8px_3px_rgba(0,0,0,0.15)] opacity-0 scale-95 transition-all duration-300 ease-out pointer-events-auto">
 
 		<div class="sticky top-0 z-10 bg-white dark:bg-bg-dimmed-primary border-b border-gray-200 dark:border-border-dimmed-subtle">
 			<div class="flex items-center gap-4 p-4 md:p-6">
@@ -18,7 +18,7 @@
 					aria-label="搜索输入">
 
 				<button id="close-button" type="button"
-					class="p-3 rounded-full text-gray-600 dark:text-text-dimmed-primary hover:bg-gray-100 dark:hover:bg-bg-dimmed-secondary active:bg-gray-50 dark:active:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-600/20 transition-colors active:scale-95"
+					class="p-3 rounded-full text-gray-600 dark:text-text-dimmed-primary hover:bg-gray-100 dark:hover:bg-bg-dimmed-secondary active:bg-gray-50 dark:active:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-600/20 transition-colors active:scale-95 cursor-pointer pointer-events-auto"
 					aria-label="关闭搜索">
 					<svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
 						<path
@@ -144,14 +144,14 @@
 
 	// 打开 Modal
 	function openModal() {
-	  modal.classList.remove('hidden');
+	  modal.classList.remove('hidden', 'opacity-0');
+	  modal.classList.add('opacity-100');
+	  modalContent.classList.remove('opacity-0', 'scale-95');
+	  modalContent.classList.add('opacity-100', 'scale-100');
 
 	  setTimeout(() => {
-		modal.classList.add('opacity-100');
-		modalContent.classList.remove('opacity-0', 'scale-95');
-		modalContent.classList.add('opacity-100', 'scale-100');
 		searchInput.focus();
-	  }, 10);
+	  }, 50);
 
 	  toggleSearchIcon(true);
 	  // 打开弹窗时提前触发预加载
@@ -160,12 +160,14 @@
 
 	// 关闭 Modal
 	function closeModal() {
+	  modal.classList.remove('opacity-100');
 	  modal.classList.add('opacity-0');
-	  modalContent.classList.add('opacity-0', 'scale-95');
 	  modalContent.classList.remove('opacity-100', 'scale-100');
+	  modalContent.classList.add('opacity-0', 'scale-95');
 
 	  setTimeout(() => {
 		modal.classList.add('hidden');
+		modal.classList.remove('opacity-0');
 		searchInput.value = '';
 		clearResults();
 		toggleSearchIcon(false);
@@ -365,22 +367,58 @@
 	  }
 	}
 
-	// 事件绑定
-	if (searchToggleBtn) {
-	  // 鼠标移入搜索按钮时预加载 pagefind
-	  searchToggleBtn.addEventListener('mouseenter', () => loadPagefind().catch(() => {}), { once: true });
-	  searchToggleBtn.addEventListener('click', (e) => {
+	// 支持任意搜索触发器（导航栏搜索图标、菜单文本链接、以及 URL Hash）
+	const SEARCH_TRIGGER_SELECTOR = '[data-target="search-bar"], a[href="/search"], a[href="/search/"], a[href="#search"], a[href="/搜索"], a[href="/搜索/"], a[href*="%E6%90%9C%E7%B4%A2"]';
+
+	document.addEventListener('click', (e) => {
+	  const trigger = e.target.closest(SEARCH_TRIGGER_SELECTOR);
+	  if (trigger) {
 		e.preventDefault();
+		// 若移动端菜单处于展开状态，点击搜索链接后自动收起菜单
+		const mobileMenu = document.getElementById('menu-bar');
+		if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+		  mobileMenu.classList.add('hidden');
+		  mobileMenu.classList.remove('block');
+		}
 		if (modal.classList.contains('hidden')) {
 		  openModal();
 		} else {
 		  closeModal();
 		}
-	  });
+	  }
+	});
+
+	// 鼠标悬停任意搜索触发器时提前预加载 pagefind
+	document.addEventListener('mouseover', (e) => {
+	  if (e.target.closest(SEARCH_TRIGGER_SELECTOR)) {
+		loadPagefind().catch(() => {});
+	  }
+	}, { passive: true });
+
+	// 支持 URL Hash 自动触发（如访问 #search 或点击 hash 链接）
+	if (window.location.hash === '#search') {
+	  openModal();
 	}
+	window.addEventListener('hashchange', () => {
+	  if (window.location.hash === '#search') {
+		openModal();
+	  }
+	});
+
+	// 挂载全局 API 供自定义脚本或链接调用
+	window.openSearchModal = openModal;
+	window.closeSearchModal = closeModal;
+	window.toggleSearchModal = () => {
+	  if (modal.classList.contains('hidden')) openModal();
+	  else closeModal();
+	};
 
 	if (closeBtn) {
-	  closeBtn.addEventListener('click', closeModal);
+	  closeBtn.addEventListener('click', (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		closeModal();
+	  });
 	}
 
 	if (searchInput) {
@@ -400,6 +438,7 @@
 	if (modal) {
 	  modal.addEventListener('click', (e) => {
 		if (e.target === modal) {
+		  e.preventDefault();
 		  closeModal();
 		}
 	  });

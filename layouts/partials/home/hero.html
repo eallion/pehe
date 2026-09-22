@@ -177,19 +177,19 @@
             <div class="grid grid-cols-4 gap-x-2 sm:gap-x-4 items-center h-[42.25px]">
               <div class="flex flex-col items-center justify-center gap-y-1.5 sm:gap-y-2 ds-stat-item">
                 <span class="text-ds-description text-xs leading-none">文章</span>
-                <span class="font-bold text-sm leading-tight ds-stat-num">{{ $articleCount }}</span>
+                <span class="font-bold text-xs sm:text-sm leading-tight whitespace-nowrap ds-stat-num">{{ lang.FormatNumber 0 (default 0 $articleCount) }}</span>
               </div>
               <div class="flex flex-col items-center justify-center gap-y-1.5 sm:gap-y-2 ds-stat-item">
                 <span class="text-ds-description text-xs leading-none">分类</span>
-                <span class="font-bold text-sm leading-tight ds-stat-num">{{ $categoryCount }}</span>
+                <span class="font-bold text-xs sm:text-sm leading-tight whitespace-nowrap ds-stat-num">{{ lang.FormatNumber 0 (default 0 $categoryCount) }}</span>
               </div>
               <div class="flex flex-col items-center justify-center gap-y-1.5 sm:gap-y-2 ds-stat-item">
                 <span class="text-ds-description text-xs leading-none">标签</span>
-                <span class="font-bold text-sm leading-tight ds-stat-num">{{ $tagCount }}</span>
+                <span class="font-bold text-xs sm:text-sm leading-tight whitespace-nowrap ds-stat-num">{{ lang.FormatNumber 0 (default 0 $tagCount) }}</span>
               </div>
               <div class="flex flex-col items-center justify-center gap-y-1.5 sm:gap-y-2 ds-stat-item">
                 <span class="text-ds-description text-xs leading-none">字数</span>
-                <span class="font-bold text-sm leading-tight ds-stat-num">{{ div $totalWords 1000 }}k</span>
+                <span class="font-bold text-xs sm:text-sm leading-tight whitespace-nowrap ds-stat-num">{{ lang.FormatNumber 0 (default 0 $totalWords) }}</span>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@
 
   <!-- Hero Bottom Section (Modern Interactive Glass Announcement Card - Desktop only: md+) -->
   <div
-    class="ds-hero-bottom ds-hero-enter z-10 hidden md:flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-auto w-full max-w-4xl mx-auto md:absolute md:bottom-8 md:left-0 md:right-0"
+    class="ds-hero-bottom ds-hero-enter z-10 hidden md:flex flex-col items-center gap-3 md:gap-4 px-4 text-center pointer-events-none w-full max-w-4xl mx-auto md:absolute md:bottom-8 md:left-0 md:right-0"
     style="--enter-y:24px;--enter-blur:8px;animation-duration:0.9s;animation-delay:0.5s">
     {{- $latestPosts := first 1 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
     {{- if eq (len $latestPosts) 0 -}}
@@ -211,7 +211,7 @@
     {{- end -}}
     {{- range $latestPosts -}}
     <a href="{{ .RelPermalink }}"
-      class="ds-hero-latest-card group relative flex flex-col items-center gap-2 px-5 py-3.5 sm:px-6 sm:py-4 rounded-ds-media border transition-all duration-300 max-w-2xl w-full mx-auto cursor-pointer no-underline">
+      class="ds-hero-latest-card group relative flex flex-col items-center gap-2 px-5 py-3.5 sm:px-6 sm:py-4 rounded-ds-media border transition-all duration-300 max-w-2xl w-full mx-auto cursor-pointer no-underline pointer-events-auto">
 
       <!-- Row 1: Badges & Meta Info -->
       <div class="ds-latest-meta flex flex-wrap items-center justify-center gap-2 text-xs">
@@ -447,7 +447,7 @@
   .ds-hero-bottom {
     position: relative;
     z-index: 10;
-    pointer-events: auto;
+    pointer-events: none;
     display: none;
     flex-direction: column;
     align-items: center;
@@ -479,6 +479,7 @@
 
   /* Latest Post Card: Scroll-Linked Progressive Blur, Scale Down & Fade Dissolve */
   .ds-hero-latest-card {
+    pointer-events: auto;
     --ds-scroll-opacity: 1;
     --ds-scroll-scale: 1;
     --ds-scroll-blur: 0px;
@@ -490,16 +491,16 @@
     will-change: opacity, transform, filter;
     transition: opacity 0.08s ease-out, transform 0.08s ease-out, filter 0.08s ease-out;
     border-color: rgba(255, 255, 255, 0.08);
-    background-color: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
 
   .ds-hero-latest-card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    background-color: rgba(0, 0, 0, 0.3);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.18);
+    background-color: rgba(0, 0, 0, 0.18);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
   }
 
   /* Bing Daily Caption: Scroll-Linked Progressive Blur, Scale Down & Fade Dissolve */
@@ -559,10 +560,10 @@
 
   .ds-terminal-box {
     border-color: rgba(255, 255, 255, 0.08);
-    background-color: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
 
   .ds-terminal-header {
@@ -615,8 +616,10 @@
 
   .dark .ds-hero-pehe .ds-terminal-box {
     border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(28, 33, 40, 0.85);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    background-color: rgba(28, 33, 40, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   }
 
   .ds-hero-pehe .ds-terminal-header {
@@ -645,7 +648,9 @@
   }
 
   .dark .ds-hero-pehe .ds-tab-btn.is-active {
-    background-color: rgba(28, 33, 40, 0.85);
+    background-color: rgba(28, 33, 40, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-color: rgba(255, 255, 255, 0.1);
     color: var(--ds-color-text-primary);
   }
@@ -674,13 +679,15 @@
 
   .dark .ds-hero-pehe .ds-hero-latest-card {
     border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(28, 33, 40, 0.85);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    background-color: rgba(28, 33, 40, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   }
 
   .dark .ds-hero-pehe .ds-hero-latest-card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    background-color: rgba(28, 33, 40, 0.95);
+    border-color: rgba(255, 255, 255, 0.18);
+    background-color: rgba(28, 33, 40, 0.82);
   }
 
   .ds-hero-pehe .ds-latest-meta,
@@ -956,9 +963,9 @@
 
   .ds-tab-btn.is-active {
     color: var(--ds-color-text-primary);
-    background-color: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-color: rgba(255, 255, 255, 0.08);
   }
 

@@ -1,5 +1,5 @@
 {{- if site.Params.backToTop | default site.Params.back_to_top | default true -}}
-<div id="ds-btt-wrapper" class="ds-btt-wrapper fixed bottom-6 right-6 z-40">
+<div id="ds-btt-wrapper" class="ds-btt-wrapper fixed bottom-6 right-6 z-40 pointer-events-none">
   <button id="ds-back-to-top" type="button" aria-label="返回顶部" title="返回顶部"
     class="group relative flex items-center justify-center w-11 h-11 rounded-full bg-white/90 dark:bg-[#22272e]/90 backdrop-blur-md border border-zinc-200/80 dark:border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.45)] text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-cyan-300 transition-all duration-300 ease-out opacity-0 pointer-events-none translate-y-3 scale-90 cursor-pointer select-none active:scale-95">
     
@@ -28,6 +28,7 @@
     bottom: 24px;
     right: 24px;
     z-index: 40;
+    pointer-events: none;
     transition: bottom 0.25s ease-out;
   }
   /* 移动端视口下若页面存在文章目录按钮（#toc-mobile-trigger），自动向上移位避让堆叠 */

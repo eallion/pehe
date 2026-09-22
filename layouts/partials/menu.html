@@ -22,8 +22,12 @@ Renders a menu for the given menu ID.
 {{- $page := .page }}
 {{- range .menuEntries }}
 	{{- $attrs := dict "href" .URL }}
+	{{- $cleanUrl := lower .URL | strings.TrimRight "/" -}}
+	{{- if or (eq $cleanUrl "/search") (eq $cleanUrl "#search") (eq .URL "/搜索") (eq .URL "/搜索/") (eq (lower (or .Identifier "")) "search") (eq (or .Params.action "") "search") -}}
+		{{- $attrs = merge $attrs (dict "data-target" "search-bar") -}}
+	{{- end -}}
 	{{- /* Add the "rounded-full border px-6 py-2 bg-zinc-100 hover:bg-zinc-200" class to all links */}}
-	{{- $attrs = merge $attrs (dict "class" "rounded-full border-none lg:border lg:border-gray-200 dark:border-border-dimmed-primary px-6 py-2 bg-none bg-zinc-100 lg:bg-transparent hover:bg-zinc-200 hover:border-zinc-200 dark:bg-bg-dimmed-secondary dark:lg:bg-transparent dark:hover:bg-border-dimmed-primary dark:hover:border-border-dimmed-primary") }}
+	{{- $attrs = merge $attrs (dict "class" "rounded-full border-none lg:border lg:border-gray-200 dark:border-border-dimmed-primary px-6 py-2 bg-none bg-zinc-100 lg:bg-transparent hover:bg-zinc-200 hover:border-zinc-200 dark:bg-bg-dimmed-secondary dark:lg:bg-transparent dark:hover:bg-border-dimmed-primary dark:hover:border-border-dimmed-primary cursor-pointer") }}
 
 	{{- if $page.IsMenuCurrent .Menu . }}
 		{{- /* Add the "active:bg-zinc-300" class if the link is the current page */}}

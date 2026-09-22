@@ -39,6 +39,11 @@
     {{- partial "menu.html" (dict "menuID" "main" "page" .) -}}
 
     <!-- Search Button -->
+    {{- $showSearchIcon := true -}}
+    {{- if or (eq site.Params.headerSearchIcon false) (eq site.Params.header_search_icon false) (eq site.Params.searchIcon false) (eq site.Params.search_icon false) -}}
+      {{- $showSearchIcon = false -}}
+    {{- end -}}
+    {{- if $showSearchIcon -}}
     <button type="button" class="ds-nav-btn w-9 h-9" data-target="search-bar" aria-label="search">
       <svg width="17" height="17" fill="currentColor" viewBox="0 0 16 16">
         <path id="path1" class="transition-all ease-linear"
@@ -49,6 +54,7 @@
         </path>
       </svg>
     </button>
+    {{- end -}}
 
     <!-- Dark Mode Toggle Button -->
     <button type="button" id="theme-toggle" aria-label="Toggle Dark Mode" class="ds-nav-btn w-9 h-9">
@@ -65,4 +71,3 @@
     </button>
   </div>
 </div>
-{{- partial "search.html" . -}}
