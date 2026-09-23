@@ -38,8 +38,9 @@
 	</aside>
 </div>
 
-<!-- 添加 not-prose 类来避免 prose 样式的影响 -->
-<h3 class="not-prose text-2xl font-bold mb-6">友情链接，随机排列：</h3>
+<div class="prose lg:prose-lg dark:prose-invert max-w-none">
+	{{ "### 友情链接，随机排列：" | .RenderString }}
+</div>
 <div class="not-prose border-t border-gray-200 dark:border-border-dimmed-subtle pt-12 mt-4 mb-12">
 	<div class="friends-links grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 		{{ $linksResource := resources.Get "data/friends/links.json" }}
