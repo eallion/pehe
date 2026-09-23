@@ -1,0 +1,65 @@
+# {{ site.Title }}
+
+{{ with site.Params.description | default site.Params.Description -}}
+> {{ . }}
+{{ end -}}
+{{ with site.Home.OutputFormats.Get "llmsfull" -}}
+> Full content available at: {{ .Permalink }}
+{{ else -}}
+> Full content for all articles is available at: {{ "llms-full.txt" | absURL }}
+{{ end }}
+{{- $pages := where .Site.RegularPages "Type" "page" -}}
+{{- if $pages }}
+
+## Pages
+
+{{ range $pages -}}
+{{- $desc := or .Summary .Description .Params.summary "" | plainify | replaceRE "\\s+" " " | replaceRE "^ | $" "" -}}
+- [{{ replace (replace .Title "[" "\\[") "]" "\\]" }}]({{ .Permalink }}){{ with $desc }}: {{ . }}{{ end }}
+{{ end -}}
+{{ end }}
+{{- $mainSections := site.Params.mainSections | default (slice "posts" "blog") -}}
+{{- $posts := where .Site.RegularPages "Section" "in" $mainSections -}}
+{{- if not $posts -}}
+  {{- $posts = where .Site.RegularPages "Type" "in" $mainSections -}}
+{{- end -}}
+{{- if not $posts -}}
+  {{- $posts = where .Site.RegularPages "Type" "post" -}}
+{{- end -}}
+{{- if not $posts -}}
+  {{- $posts = .Site.RegularPages -}}
+{{- end -}}
+{{- if $posts }}
+
+## Articles
+
+{{ range $posts -}}
+{{- $desc := or .Summary .Description .Params.summary "" | plainify | replaceRE "\\s+" " " | replaceRE "^ | $" "" -}}
+- [{{ replace (replace .Title "[" "\\[") "]" "\\]" }}]({{ .Permalink }}){{ with $desc }}: {{ . }}{{ end }}
+{{ end -}}
+{{ end }}
+
+## Feeds
+
+{{ with site.Home.OutputFormats.Get "rss" -}}
+- [RSS Feed]({{ .Permalink }}): RSS Feed
+{{ else -}}
+- [RSS Feed]({{ "index.xml" | absURL }}): RSS Feed
+{{ end -}}
+- [Sitemap]({{ "sitemap.xml" | absURL }}): Sitemap
+{{ with site.Home.OutputFormats.Get "llmsfull" -}}
+- [Full Content]({{ .Permalink }}): Full text content
+{{ else -}}
+- [Full Content]({{ "llms-full.txt" | absURL }}): Full text content
+{{ end }}
+{{- if or site.Taxonomies.categories site.Taxonomies.tags }}
+
+## Optional
+
+{{ with site.Taxonomies.categories -}}
+- [Categories]({{ "categories/" | absURL }}): Category index
+{{ end -}}
+{{ with site.Taxonomies.tags -}}
+- [Tags]({{ "tags/" | absURL }}): Tag index
+{{ end -}}
+{{ end }}

@@ -1,0 +1,35 @@
+# {{ site.Title }}
+
+{{ with site.Params.description | default site.Params.Description -}}
+> {{ . }}
+{{ end -}}
+{{ with site.Home.OutputFormats.Get "llms" -}}
+> Curated index and brief summary available at: {{ .Permalink }}
+{{ else -}}
+> Curated index and brief summary available at: {{ "llms.txt" | absURL }}
+{{ end }}
+
+{{- $mainSections := site.Params.mainSections | default (slice "posts" "blog") -}}
+{{- $posts := where .Site.RegularPages "Section" "in" $mainSections -}}
+{{- if not $posts -}}
+  {{- $posts = where .Site.RegularPages "Type" "in" $mainSections -}}
+{{- end -}}
+{{- if not $posts -}}
+  {{- $posts = where .Site.RegularPages "Type" "post" -}}
+{{- end -}}
+{{- if not $posts -}}
+  {{- $posts = .Site.RegularPages -}}
+{{- end -}}
+{{- if $posts }}
+
+## Articles
+
+{{ range $posts -}}
+"""""
+# [{{ replace (replace .Title "[" "\\[") "]" "\\]" }}]({{ .Permalink }}):
+
+{{ .RawContent | chomp }}
+"""""
+
+{{ end }}
+{{- end }}
