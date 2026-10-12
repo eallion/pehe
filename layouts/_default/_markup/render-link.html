@@ -1,14 +1,11 @@
 {{- $doRedirect := default true .Page.Site.Params.redirect -}}
 {{- $safeHosts := .Page.Site.Params.safe_hosts -}}
-{{- $siteHost := (urls.Parse .Page.Site.BaseURL).Host }}
-
+{{- $siteHost := (urls.Parse .Page.Site.BaseURL).Host -}}
 {{- if $doRedirect -}}
-	{{ $url := urls.Parse .Destination }}
-	{{ $host := lower $url.Host }}
-
+	{{- $url := urls.Parse .Destination -}}
+	{{- $host := lower $url.Host -}}
 	{{- /* 检查链接是否是 HTTP(S) */ -}}
-	{{ if or (eq $url.Scheme "http") (eq $url.Scheme "https") }}
-
+	{{- if or (eq $url.Scheme "http") (eq $url.Scheme "https") -}}
 		{{- $isSafe := false -}}
 		{{- range $safeHosts -}}
 			{{- $rule := . -}}
@@ -21,19 +18,14 @@
 				{{- $isSafe = true -}}
 			{{- end -}}
 		{{- end -}}
-		{{- if or $isSafe (eq $host $siteHost) (hasPrefix .Destination "#") }}
-			{{- /* 属于白名单链接或站点自身域名 */ -}}
-			<a href="{{ .Destination }}" target="_blank" rel="noopener noreferrer" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
-
+		{{- if or $isSafe (eq $host $siteHost) (hasPrefix .Destination "#") -}}
+			<a href="{{ .Destination }}" target="_blank" rel="noopener noreferrer"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
 		{{- else -}}
-			{{- /* 外部链接，使用跳转 */ -}}
-			<a href="/go/?target={{ .Destination | base64Encode }}" target="_blank" rel="noopener noreferrer" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+			<a href="/go/?target={{ .Destination | base64Encode }}" target="_blank" rel="noopener noreferrer"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
 		{{- end -}}
-	{{ else }}
-		{{- /* 非 http/https 链接，按原样输出 */ -}}
-		<a href="{{ .Destination }}" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
-	{{ end }}
+	{{- else -}}
+		<a href="{{ .Destination }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+	{{- end -}}
 {{- else -}}
-	{{- /* redirect = false，使用 Hugo 默认渲染逻辑 */ -}}
-	<a href="{{ .Destination }}" {{ with .Title }}title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+	<a href="{{ .Destination }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
 {{- end -}}

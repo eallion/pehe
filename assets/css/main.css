@@ -4158,79 +4158,41 @@
   }
 }
 html {
-  text-spacing: ideograph-alpha ideograph-numeric ideograph-parenthesis;
-  text-autospace: ideograph;
+  text-spacing-trim: normal;
+  text-autospace: normal;
 }
-article {
+article, .prose {
   letter-spacing: 0.02em;
-  text-spacing: ideograph-alpha ideograph-numeric ideograph-parenthesis trim-ideograph;
-  text-autospace: ideograph;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  text-spacing-trim: normal;
+  text-autospace: normal;
   hanging-punctuation: first allow-end;
+  font-feature-settings: "chws" 1, "kern" 1;
   text-rendering: optimizeLegibility;
-  font-feature-settings: "kern" 1, "liga" 1, "dlig" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 article a {
   word-break: break-word;
   overflow-wrap: break-word;
 }
-article a, article abbr, article code, article pre, article [lang="en"], article [lang="en-US"] {
+article abbr, article code, article pre, article kbd, article samp, article var, article [lang^="en"] {
   letter-spacing: normal;
-  text-spacing: normal;
-  text-autospace: none;
-}
-.prose {
-  text-spacing: ideograph-alpha ideograph-numeric ideograph-parenthesis trim-ideograph;
-  hanging-punctuation: first allow-end;
-  text-autospace: ideograph;
-}
-.prose p:lang(zh), .prose p:lang(ja), .prose p:lang(ko), .prose div:lang(zh) {
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.prose {
-  text-spacing: ideograph-alpha ideograph-numeric ideograph-parenthesis trim-ideograph;
-}
-.prose p {
-  text-spacing-trim: trim-ideograph;
-  hanging-punctuation: first allow-end;
-}
-article, .prose {
-  text-autospace: ideograph;
-  text-spacing: ideograph-alpha;
-}
-.prose {
-  text-spacing: ideograph-numeric;
-}
-.md\:prose-lg {
-  text-spacing: ideograph-alpha ideograph-numeric ideograph-parenthesis trim-ideograph;
+  text-spacing-trim: space-all;
+  text-autospace: no-autospace;
+  font-feature-settings: normal;
 }
 @media (max-width: 768px) {
   article, .prose {
     letter-spacing: 0.01em;
-    text-spacing: ideograph-alpha;
-  }
-}
-@supports not (text-spacing: ideograph-alpha) {
-  article, .prose {
-    font-feature-settings: "kern" 1, "liga" 1;
-  }
-}
-@supports not (hanging-punctuation: first) {
-  .prose p {
-    text-indent: 0;
   }
 }
 .prose blockquote {
-  text-spacing: ideograph-alpha ideograph-parenthesis;
   hanging-punctuation: first allow-end;
 }
 .prose li {
-  text-spacing: ideograph-alpha;
   hanging-punctuation: none;
-}
-.prose table {
-  text-spacing: ideograph-alpha;
 }
 html:not(.dark) .bg {
   background-color: #fff;
