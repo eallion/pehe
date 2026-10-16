@@ -2,25 +2,25 @@
   <!-- Left: Mobile menu toggle + Logo + Title + Badge -->
   <div class="flex items-center gap-3">
     <button type="button"
-      class="h-[38px] px-2.5 lg:px-0 lg:w-[38px] lg:h-[38px] flex items-center justify-center gap-1.5 lg:gap-0 rounded-full group ds-nav-btn toggle-button shrink-0 aspect-auto lg:aspect-square"
+      class="h-9 px-2.5 lg:px-0 lg:w-9 lg:h-9 flex items-center justify-center gap-1.5 lg:gap-0 rounded-full group ds-nav-btn toggle-button shrink-0 aspect-auto lg:aspect-square"
       data-target="menu-bar" aria-label="menu">
       {{ partial "icon.html" (dict "name" "menu" "class" "h-5 w-5 lg:hidden text-current shrink-0") }}
       {{ with .Site.Params.logo }}
       <span
-        class="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0 overflow-hidden aspect-square">
+        class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 overflow-hidden aspect-square">
         <img src="{{ . }}" class="w-full h-full rounded-full block object-cover aspect-square" alt="logo" width="32"
           height="32" loading="lazy">
       </span>
       {{ else }}
       <span
-        class="w-[28px] h-[28px] bg-blue-500 fill-white rounded-full flex items-center justify-center shrink-0 aspect-square">
+        class="w-7 h-7 bg-blue-500 fill-white rounded-full flex items-center justify-center shrink-0 aspect-square">
         {{ partial "icon.html" (dict "name" "logo-fallback" "class" "group-hover:animate-spin bi bi-egg-fried fill-white h-4 w-4") }}
       </span>
       {{ end }}
     </button>
     <div class="flex items-center gap-2">
       <a href="/" target="_self"
-        class="flex items-center text-current font-medium text-[15px] tracking-tight hover:opacity-90 transition-opacity select-none"
+        class="flex items-center text-current font-medium text-base tracking-tight hover:opacity-90 transition-opacity select-none"
         alt="{{ .Site.Title }}" aria-label="Home">
         {{- with .Site.Params.svg_title -}}
         {{- partial "icon.html" (dict "name" . "class" "h-6 text-current") -}}

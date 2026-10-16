@@ -31,6 +31,7 @@
     --color-rose-500: oklch(64.5% 0.246 16.439);
     --color-rose-600: oklch(58.6% 0.253 17.585);
     --color-rose-700: oklch(51.4% 0.222 16.935);
+    --color-slate-400: oklch(70.4% 0.04 256.788);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
@@ -1151,6 +1152,10 @@
     width: calc(var(--spacing) * 7);
     height: calc(var(--spacing) * 7);
   }
+  .size-\[18px\] {
+    width: 18px;
+    height: 18px;
+  }
   .size-full {
     width: 100%;
     height: 100%;
@@ -1254,6 +1259,9 @@
   .min-h-10 {
     min-height: calc(var(--spacing) * 10);
   }
+  .min-h-40 {
+    min-height: calc(var(--spacing) * 40);
+  }
   .min-h-\[100svh\] {
     min-height: 100svh;
   }
@@ -1287,11 +1295,17 @@
   .w-6 {
     width: calc(var(--spacing) * 6);
   }
+  .w-7 {
+    width: calc(var(--spacing) * 7);
+  }
   .w-8 {
     width: calc(var(--spacing) * 8);
   }
   .w-9 {
     width: calc(var(--spacing) * 9);
+  }
+  .w-9\/10 {
+    width: calc(9 / 10 * 100%);
   }
   .w-10 {
     width: calc(var(--spacing) * 10);
@@ -2405,6 +2419,9 @@
     font-size: var(--text-xs) !important;
     line-height: var(--tw-leading, var(--text-xs--line-height)) !important;
   }
+  .text-\[0\.95rem\] {
+    font-size: 0.95rem;
+  }
   .text-\[10px\] {
     font-size: 10px;
   }
@@ -2499,6 +2516,9 @@
   .whitespace-nowrap {
     white-space: nowrap;
   }
+  .text-\[\#94a3b8\] {
+    color: #94a3b8;
+  }
   .text-\[\#0969da\] {
     color: #0969da;
   }
@@ -2555,6 +2575,9 @@
   }
   .text-rose-700 {
     color: var(--color-rose-700);
+  }
+  .text-slate-400 {
+    color: var(--color-slate-400);
   }
   .text-white {
     color: var(--color-white);
@@ -3722,6 +3745,9 @@
     .lg\:aspect-square {
       aspect-ratio: 1 / 1;
     }
+    .lg\:h-9 {
+      height: calc(var(--spacing) * 9);
+    }
     .lg\:h-\[38px\] {
       height: 38px;
     }
@@ -3736,6 +3762,9 @@
     }
     .lg\:w-4\/5 {
       width: calc(4 / 5 * 100%);
+    }
+    .lg\:w-9 {
+      width: calc(var(--spacing) * 9);
     }
     .lg\:w-\[38px\] {
       width: 38px;
@@ -4130,6 +4159,30 @@
     .print\:hidden {
       display: none;
     }
+  }
+  .\[\&_\.section-title\]\:\!text-xl .section-title {
+    font-size: var(--text-xl) !important;
+    line-height: var(--tw-leading, var(--text-xl--line-height)) !important;
+  }
+  .\[\&_\.section-title\]\:\!leading-snug .section-title {
+    --tw-leading: var(--leading-snug) !important;
+    line-height: var(--leading-snug) !important;
+  }
+  .\[\&_\.section-title\]\:\!font-semibold .section-title {
+    --tw-font-weight: var(--font-weight-semibold) !important;
+    font-weight: var(--font-weight-semibold) !important;
+  }
+  .\[\&_\.section-title\]\:\!text-zinc-900 .section-title {
+    color: var(--color-zinc-900) !important;
+  }
+  @media (width >= 48rem) {
+    .md\:\[\&_\.section-title\]\:\!text-2xl .section-title {
+      font-size: var(--text-2xl) !important;
+      line-height: var(--tw-leading, var(--text-2xl--line-height)) !important;
+    }
+  }
+  .dark\:\[\&_\.section-title\]\:\!text-text-dimmed-primary:where(.dark, .dark *) .section-title {
+    color: var(--color-text-dimmed-primary) !important;
   }
   .\[\&_a\]\:text-white\/95 a {
     color: color-mix(in srgb, #fff 95%, transparent);
