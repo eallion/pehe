@@ -4,6 +4,7 @@
 
 @import './article.css';
 @import './chroma.css';
+@import './codeblock.css';
 @import './gfm-table.css';
 @import './header.css';
 @import './toc.css';

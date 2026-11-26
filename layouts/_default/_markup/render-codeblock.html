@@ -1,0 +1,29 @@
+{{- $result := transform.HighlightCodeBlock . -}}
+{{- if and .Page (eq .Page.Kind "page") -}}
+  {{- $id := printf "code-block-%d-%d" .Ordinal (hash.FNV32a .Inner) -}}
+  {{- $ariaLabel := "复制代码" -}}
+  {{- with .Type -}}
+    {{- $ariaLabel = printf "复制 %s 代码" . -}}
+  {{- end -}}
+<div class="pehe-code-block">
+  <div id="{{ $id }}" class="pehe-code-target">
+    {{- $result.Wrapped -}}
+  </div>
+  <span class="pehe-code-copy not-prose">
+    <button type="button" class="pehe-code-copy-btn" command="--copy" commandfor="{{ $id }}" aria-label="{{ $ariaLabel }}">
+      <span class="pehe-code-copy-icon" aria-hidden="true">
+        <svg class="icon-copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+        </svg>
+        <svg class="icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+      </span>
+    </button>
+    <span class="pehe-code-copy-tip" role="status"></span>
+  </span>
+</div>
+{{- else -}}
+  {{- $result.Wrapped -}}
+{{- end -}}
